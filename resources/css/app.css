@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.input-compact {
+    @apply h-[22px] px-1 py-0 text-[11px] leading-none border rounded;
+}
+
+.select-compact {
+    @apply h-[22px] px-1 py-0 text-[11px] border rounded;
+}
+
+.textarea-compact {
+    @apply h-[22px] px-1 py-0 text-[11px] resize-none border rounded;
+}
+
+.input-table {
+    @apply h-[20px] px-1 py-0 text-[10px] border;
+}
+
+.table-compact th,
+.table-compact td {
+    padding: 2px 4px !important;
+    line-height: 1.2;
+    font-size: 9px;
+}
+
+.table-compact input {
+    height: 18px;
+    font-size: 9px;
+    padding: 0 4px;
+}
+
+.table-compact input[type="number"] {
+    text-align: center;
+}
+
+.table-compact tr {
+    height: 20px;
+}

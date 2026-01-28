@@ -1,0 +1,65 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('pengeluaran_a2', function (Blueprint $table) {
+            $table->id();
+            
+            // Header
+            $table->string('id_versi_anggaran')->nullable();
+            $table->string('nomor_dpa')->nullable();
+            $table->date('tanggal')->nullable();
+            $table->string('program')->nullable();
+            $table->string('kegiatan')->nullable();
+            $table->string('sub_kegiatan')->nullable();
+            $table->string('kode_akun')->nullable();
+            
+            // Penerima Source (Optional FK)
+            $table->unsignedBigInteger('id_penerima')->nullable();
+            
+            // Snapshot Data Penerima (in case master data changes)
+            $table->string('nama_penerima_snapshot')->nullable();
+            $table->string('npwp_snapshot')->nullable();
+            $table->string('bank_snapshot')->nullable();
+            $table->string('norek_snapshot')->nullable();
+            $table->text('alamat_snapshot')->nullable();
+            
+            // Details
+            $table->text('keperluan')->nullable();
+
+            // Pengeluaran Riil
+            $table->decimal('vol_riil', 10, 2)->default(0);
+            $table->decimal('harga_riil', 15, 2)->default(0);
+            $table->decimal('total_riil', 15, 2)->default(0);
+
+            // Potongan PPh
+            $table->decimal('pph_golongan', 5, 2)->nullable();
+            $table->decimal('pph_vol', 10, 2)->default(0);
+            $table->decimal('pph_besaran', 15, 2)->default(0);
+            $table->decimal('pph_jumlah', 15, 2)->default(0);
+
+            // Potongan Pajak Lain
+            $table->string('kode_potongan_pajak')->nullable();
+            $table->decimal('nominal_pajak_potongan', 15, 2)->default(0);
+
+            // Grand Totals
+            $table->decimal('bruto', 15, 2)->default(0);
+            $table->decimal('pajak', 15, 2)->default(0);
+            $table->decimal('netto', 15, 2)->default(0);
+            $table->text('terbilang')->nullable();
+
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('pengeluaran_a2');
+    }
+};
