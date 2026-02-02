@@ -68,6 +68,7 @@
                     <tr>
                         <th class="px-4 py-2 text-center">No</th>
                         <th class="px-4 py-2 text-left">ID Rinci</th>
+                        <th class="px-4 py-2 text-left">Uraian Barang</th>
                         <th class="px-4 py-2 text-center">Volume</th>
                         <th class="px-4 py-2 text-right">Harga</th>
                         <th class="px-4 py-2 text-right">Total</th>
@@ -78,6 +79,7 @@
                         <tr class="hover:bg-gray-50">
                             <td class="px-4 py-2 text-center">{{ $i + 1 }}</td>
                             <td class="px-4 py-2">{{ $d->id_rinci_sub_bl }}</td>
+                            <td class="px-4 py-2">{{ $d->rincianRka->nama_komponen }}</td>
                             <td class="px-4 py-2 text-center">{{ $d->volume }}</td>
                             <td class="px-4 py-2 text-right">
                                 Rp {{ number_format($d->harga_riil,0,',','.') }}

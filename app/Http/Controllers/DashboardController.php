@@ -6,8 +6,13 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function ringkasan()
     {
-        return view('dashboard');
+        return view('dashboard.ringkasan');
+    }
+
+    public function kendaliSubKegiatan()
+    {
+        return view('dashboard.kendali-sub-kegiatan');
     }
 }

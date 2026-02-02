@@ -156,13 +156,13 @@ class A2Controller extends Controller
                 'jenis_tu'    => $request->tata_usaha,
                 'jenis_a2'    => $request->jenis_a2,
                 'j_transaksi' => $request->transaksi,
+                'npwp_penerima' => $request->npwp,
                 'nom_bruto'   => (int) str_replace('.', '', $request->bruto),
                 't_pajak'     => (int) str_replace('.', '', $request->pajakPotong),
                 'nom_netto'     => (int) str_replace('.', '', $request->nom_netto),
                 'nama_penerima'    => $request->nama_penerima,
                 'bank_penerima'    => $request->bank_penerima,
                 'norek_penerima'    => $request->norek_penerima,
-                'npwp_penerima'    => $request->npwp_penerima,
                 'alamat_penerima'    => $request->alamat_penerima,
                 'keperluan'   => $request->keperluan,
                 'netto_terbilang'   => $request->netto_terbilang,
@@ -237,17 +237,6 @@ class A2Controller extends Controller
                 ->withErrors($e->getMessage());
         }
     }
-
-    // public function getRincian(Request $request)
-    // {
-    //     $versi = $request->query('versi');
-
-    //     $data = RincianRka::where('id_versi_anggaran', $versi)
-    //         ->select('id_rinci_sub_bl', 'satuan', 'nama_komponen', 'volume', 'harga_satuan', 'total_harga')
-    //         ->get();
-
-    //     return response()->json($data);
-    // }
 
     public function print($id)
     {
@@ -372,8 +361,61 @@ class A2Controller extends Controller
 
     public function show($id)
     {
-        $register = Register::with('detailBelanja')->findOrFail($id);
+        $register = Register::with('detailBelanja.rincianRka')->findOrFail($id);
 
         return view('a2.show', compact('register'));
+    }
+
+    public function index(Request $request)
+    {
+        $query = Register::query(); // ganti sesuai model kamu
+
+        if ($request->filled('q')) {
+            $q = strtolower($request->q);
+
+            $query->where(function ($sub) use ($q) {
+                $sub->whereRaw('LOWER(gen_no_reg) LIKE ?', ["%{$q}%"])
+                    ->orWhereRaw('LOWER(urai_rekbel) LIKE ?', ["%{$q}%"])
+                    ->orWhereRaw('LOWER(keperluan) LIKE ?', ["%{$q}%"]);
+            });
+        }
+
+        if ($request->filled('tgl_dari')) {
+            $query->whereDate('created_at', '>=', $request->tgl_dari);
+        }
+
+        if ($request->filled('tgl_sampai')) {
+            $query->whereDate('created_at', '<=', $request->tgl_sampai);
+        }
+
+        $registers = $query
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('a2.index', compact('registers'));
+    }
+
+    public function edit($id)
+    {
+        $register = Register::findOrFail($id);
+        return view('a2.edit', compact('register'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $register = Register::findOrFail($id);
+
+        $register->update($request->all());
+
+        return redirect()
+            ->route('a2.index')
+            ->with('success', 'Data berhasil diperbarui');
+    }
+
+    public function destroy($id)
+    {
+        Register::findOrFail($id)->delete();
+        return redirect()->route('a2.index')->with('success', 'Data berhasil dihapus');
     }
 }

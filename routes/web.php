@@ -1,65 +1,101 @@
-    <?php
+<?php
 
-    use App\Http\Controllers\ProfileController;
-    use App\Http\Controllers\A2Controller;
-    use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\A2Controller;
+use App\Http\Controllers\DashboardController;
 
-    Route::get('/', function () {
-    return redirect()->route('a2.create');
+/*
+|--------------------------------------------------------------------------
+| Redirect root
+|--------------------------------------------------------------------------
+*/
+Route::get('/', function () {
+    return redirect()->route('dashboard.ringkasan');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'verified'])
+    ->prefix('dashboard')
+    ->name('dashboard.')
+    ->group(function () {
+
+        Route::get('/ringkasan', [DashboardController::class, 'ringkasan'])
+            ->name('ringkasan');
+
+        Route::get('/kendali-sub-kegiatan', [DashboardController::class, 'kendaliSubKegiatan'])
+            ->name('kendali-sub-kegiatan');
     });
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->middleware(['auth', 'verified'])->name('dashboard');
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
 
-    Route::middleware('auth')->group(function () {
-        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    /*
+    | Profile
+    */
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-        Route::prefix('a2')->name('a2.')->group(function () {
+    /*
+    |--------------------------------------------------------------------------
+    | REGISTER / A2
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('a2')->name('a2.')->group(function () {
 
-            /* =========================
-            | FORM & SIMPAN
-            ========================= */
-            Route::get('/create', [A2Controller::class, 'create'])
-                ->name('create');
+        Route::get('/', [A2Controller::class, 'index'])
+            ->name('index');
 
-            Route::post('/', [A2Controller::class, 'store'])
-                ->name('store');
+        Route::get('/create', [A2Controller::class, 'create'])
+            ->name('create');
 
-            Route::get('/{id}', [A2Controller::class, 'show'])
-                ->name('show');
+        Route::post('/', [A2Controller::class, 'store'])
+            ->name('store');
 
-            Route::get('/{id}/print', [A2Controller::class, 'print'])
-                ->name('print');
+        Route::get('/{id}', [A2Controller::class, 'show'])
+            ->name('show');
 
+        Route::get('/{id}/edit', [A2Controller::class, 'edit'])
+        ->name('edit');
 
-            /* =========================
-            | AJAX / FETCH (HARUS SAMA)
-            ========================= */
+        Route::put('/{id}', [A2Controller::class, 'update'])
+        ->name('update');
 
-            // JS: fetch(`/a2/program-by-dpa/${versi}`)
-            Route::get('/program-by-dpa/{versi}', 
-                [A2Controller::class, 'programByDpa']);
+        Route::delete('/{id}', [A2Controller::class, 'destroy'])
+            ->name('destroy');
 
-            // JS: fetch(`/a2/kegiatan-by-program/${programId}`)
-            Route::get('/kegiatan-by-program/{program}', 
-                [A2Controller::class, 'kegiatanByProgram']);
+        Route::get('/{id}/print', [A2Controller::class, 'print'])
+            ->name('print');
 
-            // JS: fetch(`/a2/subkegiatan-by-kegiatan/${kegiatanId}`)
-            Route::get('/subkegiatan-by-kegiatan/{kegiatan}', 
-                [A2Controller::class, 'subByKegiatan']);
+        /*
+        |--------------------------------------------------------------------------
+        | AJAX / FETCH
+        |--------------------------------------------------------------------------
+        */
+        Route::get('/program-by-dpa/{versi}',
+            [A2Controller::class, 'programByDpa']);
 
-            // JS: fetch(`/a2/akun-by-subkegiatan/${sub}`)
-            Route::get('/akun-by-subkegiatan/{subkegiatan}', 
-                [A2Controller::class, 'akunBySubKegiatan']);
+        Route::get('/kegiatan-by-program/{program}',
+            [A2Controller::class, 'kegiatanByProgram']);
 
-            // JS: fetch(`/a2/filter-rincian`, POST)
-            Route::post('/filter-rincian', 
-                [A2Controller::class, 'filterRincian']);
+        Route::get('/subkegiatan-by-kegiatan/{kegiatan}',
+            [A2Controller::class, 'subByKegiatan']);
 
-        });
+        Route::get('/akun-by-subkegiatan/{subkegiatan}',
+            [A2Controller::class, 'akunBySubKegiatan']);
+
+        Route::post('/filter-rincian',
+            [A2Controller::class, 'filterRincian']);
     });
+});
 
-    require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

@@ -36,10 +36,11 @@
                 </div>
             @endif
 
-            <form id="form-a2" method="POST" action="{{ route('a2.store') }}" class="space-y-2">
+            <form id="form-a2" method="POST" action="{{ route('a2.update', $register->id_reg) }}" class="space-y-2">
                 @csrf
+                @method('PUT')
                 <div class="bg-blue-800 text-white px-4 py-1 rounded shadow-sm flex justify-between items-center">
-                    <h1 class="text-xs font-bold uppercase tracking-wider">Register A2 - Bukti Pengeluaran Bidang Informatika
+                    <h1 class="text-xs font-bold uppercase tracking-wider">Edit Register A2 - Bukti Pengeluaran Bidang Informatika
                         2025</h1>
                     <div class="flex gap-2">
                         <button type="submit" id="btn-save"
@@ -61,9 +62,10 @@
                             <label class="block mb-[2px] text-[9px] leading-none text-white">TATA USAHA</label>
                             <select name="tata_usaha"
                                 class="w-full text-[9px] text-black rounded px-1 py-[1px] leading-none">
-                                <option value="GU" {{ old('tata_usaha') == 'GU' ? 'selected' : '' }}>Ganti Uang (GU)
+
+                                <option value="GU" {{ old('tata_usaha', $register->tata_usaha) == 'GU' ? 'selected' : '' }}>Ganti Uang (GU)
                                 </option>
-                                <option value="LS" {{ old('tata_usaha') == 'LS' ? 'selected' : '' }}>Langsung (LS)
+                                <option value="LS" {{ old('tata_usaha', $register->tata_usaha) == 'LS' ? 'selected' : '' }}>Langsung (LS)
                                 </option>
                             </select>
                         </div>
@@ -72,8 +74,8 @@
                         <div class="bg-green-700 p-1 rounded">
                             <label class="block mb-[1px] text-[8px] leading-none text-white">JENIS A2</label>
                             <select name="jenis_a2" class="w-full text-[9px] text-black rounded px-1 py-[1px] leading-none">
-                                <option value="Non" {{ old('jenis_a2') == 'Non' ? 'selected' : '' }}>Non</option>
-                                <option value="Cetak" {{ old('jenis_a2') == 'Cetak' ? 'selected' : '' }}>Cetak</option>
+                                <option value="Non" {{ old('jenis_a2', $register->jenis_a2) == 'Non' ? 'selected' : '' }}>Non</option>
+                                <option value="Cetak" {{ old('jenis_a2', $register->jenis_a2) == 'Cetak' ? 'selected' : '' }}>Cetak</option>
                             </select>
                         </div>
 
@@ -82,9 +84,9 @@
                             <label class="block mb-[1px] text-[8px] leading-none text-white">TRANSAKSI</label>
                             <select name="transaksi"
                                 class="w-full text-[9px] text-black rounded px-1 py-[1px] leading-none">
-                                <option value="BANK" {{ old('transaksi') == 'BANK' ? 'selected' : '' }}>BANK</option>
-                                <option value="TUNAI" {{ old('transaksi') == 'TUNAI' ? 'selected' : '' }}>TUNAI</option>
-                                <option value="KPPD" {{ old('transaksi') == 'KPPD' ? 'selected' : '' }}>KPPD</option>
+                                <option value="BANK" {{ old('transaksi', $register->transaksi) == 'BANK' ? 'selected' : '' }}>BANK</option>
+                                <option value="TUNAI" {{ old('transaksi', $register->transaksi) == 'TUNAI' ? 'selected' : '' }}>TUNAI</option>
+                                <option value="KPPD" {{ old('transaksi', $register->transaksi) == 'KPPD' ? 'selected' : '' }}>KPPD</option>
                             </select>
                         </div>
 
@@ -102,16 +104,16 @@
                                     <option value="">-- Pilih --</option>
                                     @foreach ($versi as $v)
                                         <option value="{{ $v->id_versi_anggaran }}"
-                                            {{ old('versi') == $v->id_versi_anggaran ? 'selected' : '' }}
+                                            {{ old('versi',$register->versi) == $v->id_versi_anggaran ? 'selected' : '' }}
                                             data-nomor="{{ $v->nomor_anggaran }}">
-                                            {{ $v->versi_anggaran }}
+                                            {{ $v->id_versi_anggaran }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-[10px] font-semibold text-slate-600">Nomor DPA</label>
-                                <input type="text" readonly id="no_dpa" name="no_dpa" value="{{ old('no_dpa') }}"
+                                <input type="text" readonly id="no_dpa" name="no_dpa" value="{{ old('no_dpa',$register->no_dpa) }}"
                                     class="w-full border px-1 py-[2px] text-xs rounded bg-slate-100 text-slate-500">
                             </div>
                         </div>
