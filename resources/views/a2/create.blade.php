@@ -154,7 +154,7 @@
 
                         <p class="text-[10px] font-bold text-green-700 border-b mb-2 uppercase">Informasi Kegiatan</p>
                         <div class="grid gap-1">
-                            <input type="date" name="tanggal" class="input-compact w-full" required>
+                            <input type="date" name="tanggal" class="input-compact w-full">
                             <textarea id="keperluan" name="keperluan" rows="1" placeholder="Keperluan Pembayaran" class="text-[10px]"></textarea>
                         </div>
                         <p class="text-[10px] font-bold text-green-700 border-b mb-2 uppercase pt-3">Informasi Penerima</p>

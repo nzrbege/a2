@@ -84,7 +84,7 @@ class A2Controller extends Controller
 
             $request->validate([
                 'versi' => 'required',
-                'tanggal' => 'required',
+                // 'tanggal' => 'required',
                 'program' => 'required',
                 'nama_program' => 'required',
                 'kegiatan' => 'required',
@@ -93,9 +93,9 @@ class A2Controller extends Controller
                 'nama_sub_giat' => 'required',
                 'kode_akun' => 'required',
                 'nama_akun' => 'required',
-                'keperluan' => 'required',
+                // 'keperluan' => 'required',
                 'bruto' => 'required',
-                'pajakPotong' => 'required',
+                // 'pajakPotong' => 'required',
                 'nom_netto' => 'required',
                 'riil' => 'required|array',
                 'nama_penerima' => 'required',

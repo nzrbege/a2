@@ -52,7 +52,6 @@
                     </div>
                 </div>
             @endforeach
-
         </div>
     </div>
 
@@ -61,7 +60,6 @@
         <div class="border-b px-5 py-3 font-semibold text-gray-700">
             Rincian Riil
         </div>
-
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm">
                 <thead class="bg-gray-50 text-gray-600">
