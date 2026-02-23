@@ -25,7 +25,7 @@
 
 
     @section('content')
-        <div class="max-h-screen overflow-hidden p-2 bg-slate-100">
+        <div class="min-h-screen overflow-hidden p-2 bg-slate-100">
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>
@@ -49,13 +49,11 @@
                             class="bg-gray-400 text-white px-3 py-1 rounded text-[10px] font-bold cursor-not-allowed">
                             CETAK DOKUMEN
                         </button> --}}
-
                     </div>
                 </div>
 
                 <div class="bg-white p-2 rounded border border-slate-300 shadow-sm">
                     <div class="grid grid-cols-3 gap-2 text-[10px] font-bold text-white">
-
                         {{-- TATA USAHA --}}
                         <div class="bg-green-700 p-1 rounded">
                             <label class="block mb-[2px] text-[9px] leading-none text-white">TATA USAHA</label>
@@ -87,7 +85,6 @@
                                 <option value="KPPD" {{ old('transaksi') == 'KPPD' ? 'selected' : '' }}>KPPD</option>
                             </select>
                         </div>
-
                     </div>
                 </div>
 
@@ -151,13 +148,12 @@
 
                 <div class="grid grid-cols-12 gap-2">
                     <div class="col-span-5 bg-white p-2 rounded border border-slate-300 shadow-sm">
-
                         <p class="text-[10px] font-bold text-green-700 border-b mb-2 uppercase">Informasi Kegiatan</p>
                         <div class="grid gap-1">
                             <input type="date" name="tanggal" class="input-compact w-full">
                             <textarea id="keperluan" name="keperluan" rows="1" placeholder="Keperluan Pembayaran" class="text-[10px]"></textarea>
                         </div>
-                        <p class="text-[10px] font-bold text-green-700 border-b mb-2 uppercase pt-3">Informasi Penerima</p>
+                        {{-- <p class="text-[10px] font-bold text-green-700 border-b mb-2 uppercase pt-3">Informasi Penerima</p>
                         <div class="grid grid-cols-2 gap-1">
                             <div class="col-span-2">
                                 <select name="penerima" id="penerima"
@@ -180,8 +176,70 @@
                             <input type="text" id="npwp" name="npwp" placeholder="NPWP" readonly
                                 class="input-compact bg-slate-50">
                             <input type="hidden" id="alamat_penerima" name="alamat_penerima">
+                        </div> --}}
+                        <p class="text-[10px] font-bold text-green-700 border-b mb-2 uppercase pt-3">
+    Informasi Penerima
+</p>
 
-                        </div>
+<div class="grid grid-cols-2 gap-1 text-[10px]">
+
+    <div class="col-span-2">
+        <label class="block font-semibold text-slate-600">
+            Nama Penerima
+        </label>
+
+        <select name="penerima"
+                id="penerima"
+                class="select-compact w-full bg-yellow-50 font-bold"
+                onchange="isiDataPenerima()">
+            <option value="">--- Pilih Penerima ---</option>
+
+            @foreach ($penerima as $pn)
+                <option value="{{ $pn->id }}"
+                        data-npwp="{{ $pn->npwp }}"
+                        data-bank="{{ $pn->bankpenerima }}"
+                        data-norek="{{ $pn->norek_penerima }}"
+                        data-nama="{{ $pn->penerima }}"
+                        data-alamat="{{ $pn->alamat }}">
+                    {{ $pn->penerima }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <input type="hidden" id="nama_penerima" name="nama_penerima">
+
+    <div>
+        <label class="block font-semibold text-slate-600">Bank</label>
+        <input type="text"
+               id="bank_penerima"
+               name="bank_penerima"
+               {{-- readonly --}}
+               class="input-compact bg-slate-50 w-full">
+    </div>
+
+    <div>
+        <label class="block font-semibold text-slate-600">No. Rekening/ Kode Bayar</label>
+        <input type="text"
+               id="norek_penerima"
+               name="norek_penerima"
+               {{-- readonly --}}
+               class="input-compact bg-slate-50 w-full">
+    </div>
+
+    <div class="col-span-2">
+        <label class="block font-semibold text-slate-600">NPWP</label>
+        <input type="text"
+               id="npwp"
+               name="npwp"
+               {{-- readonly --}}
+               class="input-compact bg-slate-50 w-full">
+    </div>
+
+    <input type="hidden" id="alamat_penerima" name="alamat_penerima">
+
+</div>
+
                     </div>
 
                     <div class="col-span-7 bg-white p-2 rounded border border-slate-300 shadow-sm">
@@ -846,11 +904,9 @@
                 const row = select.closest('tr');
                 const kode = select.value;
 
-                // ✅ ambil jenis_pajak dari option
                 const selectedOption = select.options[select.selectedIndex];
                 const jenisPajak = selectedOption?.dataset?.jenis || '';
 
-                // ✅ set ke hidden input
                 row.querySelector('input[name="pajak[jenis][]"]').value = jenisPajak;
 
                 const bruto = parseRupiah(document.getElementById('bruto')?.value || 0);
@@ -893,10 +949,8 @@
 
                 nominal = Math.ceil(nominal);
 
-                // ✅ SET INPUT (BUKAN INNER TEXT)
                 row.querySelector('input[name="pajak[nominal][]"]').value = nominal;
 
-                // ✅ SET KODE
                 const kodeCell = row.querySelector('.kode-pajak');
                 if (kodeCell) kodeCell.innerText = kode || '-';
 
@@ -914,5 +968,29 @@
                 document.getElementById('pajakPotong').value = total;
                 hitungNetto();
             }
+
+            document.getElementById('form-a2').addEventListener('submit', function(e) {
+
+                const bruto = document.getElementById('bruto').value || 0;
+                const pajak = document.getElementById('pajakPotong').value || 0;
+                const netto = document.getElementById('netto').value || 0;
+
+                const konfirmasi = confirm(
+                    `Pastikan data sudah benar.\n\n` +
+                    `BRUTO  : ${bruto}\n` +
+                    `PAJAK  : ${pajak}\n` +
+                    `NETTO  : ${netto}\n\n` +
+                    `Apakah Anda yakin ingin menyimpan data ini?`
+                );
+
+                if (!konfirmasi) {
+                    e.preventDefault();
+                    return;
+                }
+
+                // jika setuju → disable tombol supaya tidak double submit
+                document.getElementById('btn-save').disabled = true;
+                document.getElementById('btn-save').innerText = 'Menyimpan...';
+            });
         </script>
     @endpush

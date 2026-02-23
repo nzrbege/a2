@@ -25,7 +25,7 @@
 
 
     @section('content')
-        <div class="max-h-screen overflow-hidden p-2 bg-slate-100">
+        <div class="min-h-screen overflow-hidden p-2 bg-slate-100">
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>
@@ -99,14 +99,23 @@
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="block text-[10px] font-semibold text-slate-600">Pilih DPA</label>
-                                <select name="versi" id="versi"
+                                {{-- <select name="versi" id="versi"
                                     class="w-full border px-1 py-[2px] text-xs rounded bg-slate-50" required>
                                     <option value="">-- Pilih --</option>
                                     @foreach ($versi as $v)
                                         <option value="{{ $v->id_versi_anggaran }}"
                                             {{ old('versi',$register->versi) == $v->id_versi_anggaran ? 'selected' : '' }}
                                             data-nomor="{{ $v->nomor_anggaran }}">
-                                            {{ $v->id_versi_anggaran }}
+                                            {{ $v->versi_anggaran }}
+                                        </option>
+                                    @endforeach
+                                </select> --}}
+                                <select id="versi" name="versi" class="input-compact w-full" required>
+                                    <option value="">-- Pilih Versi --</option>
+                                    @foreach ($versi as $v)
+                                        <option value="{{ $v->nomor_anggaran }}"
+                                            {{ old('versi', $register->no_dpa) === $v->nomor_anggaran ? 'selected' : '' }}>
+                                            {{ $v->versi_anggaran }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -125,12 +134,24 @@
                         <div class="grid grid-cols-2 gap-1">
                             <div class="col-span-1">
                                 <label class="block text-[10px] font-semibold text-slate-600">Program / Kegiatan</label>
-                                <select name="program" id="program" class="select-compact w-full" disabled>
+                                <select name="program" id="program" class="select-compact w-full">
                                     <option value="">-- Pilih Program --</option>
+                                    @foreach ($program as $v)
+                                        <option value="{{ $v->kd_program }}"
+                                            {{ old('kd_prog') == $v->kd_program ? 'selected' : '' }}>
+                                            {{ $v->nama_program }}
+                                        </option>
+                                    @endforeach
                                 </select>
                                 <input type="hidden" name="nama_program" id="nama_program">
-                                <select name="kegiatan" id="kegiatan" class="select-compact w-full" disabled>
+                                <select name="kegiatan" id="kegiatan" class="select-compact w-full">
                                     <option value="">-- Pilih Kegiatan --</option>
+                                    @foreach ($kegiatan as $v)
+                                        <option value="{{ $v->kode_giat }}"
+                                            {{ old('kd_keg') == $v->kode_giat ? 'selected' : '' }}>
+                                            {{ $v->nama_giat }}
+                                        </option>
+                                    @endforeach
                                 </select>
                                 <input type="hidden" name="nama_giat" id="nama_giat">
 
@@ -140,9 +161,21 @@
                                     Rekening</label>
                                 <select name="sub_kegiatan" id="sub_kegiatan" class="select-compact w-full" disabled>
                                     <option value="">-- Pilih Sub Kegiatan --</option>
+                                    @foreach ($subkegiatan as $v)
+                                        <option value="{{ $v->kode_sub_giat }}"
+                                            {{ old('kd_subkeg') == $v->kode_sub_giat ? 'selected' : '' }}>
+                                            {{ $v->nama_sub_giat }}
+                                        </option>
+                                    @endforeach
                                 </select><select name="kode_akun" id="akun_rekening"
                                     class="w-full border px-1 py-[2px] text-[10px] rounded select-compact" disabled>
                                     <option value="">-- Pilih Akun --</option>
+                                    @foreach ($akun as $v)
+                                        <option value="{{ $v->kode_akun }}"
+                                            {{ old('kd_rekbel') == $v->kode_akun ? 'selected' : '' }}>
+                                            {{ $v->urai_rekbel }}
+                                        </option>
+                                    @endforeach
                                 </select>
                                 <input type="hidden" name="nama_akun" id="nama_akun">
                                 <input type="hidden" name="nama_sub_giat" id="nama_sub_giat">
@@ -156,34 +189,70 @@
 
                         <p class="text-[10px] font-bold text-green-700 border-b mb-2 uppercase">Informasi Kegiatan</p>
                         <div class="grid gap-1">
-                            <input type="date" name="tanggal" class="input-compact w-full" required>
-                            <textarea id="keperluan" name="keperluan" rows="1" placeholder="Keperluan Pembayaran" class="text-[10px]"></textarea>
+                            <input type="date" name="tanggal" class="input-compact w-full" value="{{ old('tanggal',$register->tanggal) }}">
+                            <textarea id="keperluan" name="keperluan" rows="1" placeholder="Keperluan Pembayaran" class="text-[10px]" value="{{ old('keperluan',$register->keperluan) }}"></textarea>
                         </div>
                         <p class="text-[10px] font-bold text-green-700 border-b mb-2 uppercase pt-3">Informasi Penerima</p>
-                        <div class="grid grid-cols-2 gap-1">
-                            <div class="col-span-2">
-                                <select name="penerima" id="penerima"
-                                    class="select-compact w-full bg-yellow-50 font-bold" onchange="isiDataPenerima()">
-                                    <option value="">--- PILIH PENERIMA ---</option>
-                                    @foreach ($penerima as $pn)
-                                        <option value="{{ $pn->id }}" data-npwp="{{ $pn->npwp }}"
-                                            data-bank="{{ $pn->bankpenerima }}" data-norek="{{ $pn->norek_penerima }}"
-                                            data-nama="{{ $pn->penerima }}" data-alamat="{{ $pn->alamat }}">
-                                            {{ $pn->penerima }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <input type="hidden" id="nama_penerima" name="nama_penerima">
-                            <input type="text" id="bank_penerima" name="bank_penerima" placeholder="Bank" readonly
-                                class="input-compact bg-slate-50">
-                            <input type="text" id="norek_penerima" name="norek_penerima" placeholder="No. Rekening"
-                                readonly class="input-compact bg-slate-50">
-                            <input type="text" id="npwp" name="npwp" placeholder="NPWP" readonly
-                                class="input-compact bg-slate-50">
-                            <input type="hidden" id="alamat_penerima" name="alamat_penerima">
+                        <div class="grid grid-cols-2 gap-1 text-[10px]">
 
-                        </div>
+    <div class="col-span-2">
+        <label class="block font-semibold text-slate-600">
+            Nama Penerima
+        </label>
+
+        <select name="penerima"
+                id="penerima"
+                class="select-compact w-full bg-yellow-50 font-bold"
+                onchange="isiDataPenerima()">
+
+            <option value="">--- Pilih Penerima ---</option>
+
+            @foreach ($penerima as $pn)
+                <option value="{{ $pn->penerima }}"
+                        data-npwp="{{ $pn->npwp }}"
+                        data-bank="{{ $pn->bankpenerima }}"
+                        data-norek="{{ $pn->norek_penerima }}"
+                        data-nama="{{ $pn->penerima }}"
+                        data-alamat="{{ $pn->alamat }}"
+                        {{ old('penerima', $register->nama_penerima) == $pn->penerima ? 'selected' : '' }}>
+                        {{ $pn->penerima }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <input type="hidden" id="nama_penerima" name="nama_penerima">
+
+    <div>
+        <label class="block font-semibold text-slate-600">Bank</label>
+        <input type="text"
+               id="bank_penerima"
+               name="bank_penerima"
+               value="{{ old('bank_penerima',$register->bank_penerima) }}"
+               class="input-compact bg-slate-50 w-full">
+    </div>
+
+    <div>
+        <label class="block font-semibold text-slate-600">No. Rekening/ Kode Bayar</label>
+        <input type="text"
+               id="norek_penerima"
+               name="norek_penerima"
+               value="{{ old('norek_penerima',$register->norek_penerima) }}"
+               class="input-compact bg-slate-50 w-full">
+    </div>
+
+    <div class="col-span-2">
+        <label class="block font-semibold text-slate-600">NPWP</label>
+        <input type="text"
+               id="npwp"
+               name="npwp"
+               value="{{ old('npwp',$register->npwp) }}"
+               class="input-compact bg-slate-50 w-full">
+    </div>
+
+    <input type="hidden" id="alamat_penerima" name="alamat_penerima">
+
+</div>
                     </div>
 
                     <div class="col-span-7 bg-white p-2 rounded border border-slate-300 shadow-sm">
@@ -848,11 +917,9 @@
                 const row = select.closest('tr');
                 const kode = select.value;
 
-                // ✅ ambil jenis_pajak dari option
                 const selectedOption = select.options[select.selectedIndex];
                 const jenisPajak = selectedOption?.dataset?.jenis || '';
 
-                // ✅ set ke hidden input
                 row.querySelector('input[name="pajak[jenis][]"]').value = jenisPajak;
 
                 const bruto = parseRupiah(document.getElementById('bruto')?.value || 0);
@@ -895,10 +962,8 @@
 
                 nominal = Math.ceil(nominal);
 
-                // ✅ SET INPUT (BUKAN INNER TEXT)
                 row.querySelector('input[name="pajak[nominal][]"]').value = nominal;
 
-                // ✅ SET KODE
                 const kodeCell = row.querySelector('.kode-pajak');
                 if (kodeCell) kodeCell.innerText = kode || '-';
 

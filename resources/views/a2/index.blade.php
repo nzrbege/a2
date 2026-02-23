@@ -95,7 +95,7 @@
                             </a>
 
                             <a href="{{ route('a2.edit', $r->id_reg) }}"
-                               class="px-2 py-1 bg-yellow-500 text-white rounded text-xs">
+                               class="px-2 py-1 bg-green-700 text-white rounded text-xs">
                                 Edit
                             </a>
 

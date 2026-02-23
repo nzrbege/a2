@@ -214,6 +214,8 @@ class A2Controller extends Controller
                 throw new \Exception('Detail riil kosong');
             }
 
+            // dd($detilData);
+
             DetailBelanja::insert($detilData);
 
             DB::commit();
@@ -274,7 +276,7 @@ class A2Controller extends Controller
                 'r.pptk_id',
                 'r.pokja_id',
                 DB::raw('COALESCE(SUM(d.volume),0) as reg_sah_vol'),
-                DB::raw('COALESCE(SUM(d.harga_riil),0) as reg_sah_nom')
+                DB::raw('COALESCE(SUM(d.total),0) as reg_sah_nom')
             )
             ->groupBy(
                 'r.id_rinci_sub_bl',
@@ -363,6 +365,8 @@ class A2Controller extends Controller
     {
         $register = Register::with('detailBelanja.rincianRka')->findOrFail($id);
 
+        // dd($register->detailBelanja);
+
         return view('a2.show', compact('register'));
     }
 
@@ -399,7 +403,105 @@ class A2Controller extends Controller
     public function edit($id)
     {
         $register = Register::findOrFail($id);
-        return view('a2.edit', compact('register'));
+
+        $versi = VersiAnggaran::all();
+        $penerima = Penerima::orderBy('penerima')->get();
+        $dpp = Dpp::all();
+
+        $versipilihan = VersiAnggaran::where('nomor_anggaran',$register->no_dpa)->value('id_versi_anggaran');
+
+        $program = RincianRka::where('id_versi_anggaran', $versipilihan)
+            ->select('kode_program', 'nama_program')
+            ->groupBy('kode_program', 'nama_program')
+            ->orderBy('kode_program')
+            ->get();
+
+        $kegiatan = RincianRka::where('kode_program', $register->kd_prog)
+            ->select('kode_giat', 'nama_giat')
+            ->groupBy('kode_giat', 'nama_giat')
+            ->orderBy('kode_giat')
+            ->get();
+            
+        $subkegiatan = RincianRka::where('kode_giat', $register->kd_keg)
+            ->select('kode_sub_giat', 'nama_sub_giat')
+            ->groupBy('kode_sub_giat', 'nama_sub_giat')
+            ->orderBy('kode_sub_giat')
+            ->get();
+        
+        $akun = RincianRka::where('kode_sub_giat', $register->kd_subkeg)
+            ->select('kode_akun', 'nama_akun')
+            ->groupBy('kode_akun', 'nama_akun')
+            ->orderBy('kode_akun')
+            ->get();
+
+        $komponen = RincianRka::from('rincian_rka as r')
+            ->leftJoin('detail_belanja as d', 'd.id_rinci_sub_bl', '=', 'r.id_rinci_sub_bl')
+            ->where('r.id_versi_anggaran', $versipilihan)
+            ->where('r.kode_program', $register->kd_prog)
+            ->where('r.kode_giat', $register->kd_keg)
+            ->where('r.kode_sub_giat', $register->kd_subkeg)
+            ->where('r.kode_akun', $register->kd_rekbel)
+            ->select(
+                'r.id_rinci_sub_bl',
+                'r.nama_komponen',
+                'r.satuan',
+                'r.volume',
+                'r.harga_satuan',
+                'r.kode_dana',
+                'r.nama_dana',
+                'r.kode_skpd',
+                'r.nama_skpd',
+                'r.pptk_id',
+                'r.pokja_id',
+                DB::raw('COALESCE(SUM(d.volume),0) as reg_sah_vol'),
+                DB::raw('COALESCE(SUM(d.harga_riil),0) as reg_sah_nom')
+            )
+            ->groupBy(
+                'r.id_rinci_sub_bl',
+                'r.nama_komponen',
+                'r.satuan',
+                'r.volume',
+                'r.harga_satuan',
+                'r.kode_dana',
+                'r.nama_dana',
+                'r.kode_skpd',
+                'r.nama_skpd',
+                'r.pptk_id',
+                'r.pokja_id'
+            )
+            ->get()
+            ->map(function ($row) {
+                $total_rencana = $row->volume * $row->harga_satuan;
+
+                return [
+                    'id_rinci_sub_bl'   => $row->id_rinci_sub_bl,
+                    'nama_komponen'     => $row->nama_komponen,
+                    'satuan'            => $row->satuan,
+                    'volume'            => $row->volume,
+                    'harga_satuan'      => $row->harga_satuan,
+                    'reg_sah_vol'       => (int) $row->reg_sah_vol,
+                    'reg_sah_nom'       => (int) $row->reg_sah_nom,
+                    'sisa_vol'          => $row->volume - $row->reg_sah_vol,
+                    'sisa_nom'          => $total_rencana - $row->reg_sah_nom,
+                    'kode_dana'         => $row->kode_dana,
+                    'nama_dana'         => $row->nama_dana,
+                    'kode_skpd'         => $row->kode_skpd,
+                    'nama_skpd'         => $row->nama_skpd,
+                    'pptk_id'           => $row->pptk_id,
+                    'pokja_id'          => $row->pokja_id,
+                ];
+            });
+
+        return view('a2.edit', compact(
+            'register',
+            'versi',
+            'penerima',
+            'program',
+            'kegiatan',
+            'subkegiatan',
+            'akun',
+            'dpp'
+        ));
     }
 
     public function update(Request $request, $id)
@@ -416,6 +518,7 @@ class A2Controller extends Controller
     public function destroy($id)
     {
         Register::findOrFail($id)->delete();
+        DetailBelanja::where('id_reg',$id)->delete();
         return redirect()->route('a2.index')->with('success', 'Data berhasil dihapus');
     }
 }

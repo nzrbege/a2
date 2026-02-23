@@ -12,7 +12,7 @@
 
         body {
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 9pt;
+            font-size: 8pt;
             margin: 0;
             padding: 10px;
             color: #000;
@@ -78,7 +78,7 @@
             width: 100px;
             text-align: center;
             font-weight: bold;
-            font-size: 10pt;
+            font-size: 8pt;
             vertical-align: middle;
         }
 
@@ -132,6 +132,52 @@
 
     .nowrap {
         white-space: nowrap;
+    }
+
+    .tabel-verifikasi {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-size: 7pt; /* font lebih kecil */
+    }
+
+    .tabel-verifikasi td {
+        border: 1px solid #000;
+        padding: 3px;
+    }
+
+    .col-oleh {
+        width: 60%;
+    }
+
+    .col-tanggal {
+        width: 20%;
+    }
+
+    .col-paraf {
+        width: 20%;
+    }
+
+    .tabel-verifikasi {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed; /* WAJIB supaya colgroup bekerja */
+        font-size: 7pt; /* font lebih kecil */
+    }
+
+    .tabel-verifikasi td {
+        border: 1px solid #000;
+        padding: 3px;
+        vertical-align: top;
+    }
+    .tabel-diterima td {
+        padding: 2px;     
+        border: none;      /* pastikan tanpa border */
+        line-height: 1.1;  /* rapatkan tinggi baris */
+    }
+
+    .tabel-diterima {
+        margin: 0;
     }
     </style>
 
@@ -195,7 +241,7 @@
         <tr>
             <td colspan="9" class="no-border-bottom">
                 <span class="bold">Untuk Pembayaran</span>
-                <table class="no-border">
+                <table class="no-border tabel-diterima">
                     <tr class="no-border">
                         <td class="no-border" width="110">Program</td>
                         <td class="no-border" width="10">:</td>
@@ -228,11 +274,11 @@
         <tr>
             <td colspan="5" class="no-border-right">
                 <span class="bold">Diterima Oleh :</span>
-                <table class="no-border" style="margin-top: 5px;">
+                <table class="no-border tabel-diterima" style="margin-top: 5px;">
                     <tr class="no-border">
-                        <td class="no-border" width="100">Nama</td>
+                        <td class="no-border" width="120">Nama</td>
                         <td class="no-border" width="10">:</td>
-                        <td class="no-border bold">{{ $register->nama_penerima }}</td>
+                        <td class="no-border">{{ $register->nama_penerima }}</td>
                     </tr>
                     <tr class="no-border">
                         <td class="no-border">Bank</td>
@@ -240,22 +286,31 @@
                         <td class="no-border">{{ $register->bank_penerima }}</td>
                     </tr>
                     <tr class="no-border">
-                        <td class="no-border">Rekening</td>
+                        <td class="no-border">Rekening/Kode Bayar</td>
                         <td class="no-border">:</td>
-                        <td class="no-border bold">{{ $register->norek_penerima }}</td>
+                        <td class="no-border">{{ $register->norek_penerima }}</td>
                     </tr>
                     <tr class="no-border">
                         <td class="no-border">NPWP</td>
                         <td class="no-border">:</td>
-                        <td class="no-border bold">{{ $register->npwp_penerima }}</td>
+                        <td class="no-border">{{ $register->npwp_penerima }}</td>
                     </tr>
                     <tr class="no-border">
                         <td class="no-border">Alamat</td>
                         <td class="no-border">:</td>
                         <td class="no-border">{{ $register->alamat_penerima }}</td>
                     </tr>
+                    <tr class="no-border">
+                        <td class="no-border"></td>
+                        <td class="no-border"></td>
+                        <td class="no-border"></td>
+                    </tr>                  
+                    <tr class="no-border">
+                        <td class="no-border"></td>
+                        <td class="no-border"></td>
+                        <td class="no-border center">{{ $register->nama_penerima }}</td>
+                    </tr>
                 </table>
-                <div class="center bold" style="margin-top: 40px;">{{ $register->nama_penerima }}</div>
             </td>
             <td colspan="4">
                 <table width="100%" style="table-layout: fixed; border-collapse: collapse;">
@@ -292,7 +347,7 @@
                         <td class="no-border right">{{ ($register->nom_pajak2 === null || $register->nom_pajak2 == 0)? '' : 'Rp '.number_format($register->nom_pajak2, 2, ',', '.') }}</td>
                     </tr>
                     <tr class="no-border">
-                        <td colspan="4" class="left no-border" style="padding: 10px 0;">Pemungutan oleh Bendaharawan APBD
+                        <td colspan="4" class="left no-border" style="padding: 10px;">Pemungutan oleh Bendaharawan APBD
                         </td>
                     </tr>
                     <tr class="no-border">
@@ -307,7 +362,8 @@
                     </tr>
                     <tr class="no-border">
                         <td class="no-border">Terbilang :</td>
-                        <td class="right bold italic no-border" colspan="3">{{ $register->netto_terbilang }}</td>
+                        <td class="right bold italic no-border" colspan="3">{{ $register->netto_terbilang }}
+                    <br/><br/><br/><br/><br/><br/></td>
                     </tr>
                 </table>
             </td>
@@ -337,15 +393,20 @@
         <tr>
             <td colspan="5" class="no-border"></td>
             <td colspan="4" class="no-border">
-                <table>
+                <table class="tabel-verifikasi">
+        <colgroup>
+            <col style="width:60%">
+            <col style="width:20%">
+            <col style="width:20%">
+        </colgroup>
                     <tr>
-                        <td colspan="3">TELAH DIVERIFIKASI</td>
-                    </tr>
-                    <tr>
-                        <td width="50%">OLEH</td>
-                        <td width="25%">TANGGAL</td>
-                        <td width="25%">PARAF</td>
-                    </tr>
+            <td colspan="3" class="bold">TELAH DIVERIFIKASI</td>
+        </tr>
+        <tr>
+            <td>OLEH</td>
+            <td>TANGGAL</td>
+            <td>PARAF</td>
+        </tr>
                     <tr>
                         <td>{{ $register->verifikator1 }}</td>
                         <td></td>
