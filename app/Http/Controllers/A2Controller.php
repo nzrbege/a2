@@ -256,10 +256,19 @@ class A2Controller extends Controller
 
     public function filterRincian(Request $request)
     {
+        // dd($request);
+        
+        $versipilihan = VersiAnggaran::where('nomor_anggaran',$request->versi)->value('id_versi_anggaran');
+
         $data = RincianRka::from('rincian_rka as r')
-            ->leftJoin('detail_belanja as d', 'd.id_rinci_sub_bl', '=', 'r.id_rinci_sub_bl')
-            ->where('r.id_versi_anggaran', $request->input('versi'))
-            ->where('r.kode_program', $request->input('program'))
+            ->leftJoin('register as reg', function ($join) use ($request) {
+                $join->on('reg.id_reg', '=', 'd.id_reg')
+                    ->where('reg.kd_keg', $request->input('kegiatan'))
+                    ->where('reg.kd_subkeg', $request->input('sub_kegiatan'))
+                    ->where('reg.kd_rekbel', $request->input('akun'));
+            })
+            // ->where('r.id_versi_anggaran', $versipilihan)
+            // ->where('r.kode_program', $request->input('program'))
             ->where('r.kode_giat', $request->input('kegiatan'))
             ->where('r.kode_sub_giat', $request->input('sub_kegiatan'))
             ->where('r.kode_akun', $request->input('akun'))
@@ -453,8 +462,9 @@ class A2Controller extends Controller
                 'r.nama_skpd',
                 'r.pptk_id',
                 'r.pokja_id',
+                'd.volume',
                 DB::raw('COALESCE(SUM(d.volume),0) as reg_sah_vol'),
-                DB::raw('COALESCE(SUM(d.harga_riil),0) as reg_sah_nom')
+                DB::raw('COALESCE(SUM(d.total),0) as reg_sah_nom')
             )
             ->groupBy(
                 'r.id_rinci_sub_bl',
@@ -491,7 +501,7 @@ class A2Controller extends Controller
                     'pokja_id'          => $row->pokja_id,
                 ];
             });
-
+        // dd($komponen);
         return view('a2.edit', compact(
             'register',
             'versi',
@@ -500,7 +510,8 @@ class A2Controller extends Controller
             'kegiatan',
             'subkegiatan',
             'akun',
-            'dpp'
+            'dpp',
+            'komponen'
         ));
     }
 

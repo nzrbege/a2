@@ -1,105 +1,111 @@
-    @extends('layouts.app')
+@extends('layouts.app')
 
-    <style>
-        .table-compact th,
-        .table-compact td {
-            padding: 2px 4px !important;
-            line-height: 1.2;
-            font-size: 9px;
-        }
+<style>
+    .table-compact th,
+    .table-compact td {
+        padding: 2px 4px !important;
+        line-height: 1.2;
+        font-size: 9px;
+    }
 
-        .table-compact input {
-            height: 18px;
-            font-size: 9px;
-            padding: 0 4px;
-        }
+    .table-compact input {
+        height: 18px;
+        font-size: 9px;
+        padding: 0 4px;
+    }
 
-        .table-compact input[type="number"] {
-            text-align: center;
-        }
+    .table-compact input[type="number"] {
+        text-align: center;
+    }
 
-        .table-compact tr {
-            height: 20px;
-        }
-    </style>
+    .table-compact tr {
+        height: 20px;
+    }
+</style>
 
 
-    @section('content')
-        <div class="min-h-screen overflow-hidden p-2 bg-slate-100">
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+@section('content')
+    <div class="min-h-screen overflow-hidden p-2 bg-slate-100">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-            <form id="form-a2" method="POST" action="{{ route('a2.update', $register->id_reg) }}" class="space-y-2">
-                @csrf
-                @method('PUT')
-                <div class="bg-blue-800 text-white px-4 py-1 rounded shadow-sm flex justify-between items-center">
-                    <h1 class="text-xs font-bold uppercase tracking-wider">Edit Register A2 - Bukti Pengeluaran Bidang Informatika
-                        2025</h1>
-                    <div class="flex gap-2">
-                        <button type="submit" id="btn-save"
-                            class="bg-white text-blue-800 px-3 py-1 rounded text-[10px] font-bold hover:bg-blue-50 transition-all">SIMPAN
-                            DATA</button>
-                        {{-- <button type="button" disabled title="Simpan data terlebih dahulu"
+        <form id="form-a2" method="POST" action="{{ route('a2.update', $register->id_reg) }}" class="space-y-2">
+            @csrf
+            @method('PUT')
+            <div class="bg-blue-800 text-white px-4 py-1 rounded shadow-sm flex justify-between items-center">
+                <h1 class="text-xs font-bold uppercase tracking-wider">Edit Register A2 - Bukti Pengeluaran Bidang
+                    Informatika
+                    2025</h1>
+                <div class="flex gap-2">
+                    <button type="submit" id="btn-save"
+                        class="bg-white text-blue-800 px-3 py-1 rounded text-[10px] font-bold hover:bg-blue-50 transition-all">SIMPAN
+                        DATA</button>
+                    {{-- <button type="button" disabled title="Simpan data terlebih dahulu"
                             class="bg-gray-400 text-white px-3 py-1 rounded text-[10px] font-bold cursor-not-allowed">
                             CETAK DOKUMEN
                         </button> --}}
 
-                    </div>
                 </div>
+            </div>
 
-                <div class="bg-white p-2 rounded border border-slate-300 shadow-sm">
-                    <div class="grid grid-cols-3 gap-2 text-[10px] font-bold text-white">
+            <div class="bg-white p-2 rounded border border-slate-300 shadow-sm">
+                <div class="grid grid-cols-3 gap-2 text-[10px] font-bold text-white">
 
-                        {{-- TATA USAHA --}}
-                        <div class="bg-green-700 p-1 rounded">
-                            <label class="block mb-[2px] text-[9px] leading-none text-white">TATA USAHA</label>
-                            <select name="tata_usaha"
-                                class="w-full text-[9px] text-black rounded px-1 py-[1px] leading-none">
+                    {{-- TATA USAHA --}}
+                    <div class="bg-green-700 p-1 rounded">
+                        <label class="block mb-[2px] text-[9px] leading-none text-white">TATA USAHA</label>
+                        <select name="tata_usaha" class="w-full text-[9px] text-black rounded px-1 py-[1px] leading-none">
 
-                                <option value="GU" {{ old('tata_usaha', $register->tata_usaha) == 'GU' ? 'selected' : '' }}>Ganti Uang (GU)
-                                </option>
-                                <option value="LS" {{ old('tata_usaha', $register->tata_usaha) == 'LS' ? 'selected' : '' }}>Langsung (LS)
-                                </option>
-                            </select>
-                        </div>
-
-                        {{-- JENIS A2 --}}
-                        <div class="bg-green-700 p-1 rounded">
-                            <label class="block mb-[1px] text-[8px] leading-none text-white">JENIS A2</label>
-                            <select name="jenis_a2" class="w-full text-[9px] text-black rounded px-1 py-[1px] leading-none">
-                                <option value="Non" {{ old('jenis_a2', $register->jenis_a2) == 'Non' ? 'selected' : '' }}>Non</option>
-                                <option value="Cetak" {{ old('jenis_a2', $register->jenis_a2) == 'Cetak' ? 'selected' : '' }}>Cetak</option>
-                            </select>
-                        </div>
-
-                        {{-- TRANSAKSI --}}
-                        <div class="bg-green-700 p-1 rounded">
-                            <label class="block mb-[1px] text-[8px] leading-none text-white">TRANSAKSI</label>
-                            <select name="transaksi"
-                                class="w-full text-[9px] text-black rounded px-1 py-[1px] leading-none">
-                                <option value="BANK" {{ old('transaksi', $register->transaksi) == 'BANK' ? 'selected' : '' }}>BANK</option>
-                                <option value="TUNAI" {{ old('transaksi', $register->transaksi) == 'TUNAI' ? 'selected' : '' }}>TUNAI</option>
-                                <option value="KPPD" {{ old('transaksi', $register->transaksi) == 'KPPD' ? 'selected' : '' }}>KPPD</option>
-                            </select>
-                        </div>
-
+                            <option value="GU" {{ old('tata_usaha', $register->tata_usaha) == 'GU' ? 'selected' : '' }}>
+                                Ganti Uang (GU)
+                            </option>
+                            <option value="LS" {{ old('tata_usaha', $register->tata_usaha) == 'LS' ? 'selected' : '' }}>
+                                Langsung (LS)
+                            </option>
+                        </select>
                     </div>
-                </div>
 
-                <div class="grid grid-cols-12 gap-2">
-                    <div class="col-span-4 bg-white p-2 rounded border border-slate-300 shadow-sm">
-                        <p class="text-[10px] font-bold text-blue-700 border-b mb-2 uppercase">Pengaturan DPA</p>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-[10px] font-semibold text-slate-600">Pilih DPA</label>
-                                {{-- <select name="versi" id="versi"
+                    {{-- JENIS A2 --}}
+                    <div class="bg-green-700 p-1 rounded">
+                        <label class="block mb-[1px] text-[8px] leading-none text-white">JENIS A2</label>
+                        <select name="jenis_a2" class="w-full text-[9px] text-black rounded px-1 py-[1px] leading-none">
+                            <option value="Non" {{ old('jenis_a2', $register->jenis_a2) == 'Non' ? 'selected' : '' }}>Non
+                            </option>
+                            <option value="Cetak" {{ old('jenis_a2', $register->jenis_a2) == 'Cetak' ? 'selected' : '' }}>
+                                Cetak</option>
+                        </select>
+                    </div>
+
+                    {{-- TRANSAKSI --}}
+                    <div class="bg-green-700 p-1 rounded">
+                        <label class="block mb-[1px] text-[8px] leading-none text-white">TRANSAKSI</label>
+                        <select name="transaksi" class="w-full text-[9px] text-black rounded px-1 py-[1px] leading-none">
+                            <option value="BANK" {{ old('transaksi', $register->transaksi) == 'BANK' ? 'selected' : '' }}>
+                                BANK</option>
+                            <option value="TUNAI"
+                                {{ old('transaksi', $register->transaksi) == 'TUNAI' ? 'selected' : '' }}>TUNAI</option>
+                            <option value="KPPD" {{ old('transaksi', $register->transaksi) == 'KPPD' ? 'selected' : '' }}>
+                                KPPD</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="grid grid-cols-12 gap-2">
+                <div class="col-span-4 bg-white p-2 rounded border border-slate-300 shadow-sm">
+                    <p class="text-[10px] font-bold text-blue-700 border-b mb-2 uppercase">Pengaturan DPA</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-600">Pilih DPA</label>
+                            {{-- <select name="versi" id="versi"
                                     class="w-full border px-1 py-[2px] text-xs rounded bg-slate-50" required>
                                     <option value="">-- Pilih --</option>
                                     @foreach ($versi as $v)
@@ -110,507 +116,579 @@
                                         </option>
                                     @endforeach
                                 </select> --}}
-                                <select id="versi" name="versi" class="input-compact w-full" required>
-                                    <option value="">-- Pilih Versi --</option>
-                                    @foreach ($versi as $v)
-                                        <option value="{{ $v->nomor_anggaran }}"
-                                            {{ old('versi', $register->no_dpa) === $v->nomor_anggaran ? 'selected' : '' }}>
-                                            {{ $v->versi_anggaran }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-semibold text-slate-600">Nomor DPA</label>
-                                <input type="text" readonly id="no_dpa" name="no_dpa" value="{{ old('no_dpa',$register->no_dpa) }}"
-                                    class="w-full border px-1 py-[2px] text-xs rounded bg-slate-100 text-slate-500">
-                            </div>
+                            <select id="versi" name="versi" class="input-compact w-full" required>
+                                <option value="">-- Pilih Versi --</option>
+                                @foreach ($versi as $v)
+                                    <option value="{{ $v->nomor_anggaran }}"
+                                        {{ old('versi', $register->no_dpa) == $v->nomor_anggaran ? 'selected' : '' }}>
+                                        {{ $v->versi_anggaran }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
-                    </div>
-
-                    <div class="col-span-8 bg-white p-2 rounded border border-slate-300 shadow-sm">
-                        <p class="text-[10px] font-bold text-blue-700 border-b mb-1 uppercase">Program, Kegiatan & Akun
-                        </p>
-                        <div class="grid grid-cols-2 gap-1">
-                            <div class="col-span-1">
-                                <label class="block text-[10px] font-semibold text-slate-600">Program / Kegiatan</label>
-                                <select name="program" id="program" class="select-compact w-full">
-                                    <option value="">-- Pilih Program --</option>
-                                    @foreach ($program as $v)
-                                        <option value="{{ $v->kd_program }}"
-                                            {{ old('kd_prog') == $v->kd_program ? 'selected' : '' }}>
-                                            {{ $v->nama_program }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <input type="hidden" name="nama_program" id="nama_program">
-                                <select name="kegiatan" id="kegiatan" class="select-compact w-full">
-                                    <option value="">-- Pilih Kegiatan --</option>
-                                    @foreach ($kegiatan as $v)
-                                        <option value="{{ $v->kode_giat }}"
-                                            {{ old('kd_keg') == $v->kode_giat ? 'selected' : '' }}>
-                                            {{ $v->nama_giat }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <input type="hidden" name="nama_giat" id="nama_giat">
-
-                            </div>
-                            <div class="col-span-1">
-                                <label class="block text-[10px] font-semibold text-slate-600">Sub Kegiatan - Akun
-                                    Rekening</label>
-                                <select name="sub_kegiatan" id="sub_kegiatan" class="select-compact w-full" disabled>
-                                    <option value="">-- Pilih Sub Kegiatan --</option>
-                                    @foreach ($subkegiatan as $v)
-                                        <option value="{{ $v->kode_sub_giat }}"
-                                            {{ old('kd_subkeg') == $v->kode_sub_giat ? 'selected' : '' }}>
-                                            {{ $v->nama_sub_giat }}
-                                        </option>
-                                    @endforeach
-                                </select><select name="kode_akun" id="akun_rekening"
-                                    class="w-full border px-1 py-[2px] text-[10px] rounded select-compact" disabled>
-                                    <option value="">-- Pilih Akun --</option>
-                                    @foreach ($akun as $v)
-                                        <option value="{{ $v->kode_akun }}"
-                                            {{ old('kd_rekbel') == $v->kode_akun ? 'selected' : '' }}>
-                                            {{ $v->urai_rekbel }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <input type="hidden" name="nama_akun" id="nama_akun">
-                                <input type="hidden" name="nama_sub_giat" id="nama_sub_giat">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-12 gap-2">
-                    <div class="col-span-5 bg-white p-2 rounded border border-slate-300 shadow-sm">
-
-                        <p class="text-[10px] font-bold text-green-700 border-b mb-2 uppercase">Informasi Kegiatan</p>
-                        <div class="grid gap-1">
-                            <input type="date" name="tanggal" class="input-compact w-full" value="{{ old('tanggal',$register->tanggal) }}">
-                            <textarea id="keperluan" name="keperluan" rows="1" placeholder="Keperluan Pembayaran" class="text-[10px]" value="{{ old('keperluan',$register->keperluan) }}"></textarea>
-                        </div>
-                        <p class="text-[10px] font-bold text-green-700 border-b mb-2 uppercase pt-3">Informasi Penerima</p>
-                        <div class="grid grid-cols-2 gap-1 text-[10px]">
-
-    <div class="col-span-2">
-        <label class="block font-semibold text-slate-600">
-            Nama Penerima
-        </label>
-
-        <select name="penerima"
-                id="penerima"
-                class="select-compact w-full bg-yellow-50 font-bold"
-                onchange="isiDataPenerima()">
-
-            <option value="">--- Pilih Penerima ---</option>
-
-            @foreach ($penerima as $pn)
-                <option value="{{ $pn->penerima }}"
-                        data-npwp="{{ $pn->npwp }}"
-                        data-bank="{{ $pn->bankpenerima }}"
-                        data-norek="{{ $pn->norek_penerima }}"
-                        data-nama="{{ $pn->penerima }}"
-                        data-alamat="{{ $pn->alamat }}"
-                        {{ old('penerima', $register->nama_penerima) == $pn->penerima ? 'selected' : '' }}>
-                        {{ $pn->penerima }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-
-    <input type="hidden" id="nama_penerima" name="nama_penerima">
-
-    <div>
-        <label class="block font-semibold text-slate-600">Bank</label>
-        <input type="text"
-               id="bank_penerima"
-               name="bank_penerima"
-               value="{{ old('bank_penerima',$register->bank_penerima) }}"
-               class="input-compact bg-slate-50 w-full">
-    </div>
-
-    <div>
-        <label class="block font-semibold text-slate-600">No. Rekening/ Kode Bayar</label>
-        <input type="text"
-               id="norek_penerima"
-               name="norek_penerima"
-               value="{{ old('norek_penerima',$register->norek_penerima) }}"
-               class="input-compact bg-slate-50 w-full">
-    </div>
-
-    <div class="col-span-2">
-        <label class="block font-semibold text-slate-600">NPWP</label>
-        <input type="text"
-               id="npwp"
-               name="npwp"
-               value="{{ old('npwp',$register->npwp) }}"
-               class="input-compact bg-slate-50 w-full">
-    </div>
-
-    <input type="hidden" id="alamat_penerima" name="alamat_penerima">
-
-</div>
-                    </div>
-
-                    <div class="col-span-7 bg-white p-2 rounded border border-slate-300 shadow-sm">
-                        <p class="text-[10px] font-bold text-orange-700 border-b mb-2 uppercase">
-                            Hitung Potongan PPh
-                        </p>
-
-                        <table class="w-full text-[10px] border mb-2">
-                            <thead class="bg-yellow-800 text-white">
-                                <tr>
-                                    <th class="border px-1 py-[2px]">Jenis Golongan</th>
-                                    <th class="border px-1 py-[2px]">Vol</th>
-                                    <th class="border px-1 py-[2px]">Besaran</th>
-                                    <th class="border px-1 py-[2px]">Pajak</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-yellow-100 font-bold">
-                                <tr>
-                                    <td class="border px-1 py-[2px]">Golongan IV</td>
-                                    <td class="border px-1 py-[2px]"><input type="number" id="vol_iv"
-                                            oninput="hitungPajakManual()" class="input-compact bg-slate-50"></td>
-                                    <td class="border px-1 py-[2px]"><input type="number" id="besaran_iv"
-                                            oninput="hitungPajakManual()" class="input-compact bg-slate-50"></td>
-                                    <td class="border px-1 py-[2px] text-right" id="pajak_iv">0</td>
-                                </tr>
-                                <tr>
-                                    <td class="border px-1 py-[2px]">Golongan III</td>
-                                    <td class="border px-1 py-[2px]"><input type="number" id="vol_iii"
-                                            oninput="hitungPajakManual()" class="input-compact bg-slate-50"></td>
-                                    <td class="border px-1 py-[2px]"><input type="number" id="besaran_iii"
-                                            oninput="hitungPajakManual()" class="input-compact bg-slate-50"></td>
-                                    <td class="border px-1 py-[2px] text-right" id="pajak_iii">0</td>
-                                </tr>
-                                <tr>
-                                    <td class="border px-1 py-[2px]">Pihak Lain</td>
-                                    <td class="border px-1 py-[2px]"><input type="number" id="vol_lain"
-                                            oninput="hitungPajakManual()" class="input-compact bg-slate-50"></td>
-                                    <td class="border px-1 py-[2px]"><input type="number" id="besaran_lain"
-                                            oninput="hitungPajakManual()" class="input-compact bg-slate-50"></td>
-                                    <td class="border px-1 py-[2px] text-right" id="pajak_lain">0</td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <table class="w-full text-[10px] border" id="tabel_pajak">
-                            <thead class="bg-red-800 text-white">
-                                <tr>
-                                    <th class="border px-1 py-[2px]">Potongan Pajak</th>
-                                    <th class="border px-1 py-[2px]">Nominal</th>
-                                    <th class="border px-1 py-[2px]">Kode</th>
-                                    <th class="border px-1 py-[2px]">+</th>
-                                </tr>
-                            </thead>
-
-                            <tbody id="body_pajak" class="bg-red-100 font-bold text-center">
-                                <!-- BARIS PERTAMA -->
-                                <tr class="pajak-row">
-                                    <td class="border px-1 py-[2px]">
-                                        <select name="pajak[kode][]" class="w-full text-[9px]" onchange="hitungPajakBaris(this)">
-                                            <option value="">-- Pilih Pajak --</option>
-                                            @foreach ($dpp as $p)
-                                                <option value="{{ $p->kode_potongan }}" data-jenis="{{ $p->jenis_pajak }}">
-                                                    {{ $p->jenis_potongan }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-
-                                    <td class="border px-1 py-[2px]">
-                                        <input type="text" name="pajak[nominal][]"
-                                            class="w-full text-right text-[9px] bg-gray-100" value="0" readonly>
-                                        <input type="hidden" name="pajak[jenis][]">
-                                    </td>
-
-                                    <td class="border px-1 py-[2px] kode-pajak">-</td>
-
-                                    <td class="border px-1 py-[2px]">
-                                        <button type="button" onclick="tambahPajak()"
-                                            class="bg-green-600 text-white px-2 py-1 rounded text-[9px]">
-                                            +
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-12 gap-2">
-                    <div
-                        class="col-span-3 bg-blue-50 p-2 rounded border border-blue-200 shadow-sm flex flex-col justify-between">
                         <div>
-                            <p class="text-[10px] font-bold text-blue-800 border-b border-blue-200 mb-1 uppercase">Total
-                                Dibayarkan</p>
-                            <div class="space-y-1">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-[9px] text-slate-500">BRUTO:</span>
-                                    <input type="text" id="bruto" name="bruto" readonly
-                                        class="w-24 text-right bg-transparent border-none p-0 text-[11px] font-bold">
-                                </div>
-                                <div class="flex justify-between items-center text-red-600">
-                                    <span class="text-[9px]">PAJAK:</span>
-                                    <input type="text" id="pajakPotong" name="pajakPotong" readonly
-                                        class="w-24 text-right bg-transparent border-none p-0 text-[11px] font-bold">
-                                </div>
-                                <div class="flex justify-between items-center text-green-700 border-t pt-1">
-                                    <span class="text-[10px] font-bold">NETTO:</span>
-                                    <input type="text" id="netto" name="nom_netto" readonly
-                                        class="w-24 text-right bg-transparent border-none p-0 text-sm font-black">
-                                </div>
-                            </div>
-                        </div>
-                        <textarea id="terbilang" rows="2" readonly name="netto_terbilang"
-                            class="mt-2 w-full text-[9px] bg-white italic px-1 py-[2px] border rounded text-slate-600 leading-tight"
-                            placeholder="Terbilang..."></textarea>
-                    </div>
-
-                    <div class="col-span-9 bg-white rounded border border-slate-300 shadow-sm">
-                        <div class="max-h-[160px] overflow-y-auto overflow-x-auto scrollbar-thin">
-                            <table class="w-full table-compact leading-tight">
-                                <thead class="bg-slate-800 text-white sticky top-0">
-                                    <tr>
-                                        <th rowspan="2" class="px-[2px] py-[1px] border text-[9px]">ID</th>
-                                        <th rowspan="2" class="px-[2px] py-[1px] border text-[9px]">Uraian Komponen
-                                        </th>
-                                        <th rowspan="2" class="px-[2px] py-[1px] border text-[9px]">Satuan</th>
-                                        <th colspan="3" class="px-[2px] py-[1px] border text-[9px] bg-blue-700">Rincian
-                                            Anggaran</th>
-                                        <th colspan="3" class="px-[2px] py-[1px] border text-[9px] bg-green-700">
-                                            Pengeluaran Riil</th>
-                                        <th colspan="4" class="px-[2px] py-[1px] border text-[9px] bg-indigo-700">
-                                            Informasi
-                                            Komponen</th>
-                                    </tr>
-                                    <tr>
-                                        <!-- Rincian Anggaran -->
-                                        <th class="px-1 py-[2px] border">Vol</th>
-                                        <th class="px-1 py-[2px] border">Harga</th>
-                                        <th class="px-1 py-[2px] border">Total</th>
-
-                                        <!-- Riil -->
-                                        <th class="px-1 py-[2px] border">Vol</th>
-                                        <th class="px-1 py-[2px] border">Harga</th>
-                                        <th class="px-1 py-[2px] border">Nominal</th>
-
-                                        <!-- Info -->
-                                        <th class="px-1 py-[2px] border">Reg Vol</th>
-                                        <th class="px-1 py-[2px] border">Reg Nom</th>
-                                        <th class="px-1 py-[2px] border">Sisa Vol</th>
-                                        <th class="px-1 py-[2px] border">Sisa Nom</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody id="tabelRincian" class="divide-y divide-slate-200">
-                                </tbody>
-                            </table>
+                            <label class="block text-[10px] font-semibold text-slate-600">Nomor DPA</label>
+                            <input type="text" readonly id="no_dpa" name="no_dpa"
+                                value="{{ old('no_dpa', $register->no_dpa) }}"
+                                class="w-full border px-1 py-[2px] text-xs rounded bg-slate-100 text-slate-500">
                         </div>
                     </div>
                 </div>
-                <input type="hidden" id="hasilPph" name="hasilPph">
-                <div class="grid grid-cols-12 gap-2 mt-2">
-            </form>
-        </div>
-    @endsection
 
-    @push('scripts')
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
+                <div class="col-span-8 bg-white p-2 rounded border border-slate-300 shadow-sm">
+                    <p class="text-[10px] font-bold text-blue-700 border-b mb-1 uppercase">Program, Kegiatan & Akun
+                    </p>
+                    <div class="grid grid-cols-2 gap-1">
+                        <div class="col-span-1">
+                            <label class="block text-[10px] font-semibold text-slate-600">Program / Kegiatan</label>
+                            <select name="program" id="program" class="select-compact w-full">
+                                <option value="">-- Pilih Program --</option>
+                                @foreach ($program as $v)
+                                    <option value="{{ $v->kode_program }}"
+                                        {{ old('program', $register->kd_prog) == $v->kode_program ? 'selected' : '' }}>
+                                        {{ $v->nama_program }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <input type="hidden" name="nama_program" id="nama_program">
+                            <select name="kegiatan" id="kegiatan" class="select-compact w-full">
+                                <option value="">-- Pilih Kegiatan --</option>
+                                @foreach ($kegiatan as $v)
+                                    <option value="{{ $v->kode_giat }}"
+                                        {{ old('kegiatan', $register->kd_keg) == $v->kode_giat ? 'selected' : '' }}>
+                                        {{ $v->nama_giat }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <input type="hidden" name="nama_giat" id="nama_giat">
 
-                /* =========================
-                HELPER RESET SELECT
-                ========================== */
-                function resetSelect(id, placeholder) {
-                    let el = document.getElementById(id);
-                    el.innerHTML = `<option value="">${placeholder}</option>`;
-                    el.disabled = true;
+                        </div>
+                        <div class="col-span-1">
+                            <label class="block text-[10px] font-semibold text-slate-600">Sub Kegiatan - Akun
+                                Rekening</label>
+                            <select name="sub_kegiatan" id="sub_kegiatan" class="select-compact w-full">
+                                <option value="">-- Pilih Sub Kegiatan --</option>
+                                @foreach ($subkegiatan as $v)
+                                    <option value="{{ $v->kode_sub_giat }}"
+                                        {{ old('sub_kegiatan', $register->kd_subkeg) == $v->kode_sub_giat ? 'selected' : '' }}>
+                                        {{ $v->nama_sub_giat }}
+                                    </option>
+                                @endforeach
+                            </select><select name="kode_akun" id="akun_rekening"
+                                class="w-full border px-1 py-[2px] text-[10px] rounded select-compact">
+                                <option value="">-- Pilih Akun --</option>
+                                @foreach ($akun as $v)
+                                    <option value="{{ $v->kode_akun }}"
+                                        {{ old('kode_akun', $register->kd_rekbel) == $v->kode_akun ? 'selected' : '' }}>
+                                        {{ $v->nama_akun }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <input type="hidden" name="nama_akun" id="nama_akun">
+                            <input type="hidden" name="nama_sub_giat" id="nama_sub_giat">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-12 gap-2">
+                <div class="col-span-5 bg-white p-2 rounded border border-slate-300 shadow-sm">
+
+                    <p class="text-[10px] font-bold text-green-700 border-b mb-2 uppercase">Informasi Kegiatan</p>
+                    <div class="grid gap-1">
+                        <input type="date" name="tanggal" class="input-compact w-full"
+                            value="{{ old('tanggal', $register->tanggal) }}">
+                        <textarea id="keperluan" name="keperluan" rows="1" placeholder="Keperluan Pembayaran" class="text-[10px]"
+                            value="{{ old('keperluan', $register->keperluan) }}"></textarea>
+                    </div>
+                    <p class="text-[10px] font-bold text-green-700 border-b mb-2 uppercase pt-3">Informasi Penerima</p>
+                    <div class="grid grid-cols-2 gap-1 text-[10px]">
+
+                        <div class="col-span-2">
+                            <label class="block font-semibold text-slate-600">
+                                Nama Penerima
+                            </label>
+
+                            <select name="penerima" id="penerima" class="select-compact w-full bg-yellow-50 font-bold"
+                                onchange="isiDataPenerima()">
+
+                                <option value="">--- Pilih Penerima ---</option>
+
+                                @foreach ($penerima as $pn)
+                                    <option value="{{ $pn->penerima }}" data-npwp="{{ $pn->npwp }}"
+                                        data-bank="{{ $pn->bankpenerima }}" data-norek="{{ $pn->norek_penerima }}"
+                                        data-nama="{{ $pn->penerima }}" data-alamat="{{ $pn->alamat }}"
+                                        {{ old('penerima', $register->nama_penerima) == $pn->penerima ? 'selected' : '' }}>
+                                        {{ $pn->penerima }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <input type="hidden" id="nama_penerima" name="nama_penerima">
+
+                        <div>
+                            <label class="block font-semibold text-slate-600">Bank</label>
+                            <input type="text" id="bank_penerima" name="bank_penerima"
+                                value="{{ old('bank_penerima', $register->bank_penerima) }}"
+                                class="input-compact bg-slate-50 w-full">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-slate-600">No. Rekening/ Kode Bayar</label>
+                            <input type="text" id="norek_penerima" name="norek_penerima"
+                                value="{{ old('norek_penerima', $register->norek_penerima) }}"
+                                class="input-compact bg-slate-50 w-full">
+                        </div>
+
+                        <div class="col-span-2">
+                            <label class="block font-semibold text-slate-600">NPWP</label>
+                            <input type="text" id="npwp" name="npwp"
+                                value="{{ old('npwp', $register->npwp) }}" class="input-compact bg-slate-50 w-full">
+                        </div>
+
+                        <input type="hidden" id="alamat_penerima" name="alamat_penerima">
+
+                    </div>
+                </div>
+
+                <div class="col-span-7 bg-white p-2 rounded border border-slate-300 shadow-sm">
+                    <p class="text-[10px] font-bold text-orange-700 border-b mb-2 uppercase">
+                        Hitung Potongan PPh
+                    </p>
+
+                    <table class="w-full text-[10px] border mb-2">
+                        <thead class="bg-yellow-800 text-white">
+                            <tr>
+                                <th class="border px-1 py-[2px]">Jenis Golongan</th>
+                                <th class="border px-1 py-[2px]">Vol</th>
+                                <th class="border px-1 py-[2px]">Besaran</th>
+                                <th class="border px-1 py-[2px]">Pajak</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-yellow-100 font-bold">
+                            <tr>
+                                <td class="border px-1 py-[2px]">Golongan IV</td>
+                                <td class="border px-1 py-[2px]"><input type="number" id="vol_iv"
+                                        oninput="hitungPajakManual()" class="input-compact bg-slate-50"></td>
+                                <td class="border px-1 py-[2px]"><input type="number" id="besaran_iv"
+                                        oninput="hitungPajakManual()" class="input-compact bg-slate-50"></td>
+                                <td class="border px-1 py-[2px] text-right" id="pajak_iv">0</td>
+                            </tr>
+                            <tr>
+                                <td class="border px-1 py-[2px]">Golongan III</td>
+                                <td class="border px-1 py-[2px]"><input type="number" id="vol_iii"
+                                        oninput="hitungPajakManual()" class="input-compact bg-slate-50"></td>
+                                <td class="border px-1 py-[2px]"><input type="number" id="besaran_iii"
+                                        oninput="hitungPajakManual()" class="input-compact bg-slate-50"></td>
+                                <td class="border px-1 py-[2px] text-right" id="pajak_iii">0</td>
+                            </tr>
+                            <tr>
+                                <td class="border px-1 py-[2px]">Pihak Lain</td>
+                                <td class="border px-1 py-[2px]"><input type="number" id="vol_lain"
+                                        oninput="hitungPajakManual()" class="input-compact bg-slate-50"></td>
+                                <td class="border px-1 py-[2px]"><input type="number" id="besaran_lain"
+                                        oninput="hitungPajakManual()" class="input-compact bg-slate-50"></td>
+                                <td class="border px-1 py-[2px] text-right" id="pajak_lain">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="w-full text-[10px] border" id="tabel_pajak">
+                        <thead class="bg-red-800 text-white">
+                            <tr>
+                                <th class="border px-1 py-[2px]">Potongan Pajak</th>
+                                <th class="border px-1 py-[2px]">Nominal</th>
+                                <th class="border px-1 py-[2px]">Kode</th>
+                                <th class="border px-1 py-[2px]">+</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="body_pajak" class="bg-red-100 font-bold text-center">
+                            <!-- BARIS PERTAMA -->
+                            <tr class="pajak-row">
+                                <td class="border px-1 py-[2px]">
+                                    <select name="pajak[kode][]" class="w-full text-[9px]"
+                                        onchange="hitungPajakBaris(this)">
+                                        <option value="">-- Pilih Pajak --</option>
+                                        @foreach ($dpp as $p)
+                                            <option value="{{ $p->kode_potongan }}" data-jenis="{{ $p->jenis_pajak }}">
+                                                {{ $p->jenis_potongan }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </td>
+
+                                <td class="border px-1 py-[2px]">
+                                    <input type="text" name="pajak[nominal][]"
+                                        class="w-full text-right text-[9px] bg-gray-100" value="0" readonly>
+                                    <input type="hidden" name="pajak[jenis][]">
+                                </td>
+
+                                <td class="border px-1 py-[2px] kode-pajak">-</td>
+
+                                <td class="border px-1 py-[2px]">
+                                    <button type="button" onclick="tambahPajak()"
+                                        class="bg-green-600 text-white px-2 py-1 rounded text-[9px]">
+                                        +
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+
+            <div class="grid grid-cols-12 gap-2">
+                <div
+                    class="col-span-3 bg-blue-50 p-2 rounded border border-blue-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-blue-800 border-b border-blue-200 mb-1 uppercase">Total
+                            Dibayarkan</p>
+                        <div class="space-y-1">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[9px] text-slate-500">BRUTO:</span>
+                                <input type="text" id="bruto" name="bruto" readonly
+                                    class="w-24 text-right bg-transparent border-none p-0 text-[11px] font-bold">
+                            </div>
+                            <div class="flex justify-between items-center text-red-600">
+                                <span class="text-[9px]">PAJAK:</span>
+                                <input type="text" id="pajakPotong" name="pajakPotong" readonly
+                                    class="w-24 text-right bg-transparent border-none p-0 text-[11px] font-bold">
+                            </div>
+                            <div class="flex justify-between items-center text-green-700 border-t pt-1">
+                                <span class="text-[10px] font-bold">NETTO:</span>
+                                <input type="text" id="netto" name="nom_netto" readonly
+                                    class="w-24 text-right bg-transparent border-none p-0 text-sm font-black">
+                            </div>
+                        </div>
+                    </div>
+                    <textarea id="terbilang" rows="2" readonly name="netto_terbilang"
+                        class="mt-2 w-full text-[9px] bg-white italic px-1 py-[2px] border rounded text-slate-600 leading-tight"
+                        placeholder="Terbilang..."></textarea>
+                </div>
+
+                <div class="col-span-9 bg-white rounded border border-slate-300 shadow-sm">
+                    <div class="max-h-[160px] overflow-y-auto overflow-x-auto scrollbar-thin">
+                        <table class="w-full table-compact leading-tight">
+                            <thead class="bg-slate-800 text-white sticky top-0">
+                                <tr>
+                                    <th rowspan="2" class="px-[2px] py-[1px] border text-[9px]">ID</th>
+                                    <th rowspan="2" class="px-[2px] py-[1px] border text-[9px]">Uraian Komponen
+                                    </th>
+                                    <th rowspan="2" class="px-[2px] py-[1px] border text-[9px]">Satuan</th>
+                                    <th colspan="3" class="px-[2px] py-[1px] border text-[9px] bg-blue-700">Rincian
+                                        Anggaran</th>
+                                    <th colspan="3" class="px-[2px] py-[1px] border text-[9px] bg-green-700">
+                                        Pengeluaran Riil</th>
+                                    <th colspan="4" class="px-[2px] py-[1px] border text-[9px] bg-indigo-700">
+                                        Informasi
+                                        Komponen</th>
+                                </tr>
+                                <tr>
+                                    <!-- Rincian Anggaran -->
+                                    <th class="px-1 py-[2px] border">Vol</th>
+                                    <th class="px-1 py-[2px] border">Harga</th>
+                                    <th class="px-1 py-[2px] border">Total</th>
+
+                                    <!-- Riil -->
+                                    <th class="px-1 py-[2px] border">Vol</th>
+                                    <th class="px-1 py-[2px] border">Harga</th>
+                                    <th class="px-1 py-[2px] border">Nominal</th>
+
+                                    <!-- Info -->
+                                    <th class="px-1 py-[2px] border">Reg Vol</th>
+                                    <th class="px-1 py-[2px] border">Reg Nom</th>
+                                    <th class="px-1 py-[2px] border">Sisa Vol</th>
+                                    <th class="px-1 py-[2px] border">Sisa Nom</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="tabelRincian" class="divide-y divide-slate-200">
+                                @forelse ($komponen as $i => $row)
+                                    <tr class="hover:bg-gray-50 text-[9px]">
+                                        <td class="border px-1 py-[2px] text-center">
+                                            {{ $i + 1 }}
+                                        </td>
+
+                                        <td class="border px-1 py-[2px]">
+                                            {{ $row['nama_komponen'] }}
+                                        </td>
+
+                                        <td class="border px-1 py-[2px] text-center">
+                                            {{ $row['satuan'] }}
+                                        </td>
+
+                                        {{-- Rincian Anggaran --}}
+                                        <td class="border px-1 py-[2px] text-right">
+                                            {{ number_format($row['volume'], 0, ',', '.') }}
+                                        </td>
+
+                                        <td class="border px-1 py-[2px] text-right">
+                                            {{ number_format($row['harga_satuan'], 0, ',', '.') }}
+                                        </td>
+
+                                        <td class="border px-1 py-[2px] text-right">
+                                            {{ number_format($row['volume'] * $row['harga_satuan'], 0, ',', '.') }}
+                                        </td>
+
+                                        {{-- Pengeluaran Riil (kalau belum ada harga riil, bisa isi 0 dulu) --}}
+                                        <td class="border px-1 py-[2px] text-right">
+                                            {{-- {{ number_format($row['reg_sah_vol'], 0, ',', '.') }} --}}
+
+                                            <input type="number"
+                name="riil[${i}][vol]"
+                                                value="{{ old('reg_sah_vol', $row['reg_sah_vol']) }}"
+        class="w-12 border text-[9px] p-0"
+                oninput="hitungRiilBaris(${i})">
+                                        </td>
+
+                                        <td class="border px-1 py-[2px] text-right">
+                                            <input type="text"
+                                                name="riil[${i}][harga]"
+                                                value="{{ old('reg_sah_vol', $row['reg_sah_vol']) }}"
+                                            class="w-16 border text-[9px] p-0 text-right"
+                                                oninput="hitungRiilBaris(${i})"
+                                                onfocus="unformatNumber(this)"
+                                                onblur="formatNumber(this)">
+                                        </td>
+
+                                        <td class="border px-1 py-[2px] text-right">
+                                            {{ number_format($row['reg_sah_nom'], 0, ',', '.') }}
+                                        </td>
+
+                                        {{-- Informasi --}}
+                                        <td class="border px-1 py-[2px] text-right">
+                                            {{ number_format($row['reg_sah_vol'], 0, ',', '.') }}
+                                        </td>
+
+                                        <td class="border px-1 py-[2px] text-right">
+                                            {{ number_format($row['reg_sah_nom'], 0, ',', '.') }}
+                                        </td>
+
+                                        <td class="border px-1 py-[2px] text-right">
+                                            {{ number_format($row['sisa_vol'], 0, ',', '.') }}
+                                        </td>
+
+                                        <td class="border px-1 py-[2px] text-right">
+                                            {{ number_format($row['sisa_nom'], 0, ',', '.') }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="13" class="text-center py-3 text-gray-500">
+                                            Tidak ada data
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" id="hasilPph" name="hasilPph">
+            <div class="grid grid-cols-12 gap-2 mt-2">
+        </form>
+    </div>
+@endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            /* =========================
+            HELPER RESET SELECT
+            ========================== */
+            function resetSelect(id, placeholder) {
+                let el = document.getElementById(id);
+                el.innerHTML = `<option value="">${placeholder}</option>`;
+                el.disabled = true;
+            }
+
+            /* =========================
+            VERSI / DPA
+            ========================== */
+            document.getElementById('versi').addEventListener('change', function() {
+
+                console.log('CHANGE TRIGGERED');
+
+                let opt = this.options[this.selectedIndex];
+                console.log('DATA NOMOR:', opt.dataset.nomor);
+
+                let nomor = this.options[this.selectedIndex]?.dataset.nomor;
+                document.getElementById('no_dpa').value = nomor ?? '';
+
+                let versi = this.value;
+
+                setLoadingSelect('program', 'Memuat Program...');
+                resetSelect('kegiatan', '-- Pilih Kegiatan --');
+                resetSelect('sub_kegiatan', '-- Pilih Sub Kegiatan --');
+                resetSelect('akun_rekening', '-- Pilih Akun --');
+
+                if (!versi) return;
+
+                fetch(`/a2/program-by-dpa/${versi}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        let program = document.getElementById('program');
+                        program.innerHTML = `<option value="">-- Pilih Program --</option>`;
+                        program.disabled = false;
+
+                        data.forEach(p => {
+                            let opt = document.createElement('option');
+                            opt.value = p.kode_program;
+                            opt.textContent = p.nama_program;
+                            program.appendChild(opt);
+                        });
+                    });
+            });
+
+
+            /* =========================
+            PROGRAM
+            ========================== */
+            document.getElementById('program').addEventListener('change', function() {
+
+                const selected = this.options[this.selectedIndex];
+                document.getElementById('nama_program').value = selected ? selected.textContent.trim() : '';
+
+                let programId = this.value;
+
+                setLoadingSelect('kegiatan', 'Memuat Kegiatan...');
+                resetSelect('sub_kegiatan', '-- Pilih Sub Kegiatan --');
+                resetSelect('akun_rekening', '-- Pilih Akun --');
+
+                if (!programId) return;
+
+                fetch(`/a2/kegiatan-by-program/${programId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        let kegiatan = document.getElementById('kegiatan');
+                        kegiatan.innerHTML = `<option value="">-- Pilih Kegiatan --</option>`;
+                        kegiatan.disabled = false;
+
+                        data.forEach(k => {
+                            let opt = document.createElement('option');
+                            opt.value = k.kode_giat;
+                            opt.textContent = k.nama_giat;
+                            kegiatan.appendChild(opt);
+                        });
+                    });
+            });
+
+
+            /* =========================
+            KEGIATAN
+            ========================== */
+            document.getElementById('kegiatan').addEventListener('change', function() {
+
+                const selected = this.options[this.selectedIndex];
+                document.getElementById('nama_giat').value = selected ? selected.textContent.trim() : '';
+
+                let kegiatanId = this.value;
+
+                setLoadingSelect('sub_kegiatan', 'Memuat Sub Kegiatan...');
+                resetSelect('akun_rekening', '-- Pilih Akun --');
+
+                if (!kegiatanId) return;
+
+                fetch(`/a2/subkegiatan-by-kegiatan/${kegiatanId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        let sub = document.getElementById('sub_kegiatan');
+                        sub.innerHTML = `<option value="">-- Pilih Sub Kegiatan --</option>`;
+                        sub.disabled = false;
+
+                        data.forEach(s => {
+                            let opt = document.createElement('option');
+                            opt.value = s.kode_sub_giat;
+                            opt.textContent = s.nama_sub_giat;
+                            sub.appendChild(opt);
+                        });
+                    });
+            });
+
+            /* =========================
+            SUB KEGIATAN
+            ========================== */
+            document.getElementById('sub_kegiatan').addEventListener('change', function() {
+
+                const selected = this.options[this.selectedIndex];
+                document.getElementById('nama_sub_giat').value = selected ? selected.textContent.trim() :
+                    '';
+
+                let sub = this.value;
+
+                setLoadingSelect('akun_rekening', 'Memuat Akun...');
+
+                if (!sub) return;
+
+                fetch(`/a2/akun-by-subkegiatan/${sub}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        let akun = document.getElementById('akun_rekening');
+                        akun.innerHTML = `<option value="">-- Pilih Akun --</option>`;
+                        akun.disabled = false;
+
+                        data.forEach(a => {
+                            let opt = document.createElement('option');
+                            opt.value = a.kode_akun;
+                            opt.textContent = `${a.kode_akun} - ${a.nama_akun}`;
+                            akun.appendChild(opt);
+                        });
+                    });
+            });
+
+            /* =========================
+            AKUN → RINCIAN
+            ========================== */
+            document.getElementById('akun_rekening').addEventListener('change', function() {
+
+                const selected = this.options[this.selectedIndex];
+                if (!selected) {
+                    document.getElementById('nama_akun').value = '';
+                    return;
                 }
 
-                /* =========================
-                VERSI / DPA
-                ========================== */
-                document.getElementById('versi').addEventListener('change', function() {
+                const text = selected.textContent;
+                const nama = text.split(' - ').slice(1).join(' - ');
 
-                    console.log('CHANGE TRIGGERED');
+                document.getElementById('nama_akun').value = nama.trim();
 
-                    let opt = this.options[this.selectedIndex];
-                    console.log('DATA NOMOR:', opt.dataset.nomor);
+                let akun = this.value;
+                let versi = document.getElementById('versi').value;
+                let program = document.getElementById('program').value;
+                let kegiatan = document.getElementById('kegiatan').value;
+                let sub = document.getElementById('sub_kegiatan').value;
 
-                    let nomor = this.options[this.selectedIndex]?.dataset.nomor;
-                    document.getElementById('no_dpa').value = nomor ?? '';
+                
+                if (!akun || !versi || !program || !kegiatan || !sub) {
+                    document.getElementById('tabelRincian').innerHTML = '';
+                    return;
+                }
 
-                    let versi = this.value;
-
-                    setLoadingSelect('program', 'Memuat Program...');
-                    resetSelect('kegiatan', '-- Pilih Kegiatan --');
-                    resetSelect('sub_kegiatan', '-- Pilih Sub Kegiatan --');
-                    resetSelect('akun_rekening', '-- Pilih Akun --');
-
-                    if (!versi) return;
-
-                    fetch(`/a2/program-by-dpa/${versi}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            let program = document.getElementById('program');
-                            program.innerHTML = `<option value="">-- Pilih Program --</option>`;
-                            program.disabled = false;
-
-                            data.forEach(p => {
-                                let opt = document.createElement('option');
-                                opt.value = p.kode_program;
-                                opt.textContent = p.nama_program;
-                                program.appendChild(opt);
-                            });
-                        });
-                });
-
-
-                /* =========================
-                PROGRAM
-                ========================== */
-                document.getElementById('program').addEventListener('change', function() {
-
-                    const selected = this.options[this.selectedIndex];
-                    document.getElementById('nama_program').value = selected ? selected.textContent.trim() : '';
-
-                    let programId = this.value;
-
-                    setLoadingSelect('kegiatan', 'Memuat Kegiatan...');
-                    resetSelect('sub_kegiatan', '-- Pilih Sub Kegiatan --');
-                    resetSelect('akun_rekening', '-- Pilih Akun --');
-
-                    if (!programId) return;
-
-                    fetch(`/a2/kegiatan-by-program/${programId}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            let kegiatan = document.getElementById('kegiatan');
-                            kegiatan.innerHTML = `<option value="">-- Pilih Kegiatan --</option>`;
-                            kegiatan.disabled = false;
-
-                            data.forEach(k => {
-                                let opt = document.createElement('option');
-                                opt.value = k.kode_giat;
-                                opt.textContent = k.nama_giat;
-                                kegiatan.appendChild(opt);
-                            });
-                        });
-                });
-
-
-                /* =========================
-                KEGIATAN
-                ========================== */
-                document.getElementById('kegiatan').addEventListener('change', function() {
-
-                    const selected = this.options[this.selectedIndex];
-                    document.getElementById('nama_giat').value = selected ? selected.textContent.trim() : '';
-
-                    let kegiatanId = this.value;
-
-                    setLoadingSelect('sub_kegiatan', 'Memuat Sub Kegiatan...');
-                    resetSelect('akun_rekening', '-- Pilih Akun --');
-
-                    if (!kegiatanId) return;
-
-                    fetch(`/a2/subkegiatan-by-kegiatan/${kegiatanId}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            let sub = document.getElementById('sub_kegiatan');
-                            sub.innerHTML = `<option value="">-- Pilih Sub Kegiatan --</option>`;
-                            sub.disabled = false;
-
-                            data.forEach(s => {
-                                let opt = document.createElement('option');
-                                opt.value = s.kode_sub_giat;
-                                opt.textContent = s.nama_sub_giat;
-                                sub.appendChild(opt);
-                            });
-                        });
-                });
-
-                /* =========================
-                SUB KEGIATAN
-                ========================== */
-                document.getElementById('sub_kegiatan').addEventListener('change', function() {
-
-                    const selected = this.options[this.selectedIndex];
-                    document.getElementById('nama_sub_giat').value = selected ? selected.textContent.trim() :
-                        '';
-
-                    let sub = this.value;
-
-                    setLoadingSelect('akun_rekening', 'Memuat Akun...');
-
-                    if (!sub) return;
-
-                    fetch(`/a2/akun-by-subkegiatan/${sub}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            let akun = document.getElementById('akun_rekening');
-                            akun.innerHTML = `<option value="">-- Pilih Akun --</option>`;
-                            akun.disabled = false;
-
-                            data.forEach(a => {
-                                let opt = document.createElement('option');
-                                opt.value = a.kode_akun;
-                                opt.textContent = `${a.kode_akun} - ${a.nama_akun}`;
-                                akun.appendChild(opt);
-                            });
-                        });
-                });
-
-                /* =========================
-                AKUN → RINCIAN
-                ========================== */
-                document.getElementById('akun_rekening').addEventListener('change', function() {
-
-                    const selected = this.options[this.selectedIndex];
-                    if (!selected) {
-                        document.getElementById('nama_akun').value = '';
-                        return;
-                    }
-
-                    const text = selected.textContent;
-                    const nama = text.split(' - ').slice(1).join(' - ');
-
-                    document.getElementById('nama_akun').value = nama.trim();
-
-                    let akun = this.value;
-                    let versi = document.getElementById('versi').value;
-                    let program = document.getElementById('program').value;
-                    let kegiatan = document.getElementById('kegiatan').value;
-                    let sub = document.getElementById('sub_kegiatan').value;
-
-                    if (!akun || !versi || !program || !kegiatan || !sub) {
-                        document.getElementById('tabelRincian').innerHTML = '';
-                        return;
-                    }
-
-                    fetch(`/a2/filter-rincian`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                versi,
-                                program,
-                                kegiatan,
-                                sub_kegiatan: sub,
-                                akun
-                            })
+                fetch(`/a2/filter-rincian`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            versi,
+                            program,
+                            kegiatan,
+                            sub_kegiatan: sub,
+                            akun
                         })
-                        .then(res => res.json())
-                        .then(data => {
-                            let html = data.map((row, i) => `
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+
+    // console.log('HASIL DARI CONTROLLER:', data);
+
+                        let html = data.map((row, i) => `
     <tr>
         <td class="px-1 py-[2px] border text-center">${row.id_rinci_sub_bl}</td>
         <td class="px-1 py-[2px] border">${row.nama_komponen}</td>
@@ -668,318 +746,318 @@
     `).join('');
 
 
-                            document.getElementById('tabelRincian').innerHTML = html;
-                        });
-                });
-
+                        document.getElementById('tabelRincian').innerHTML = html;
+                    });
             });
 
-            // Penerima Logic
-            function isiDataPenerima() {
-                let select = document.getElementById('penerima');
-                let option = select.options[select.selectedIndex];
-                document.getElementById('nama_penerima').value = option.getAttribute('data-nama') || '';
-                document.getElementById('npwp').value = option.getAttribute('data-npwp') || '';
-                document.getElementById('bank_penerima').value = option.getAttribute('data-bank') || '';
-                document.getElementById('norek_penerima').value = option.getAttribute('data-norek') || '';
-                document.getElementById('alamat_penerima').value = option.getAttribute('data-alamat') || '';
-            }
+        });
 
-            function setLoadingSelect(id, text = 'Memuat...') {
-                let el = document.getElementById(id);
-                el.innerHTML = `<option value="">${text}</option>`;
-                el.disabled = true;
-            }
+        // Penerima Logic
+        function isiDataPenerima() {
+            let select = document.getElementById('penerima');
+            let option = select.options[select.selectedIndex];
+            document.getElementById('nama_penerima').value = option.getAttribute('data-nama') || '';
+            document.getElementById('npwp').value = option.getAttribute('data-npwp') || '';
+            document.getElementById('bank_penerima').value = option.getAttribute('data-bank') || '';
+            document.getElementById('norek_penerima').value = option.getAttribute('data-norek') || '';
+            document.getElementById('alamat_penerima').value = option.getAttribute('data-alamat') || '';
+        }
 
-            function hitungRiilBaris(i) {
-                const vol = Number(document.querySelector(`input[name="riil[${i}][vol]"]`)?.value || 0);
-                const harga = parseRupiah(
-                    document.querySelector(`input[name="riil[${i}][harga]"]`)?.value || 0
-                );
+        function setLoadingSelect(id, text = 'Memuat...') {
+            let el = document.getElementById(id);
+            el.innerHTML = `<option value="">${text}</option>`;
+            el.disabled = true;
+        }
 
-                const total = vol * harga;
+        function hitungRiilBaris(i) {
+            const vol = Number(document.querySelector(`input[name="riil[${i}][vol]"]`)?.value || 0);
+            const harga = parseRupiah(
+                document.querySelector(`input[name="riil[${i}][harga]"]`)?.value || 0
+            );
 
-                document.getElementById(`nominal_riil_${i}`).value =
-                    total > 0 ? formatRupiah(total) : '';
+            const total = vol * harga;
 
-                hitungBruto();
-            }
+            document.getElementById(`nominal_riil_${i}`).value =
+                total > 0 ? formatRupiah(total) : '';
+
+            hitungBruto();
+        }
 
 
-            function unformatNumber(el) {
-                el.value = el.value.replace(/\./g, '').replace(',', '.');
-            }
+        function unformatNumber(el) {
+            el.value = el.value.replace(/\./g, '').replace(',', '.');
+        }
 
-            function formatNumber(el) {
-                if (!el.value) return;
+        function formatNumber(el) {
+            if (!el.value) return;
 
-                const angka = parseRupiah(el.value);
+            const angka = parseRupiah(el.value);
 
-                el.value = angka.toLocaleString('id-ID', {
-                    minimumFractionDigits: angka % 1 === 0 ? 0 : 2,
-                    maximumFractionDigits: 2
-                });
-            }
+            el.value = angka.toLocaleString('id-ID', {
+                minimumFractionDigits: angka % 1 === 0 ? 0 : 2,
+                maximumFractionDigits: 2
+            });
+        }
 
-            // function formatNumber(el) {
-            //     if (!el.value) return;
-            //     el.value = parseInt(el.value.replace(/\D/g, '')).toLocaleString('id-ID');
-            // }
+        // function formatNumber(el) {
+        //     if (!el.value) return;
+        //     el.value = parseInt(el.value.replace(/\D/g, '')).toLocaleString('id-ID');
+        // }
 
-            /* =========================
-            FORMAT & PARSE RUPIAH
-            ========================= */
-            function parseRupiah(val) {
-                if (!val) return 0;
+        /* =========================
+        FORMAT & PARSE RUPIAH
+        ========================= */
+        function parseRupiah(val) {
+            if (!val) return 0;
 
-                return parseFloat(
-                    val.toString()
-                    .replace(/\./g, '') // hapus ribuan
-                    .replace(',', '.') // koma → desimal
-                    .replace(/[^0-9.]/g, '')
-                ) || 0;
-            }
+            return parseFloat(
+                val.toString()
+                .replace(/\./g, '') // hapus ribuan
+                .replace(',', '.') // koma → desimal
+                .replace(/[^0-9.]/g, '')
+            ) || 0;
+        }
 
-            function formatRupiah(num) {
-                return Number(num || 0).toLocaleString('id-ID');
-            }
+        function formatRupiah(num) {
+            return Number(num || 0).toLocaleString('id-ID');
+        }
 
-            function hitungBruto() {
-                let total = 0;
+        function hitungBruto() {
+            let total = 0;
 
-                document.querySelectorAll('[id^="nominal_riil_"]').forEach(el => {
-                    total += parseRupiah(el.value);
-                });
+            document.querySelectorAll('[id^="nominal_riil_"]').forEach(el => {
+                total += parseRupiah(el.value);
+            });
 
-                document.getElementById('bruto').value = formatRupiah(total);
+            document.getElementById('bruto').value = formatRupiah(total);
 
-                hitungNetto(); // lanjut ke netto
-            }
+            hitungNetto(); // lanjut ke netto
+        }
 
-            function hitungPajak() {
-                const kode = document.getElementById('dpp_select')?.value;
+        function hitungPajak() {
+            const kode = document.getElementById('dpp_select')?.value;
 
-                if (!kode) {
-                    document.getElementById('pph_nominal').innerText = 0;
-                    document.getElementById('pph_kode').innerText = '-';
-                    document.getElementById('pajakPotong').value = 0;
-                    hitungNetto();
-                    return;
-                }
-
-                const bruto = parseRupiah(document.getElementById('bruto').value);
-
-                // Pajak manual golongan
-                const iv = (Number(vol_iv.value) || 0) * (Number(besaran_iv.value) || 0) * 0.15;
-                const iii = (Number(vol_iii.value) || 0) * (Number(besaran_iii.value) || 0) * 0.05;
-                const lain = (Number(vol_lain.value) || 0) * (Number(besaran_lain.value) || 0) * 0.06;
-
-                pajak_iv.innerText = iv ? formatRupiah(iv) : 0;
-                pajak_iii.innerText = iii ? formatRupiah(iii) : 0;
-                pajak_lain.innerText = lain ? formatRupiah(lain) : 0;
-
-                let nominal = 0;
-                const dpp = Math.ceil((100 / 111) * bruto);
-
-                switch (kode) {
-
-                    case '411121-402':
-                        nominal = iv + iii + lain;
-                        break;
-
-                    case '411121-21-100-20':
-                        nominal = 0.05 * dpp;
-                        break;
-
-                    case '411122-920':
-                        nominal = 0.015 * dpp;
-                        break;
-
-                    case '411124-100':
-                    case '411124-104':
-                        nominal = 0.02 * dpp;
-                        break;
-
-                    case '411211-920':
-                        nominal = 0.12 * (11 / 12 * dpp);
-                        break;
-
-                    case '999999-100':
-                        nominal = 0.10 * bruto;
-                        break;
-
-                    default:
-                        nominal = 0;
-                }
-
-                nominal = Math.ceil(nominal);
-
-                document.getElementById('pph_nominal').innerText =
-                    nominal ? formatRupiah(nominal) : 0;
-
-                document.getElementById('pph_kode').innerText = kode;
-                document.getElementById('pajakPotong').value = nominal;
-
+            if (!kode) {
+                document.getElementById('pph_nominal').innerText = 0;
+                document.getElementById('pph_kode').innerText = '-';
+                document.getElementById('pajakPotong').value = 0;
                 hitungNetto();
+                return;
             }
 
-            function hitungNetto() {
-                const bruto = parseRupiah(document.getElementById('bruto').value);
-                const pajak = parseRupiah(document.getElementById('pajakPotong').value);
+            const bruto = parseRupiah(document.getElementById('bruto').value);
 
-                const netto = bruto - pajak;
+            // Pajak manual golongan
+            const iv = (Number(vol_iv.value) || 0) * (Number(besaran_iv.value) || 0) * 0.15;
+            const iii = (Number(vol_iii.value) || 0) * (Number(besaran_iii.value) || 0) * 0.05;
+            const lain = (Number(vol_lain.value) || 0) * (Number(besaran_lain.value) || 0) * 0.06;
 
-                document.getElementById('netto').value = formatRupiah(netto);
-                document.getElementById('terbilang').value =
-                    netto > 0 ? terbilang(netto) + ' Rupiah' : '';
+            pajak_iv.innerText = iv ? formatRupiah(iv) : 0;
+            pajak_iii.innerText = iii ? formatRupiah(iii) : 0;
+            pajak_lain.innerText = lain ? formatRupiah(lain) : 0;
+
+            let nominal = 0;
+            const dpp = Math.ceil((100 / 111) * bruto);
+
+            switch (kode) {
+
+                case '411121-402':
+                    nominal = iv + iii + lain;
+                    break;
+
+                case '411121-21-100-20':
+                    nominal = 0.05 * dpp;
+                    break;
+
+                case '411122-920':
+                    nominal = 0.015 * dpp;
+                    break;
+
+                case '411124-100':
+                case '411124-104':
+                    nominal = 0.02 * dpp;
+                    break;
+
+                case '411211-920':
+                    nominal = 0.12 * (11 / 12 * dpp);
+                    break;
+
+                case '999999-100':
+                    nominal = 0.10 * bruto;
+                    break;
+
+                default:
+                    nominal = 0;
             }
 
-            function terbilangInt(n) {
-                n = Math.floor(n);
+            nominal = Math.ceil(nominal);
 
-                const angka = ["", "Satu", "Dua", "Tiga", "Empat", "Lima",
-                    "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"
-                ];
+            document.getElementById('pph_nominal').innerText =
+                nominal ? formatRupiah(nominal) : 0;
 
-                if (n < 12) return angka[n];
-                if (n < 20) return terbilangInt(n - 10) + " Belas";
-                if (n < 100) return terbilangInt(Math.floor(n / 10)) + " Puluh " + terbilangInt(n % 10);
-                if (n < 200) return "Seratus " + terbilangInt(n - 100);
-                if (n < 1000) return terbilangInt(Math.floor(n / 100)) + " Ratus " + terbilangInt(n % 100);
-                if (n < 2000) return "Seribu " + terbilangInt(n - 1000);
-                if (n < 1000000) return terbilangInt(Math.floor(n / 1000)) + " Ribu " + terbilangInt(n % 1000);
-                if (n < 1000000000) return terbilangInt(Math.floor(n / 1000000)) + " Juta " + terbilangInt(n % 1000000);
+            document.getElementById('pph_kode').innerText = kode;
+            document.getElementById('pajakPotong').value = nominal;
 
-                return "";
+            hitungNetto();
+        }
+
+        function hitungNetto() {
+            const bruto = parseRupiah(document.getElementById('bruto').value);
+            const pajak = parseRupiah(document.getElementById('pajakPotong').value);
+
+            const netto = bruto - pajak;
+
+            document.getElementById('netto').value = formatRupiah(netto);
+            document.getElementById('terbilang').value =
+                netto > 0 ? terbilang(netto) + ' Rupiah' : '';
+        }
+
+        function terbilangInt(n) {
+            n = Math.floor(n);
+
+            const angka = ["", "Satu", "Dua", "Tiga", "Empat", "Lima",
+                "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"
+            ];
+
+            if (n < 12) return angka[n];
+            if (n < 20) return terbilangInt(n - 10) + " Belas";
+            if (n < 100) return terbilangInt(Math.floor(n / 10)) + " Puluh " + terbilangInt(n % 10);
+            if (n < 200) return "Seratus " + terbilangInt(n - 100);
+            if (n < 1000) return terbilangInt(Math.floor(n / 100)) + " Ratus " + terbilangInt(n % 100);
+            if (n < 2000) return "Seribu " + terbilangInt(n - 1000);
+            if (n < 1000000) return terbilangInt(Math.floor(n / 1000)) + " Ribu " + terbilangInt(n % 1000);
+            if (n < 1000000000) return terbilangInt(Math.floor(n / 1000000)) + " Juta " + terbilangInt(n % 1000000);
+
+            return "";
+        }
+
+        function terbilang(n) {
+            n = Number(n);
+
+            if (isNaN(n)) return "";
+
+            const rupiah = Math.floor(n);
+            const sen = Math.round((n - rupiah) * 100);
+
+            let hasil = terbilangInt(rupiah);
+
+            if (sen > 0) {
+                hasil += " " + terbilangInt(sen) + " Sen";
             }
 
-            function terbilang(n) {
-                n = Number(n);
+            return hasil.trim();
+        }
 
-                if (isNaN(n)) return "";
+        function hitungPajakManual() {
+            // hanya update tampilan per golongan
+            const iv = (Number(vol_iv.value) || 0) * (Number(besaran_iv.value) || 0) * 0.15;
+            const iii = (Number(vol_iii.value) || 0) * (Number(besaran_iii.value) || 0) * 0.05;
+            const lain = (Number(vol_lain.value) || 0) * (Number(besaran_lain.value) || 0) * 0.06;
 
-                const rupiah = Math.floor(n);
-                const sen = Math.round((n - rupiah) * 100);
+            pajak_iv.innerText = iv ? formatRupiah(iv) : 0;
+            pajak_iii.innerText = iii ? formatRupiah(iii) : 0;
+            pajak_lain.innerText = lain ? formatRupiah(lain) : 0;
+        }
 
-                let hasil = terbilangInt(rupiah);
+        function tambahPajak() {
+            const body = document.getElementById('body_pajak');
+            const rows = body.querySelectorAll('.pajak-row');
 
-                if (sen > 0) {
-                    hasil += " " + terbilangInt(sen) + " Sen";
-                }
-
-                return hasil.trim();
+            if (rows.length >= 2) {
+                alert('Maksimal 2 pajak');
+                return;
             }
 
-            function hitungPajakManual() {
-                // hanya update tampilan per golongan
-                const iv = (Number(vol_iv.value) || 0) * (Number(besaran_iv.value) || 0) * 0.15;
-                const iii = (Number(vol_iii.value) || 0) * (Number(besaran_iii.value) || 0) * 0.05;
-                const lain = (Number(vol_lain.value) || 0) * (Number(besaran_lain.value) || 0) * 0.06;
+            const clone = rows[0].cloneNode(true);
 
-                pajak_iv.innerText = iv ? formatRupiah(iv) : 0;
-                pajak_iii.innerText = iii ? formatRupiah(iii) : 0;
-                pajak_lain.innerText = lain ? formatRupiah(lain) : 0;
-            }
+            clone.querySelector('select').value = '';
+            clone.querySelector('input[name="pajak[nominal][]"]').value = 0;
 
-            function tambahPajak() {
-                const body = document.getElementById('body_pajak');
-                const rows = body.querySelectorAll('.pajak-row');
+            const kodeCell = clone.querySelector('.kode-pajak');
+            if (kodeCell) kodeCell.innerText = '-';
 
-                if (rows.length >= 2) {
-                    alert('Maksimal 2 pajak');
-                    return;
-                }
-
-                const clone = rows[0].cloneNode(true);
-
-                clone.querySelector('select').value = '';
-                clone.querySelector('input[name="pajak[nominal][]"]').value = 0;
-
-                const kodeCell = clone.querySelector('.kode-pajak');
-                if (kodeCell) kodeCell.innerText = '-';
-
-                clone.querySelector('button').outerHTML = `
+            clone.querySelector('button').outerHTML = `
         <button type="button"
             onclick="hapusPajak(this)"
             class="bg-red-600 text-white px-2 py-1 rounded text-[9px]">
             -
         </button>`;
 
-                body.appendChild(clone);
+            body.appendChild(clone);
+        }
+
+
+        function hapusPajak(btn) {
+            btn.closest('.pajak-row').remove();
+        }
+
+        function hitungPajakBaris(select) {
+            const row = select.closest('tr');
+            const kode = select.value;
+
+            const selectedOption = select.options[select.selectedIndex];
+            const jenisPajak = selectedOption?.dataset?.jenis || '';
+
+            row.querySelector('input[name="pajak[jenis][]"]').value = jenisPajak;
+
+            const bruto = parseRupiah(document.getElementById('bruto')?.value || 0);
+            const dpp = Math.ceil((100 / 111) * bruto);
+
+            let nominal = 0;
+
+            switch (kode) {
+                case '411121-402':
+                    const iv = (Number(vol_iv.value) || 0) * (Number(besaran_iv.value) || 0) * 0.15;
+                    const iii = (Number(vol_iii.value) || 0) * (Number(besaran_iii.value) || 0) * 0.05;
+                    const lain = (Number(vol_lain.value) || 0) * (Number(besaran_lain.value) || 0) * 0.06;
+                    nominal = iv + iii + lain;
+                    break;
+
+                case '411121-21-100-20':
+                    nominal = 0.05 * dpp;
+                    break;
+
+                case '411122-920':
+                    nominal = 0.015 * dpp;
+                    break;
+
+                case '411124-100':
+                case '411124-104':
+                    nominal = 0.02 * dpp;
+                    break;
+
+                case '411211-920':
+                    nominal = 0.12 * (11 / 12 * dpp);
+                    break;
+
+                case '999999-100':
+                    nominal = 0.10 * bruto;
+                    break;
+
+                default:
+                    nominal = 0;
             }
 
+            nominal = Math.ceil(nominal);
 
-            function hapusPajak(btn) {
-                btn.closest('.pajak-row').remove();
-            }
+            row.querySelector('input[name="pajak[nominal][]"]').value = nominal;
 
-            function hitungPajakBaris(select) {
-                const row = select.closest('tr');
-                const kode = select.value;
+            const kodeCell = row.querySelector('.kode-pajak');
+            if (kodeCell) kodeCell.innerText = kode || '-';
 
-                const selectedOption = select.options[select.selectedIndex];
-                const jenisPajak = selectedOption?.dataset?.jenis || '';
-
-                row.querySelector('input[name="pajak[jenis][]"]').value = jenisPajak;
-
-                const bruto = parseRupiah(document.getElementById('bruto')?.value || 0);
-                const dpp = Math.ceil((100 / 111) * bruto);
-
-                let nominal = 0;
-
-                switch (kode) {
-                    case '411121-402':
-                        const iv = (Number(vol_iv.value) || 0) * (Number(besaran_iv.value) || 0) * 0.15;
-                        const iii = (Number(vol_iii.value) || 0) * (Number(besaran_iii.value) || 0) * 0.05;
-                        const lain = (Number(vol_lain.value) || 0) * (Number(besaran_lain.value) || 0) * 0.06;
-                        nominal = iv + iii + lain;
-                        break;
-
-                    case '411121-21-100-20':
-                        nominal = 0.05 * dpp;
-                        break;
-
-                    case '411122-920':
-                        nominal = 0.015 * dpp;
-                        break;
-
-                    case '411124-100':
-                    case '411124-104':
-                        nominal = 0.02 * dpp;
-                        break;
-
-                    case '411211-920':
-                        nominal = 0.12 * (11 / 12 * dpp);
-                        break;
-
-                    case '999999-100':
-                        nominal = 0.10 * bruto;
-                        break;
-
-                    default:
-                        nominal = 0;
-                }
-
-                nominal = Math.ceil(nominal);
-
-                row.querySelector('input[name="pajak[nominal][]"]').value = nominal;
-
-                const kodeCell = row.querySelector('.kode-pajak');
-                if (kodeCell) kodeCell.innerText = kode || '-';
-
-                hitungTotalPajak();
-            }
+            hitungTotalPajak();
+        }
 
 
-            function hitungTotalPajak() {
-                let total = 0;
+        function hitungTotalPajak() {
+            let total = 0;
 
-                document.querySelectorAll('input[name="pajak[nominal][]"]').forEach(el => {
-                    total += parseRupiah(el.value || 0);
-                });
+            document.querySelectorAll('input[name="pajak[nominal][]"]').forEach(el => {
+                total += parseRupiah(el.value || 0);
+            });
 
-                document.getElementById('pajakPotong').value = total;
-                hitungNetto();
-            }
-        </script>
-    @endpush
+            document.getElementById('pajakPotong').value = total;
+            hitungNetto();
+        }
+    </script>
+@endpush

@@ -614,13 +614,15 @@
         <td class="px-1 py-[2px] border">
             <input type="number"
                 name="riil[${i}][vol]"
-        class="w-12 border text-[9px] p-0"
+                step="any"
+                class="w-12 border text-[9px] p-0"
                 oninput="hitungRiilBaris(${i})">
         </td>
         <td class="px-1 py-[2px] border">
             <input type="text"
                 name="riil[${i}][harga]"
-        class="w-16 border text-[9px] p-0 text-right"
+                step="any"
+                class="w-16 border text-[9px] p-0 text-right"
                 oninput="hitungRiilBaris(${i})"
                 onfocus="unformatNumber(this)"
                 onblur="formatNumber(this)">

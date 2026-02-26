@@ -18,7 +18,7 @@
                         <x-slot name="trigger">
                             <button
                                 class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700">
-                                📊 Dashboard
+                                Dashboard
                                 <svg class="ml-1 h-4 w-4 fill-current" viewBox="0 0 20 20">
                                     <path d="M5.293 7.293L10 12l4.707-4.707" />
                                 </svg>
@@ -41,7 +41,7 @@
                         <x-slot name="trigger">
                             <button
                                 class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700">
-                                📁 Register
+                                Register
                                 <svg class="ml-1 h-4 w-4 fill-current" viewBox="0 0 20 20">
                                     <path d="M5.293 7.293L10 12l4.707-4.707" />
                                 </svg>
@@ -55,6 +55,29 @@
 
                             <x-dropdown-link :href="route('a2.create')">
                                 Tambah Register
+                            </x-dropdown-link>
+                        </x-slot>
+                    </x-dropdown>
+
+                    {{-- PENERIMA DROPDOWN --}}
+                    <x-dropdown align="left" width="48">
+                        <x-slot name="trigger">
+                            <button
+                                class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700">
+                                Penerima
+                                <svg class="ml-1 h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M5.293 7.293L10 12l4.707-4.707" />
+                                </svg>
+                            </button>
+                        </x-slot>
+
+                        <x-slot name="content">
+                            <x-dropdown-link :href="route('penerima.index')">
+                                Daftar Penerima
+                            </x-dropdown-link>
+
+                            <x-dropdown-link :href="route('penerima.create')">
+                                Tambah Penerima
                             </x-dropdown-link>
                         </x-slot>
                     </x-dropdown>
