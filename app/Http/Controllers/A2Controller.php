@@ -260,33 +260,26 @@ class A2Controller extends Controller
         
         $versipilihan = VersiAnggaran::where('nomor_anggaran',$request->versi)->value('id_versi_anggaran');
 
-        $data = RincianRka::from('rincian_rka as r')
-            ->leftJoin('register as reg', function ($join) use ($request) {
-                $join->on('reg.id_reg', '=', 'd.id_reg')
-                    ->where('reg.kd_keg', $request->input('kegiatan'))
-                    ->where('reg.kd_subkeg', $request->input('sub_kegiatan'))
-                    ->where('reg.kd_rekbel', $request->input('akun'));
+        $subQuery = DB::table('register')
+            ->join('detail_belanja', 'register.id_reg', '=', 'detail_belanja.id_reg')
+            ->where('kd_keg', $request->input('kegiatan'))
+            ->where('register.kd_subkeg', $request->input('sub_kegiatan'))
+            ->where('register.kd_rekbel', $request->input('akun'))
+            ->select(
+                'register.*',
+                'detail_belanja.id_rinci_sub_bl',
+                'detail_belanja.volume',
+                'detail_belanja.harga_riil',
+                'detail_belanja.total'
+            );
+
+        $data = DB::table('rincian_rka as r')
+            ->leftJoinSub($subQuery, 'd', function ($join) {
+                $join->on('d.id_rinci_sub_bl', '=', 'r.id_rinci_sub_bl');
             })
-            // ->where('r.id_versi_anggaran', $versipilihan)
-            // ->where('r.kode_program', $request->input('program'))
             ->where('r.kode_giat', $request->input('kegiatan'))
             ->where('r.kode_sub_giat', $request->input('sub_kegiatan'))
             ->where('r.kode_akun', $request->input('akun'))
-            ->select(
-                'r.id_rinci_sub_bl',
-                'r.nama_komponen',
-                'r.satuan',
-                'r.volume',
-                'r.harga_satuan',
-                'r.kode_dana',
-                'r.nama_dana',
-                'r.kode_skpd',
-                'r.nama_skpd',
-                'r.pptk_id',
-                'r.pokja_id',
-                DB::raw('COALESCE(SUM(d.volume),0) as reg_sah_vol'),
-                DB::raw('COALESCE(SUM(d.total),0) as reg_sah_nom')
-            )
             ->groupBy(
                 'r.id_rinci_sub_bl',
                 'r.nama_komponen',
@@ -300,28 +293,106 @@ class A2Controller extends Controller
                 'r.pptk_id',
                 'r.pokja_id'
             )
+            ->select(
+                'r.id_rinci_sub_bl',
+                'r.nama_komponen',
+                'r.satuan',
+                'r.volume',
+                'r.harga_satuan',
+                'r.kode_dana',
+                'r.nama_dana',
+                'r.kode_skpd',
+                'r.nama_skpd',
+                'r.pptk_id',
+                'r.pokja_id',
+                DB::raw('COALESCE(SUM(d.volume), 0) as reg_sah_vol'),
+                DB::raw('COALESCE(SUM(d.total), 0) as reg_sah_nom')
+            )
             ->get()
             ->map(function ($row) {
-                $total_rencana = $row->volume * $row->harga_satuan;
+                        $total_rencana = $row->volume * $row->harga_satuan;
 
-                return [
-                    'id_rinci_sub_bl'   => $row->id_rinci_sub_bl,
-                    'nama_komponen'     => $row->nama_komponen,
-                    'satuan'            => $row->satuan,
-                    'volume'            => $row->volume,
-                    'harga_satuan'      => $row->harga_satuan,
-                    'reg_sah_vol'       => (int) $row->reg_sah_vol,
-                    'reg_sah_nom'       => (int) $row->reg_sah_nom,
-                    'sisa_vol'          => $row->volume - $row->reg_sah_vol,
-                    'sisa_nom'          => $total_rencana - $row->reg_sah_nom,
-                    'kode_dana'         => $row->kode_dana,
-                    'nama_dana'         => $row->nama_dana,
-                    'kode_skpd'         => $row->kode_skpd,
-                    'nama_skpd'         => $row->nama_skpd,
-                    'pptk_id'           => $row->pptk_id,
-                    'pokja_id'          => $row->pokja_id,
-                ];
-            });
+                        return [
+                            'id_rinci_sub_bl'   => $row->id_rinci_sub_bl,
+                            'nama_komponen'     => $row->nama_komponen,
+                            'satuan'            => $row->satuan,
+                            'volume'            => $row->volume,
+                            'harga_satuan'      => $row->harga_satuan,
+                            'reg_sah_vol'       => (int) $row->reg_sah_vol,
+                            'reg_sah_nom'       => (int) $row->reg_sah_nom,
+                            'sisa_vol'          => $row->volume - $row->reg_sah_vol,
+                            'sisa_nom'          => $total_rencana - $row->reg_sah_nom,
+                            'kode_dana'         => $row->kode_dana,
+                            'nama_dana'         => $row->nama_dana,
+                            'kode_skpd'         => $row->kode_skpd,
+                            'nama_skpd'         => $row->nama_skpd,
+                            'pptk_id'           => $row->pptk_id,
+                            'pokja_id'          => $row->pokja_id,
+                        ];
+                    });
+
+        // $data = RincianRka::from('rincian_rka as r')
+        //     ->leftJoin('register as reg', function ($join) use ($request) {
+        //         $join->on('reg.id_reg', '=', 'd.id_reg')
+        //             ->where('reg.kd_keg', $request->input('kegiatan'))
+        //             ->where('reg.kd_subkeg', $request->input('sub_kegiatan'))
+        //             ->where('reg.kd_rekbel', $request->input('akun'));
+        //     })
+        //     // ->where('r.id_versi_anggaran', $versipilihan)
+        //     // ->where('r.kode_program', $request->input('program'))
+        //     ->where('r.kode_giat', $request->input('kegiatan'))
+        //     ->where('r.kode_sub_giat', $request->input('sub_kegiatan'))
+        //     ->where('r.kode_akun', $request->input('akun'))
+        //     ->select(
+        //         'r.id_rinci_sub_bl',
+        //         'r.nama_komponen',
+        //         'r.satuan',
+        //         'r.volume',
+        //         'r.harga_satuan',
+        //         'r.kode_dana',
+        //         'r.nama_dana',
+        //         'r.kode_skpd',
+        //         'r.nama_skpd',
+        //         'r.pptk_id',
+        //         'r.pokja_id',
+        //         DB::raw('COALESCE(SUM(d.volume),0) as reg_sah_vol'),
+        //         DB::raw('COALESCE(SUM(d.total),0) as reg_sah_nom')
+        //     )
+        //     ->groupBy(
+        //         'r.id_rinci_sub_bl',
+        //         'r.nama_komponen',
+        //         'r.satuan',
+        //         'r.volume',
+        //         'r.harga_satuan',
+        //         'r.kode_dana',
+        //         'r.nama_dana',
+        //         'r.kode_skpd',
+        //         'r.nama_skpd',
+        //         'r.pptk_id',
+        //         'r.pokja_id'
+        //     )
+        //     ->get()
+        //     ->map(function ($row) {
+        //         $total_rencana = $row->volume * $row->harga_satuan;
+
+        //         return [
+        //             'id_rinci_sub_bl'   => $row->id_rinci_sub_bl,
+        //             'nama_komponen'     => $row->nama_komponen,
+        //             'satuan'            => $row->satuan,
+        //             'volume'            => $row->volume,
+        //             'harga_satuan'      => $row->harga_satuan,
+        //             'reg_sah_vol'       => (int) $row->reg_sah_vol,
+        //             'reg_sah_nom'       => (int) $row->reg_sah_nom,
+        //             'sisa_vol'          => $row->volume - $row->reg_sah_vol,
+        //             'sisa_nom'          => $total_rencana - $row->reg_sah_nom,
+        //             'kode_dana'         => $row->kode_dana,
+        //             'nama_dana'         => $row->nama_dana,
+        //             'kode_skpd'         => $row->kode_skpd,
+        //             'nama_skpd'         => $row->nama_skpd,
+        //             'pptk_id'           => $row->pptk_id,
+        //             'pokja_id'          => $row->pokja_id,
+        //         ];
+        //     });
         return response()->json($data);
     }
 
