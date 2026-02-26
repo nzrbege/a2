@@ -25,7 +25,7 @@
 
 
     @section('content')
-        <div class="min-h-screen overflow-hidden p-2 bg-slate-100">
+        <div class="min-h-screen overflow-hidden p-2 bg-slate-100" x-data="{ open: false }">
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>
@@ -36,7 +36,7 @@
                 </div>
             @endif
 
-            <form id="form-a2" method="POST" action="{{ route('a2.store') }}" class="space-y-2">
+            <form x-ref="formA2" id="form-a2" method="POST" action="{{ route('a2.store') }}" class="space-y-2" @submit.prevent="open = true">
                 @csrf
                 <div class="bg-blue-800 text-white px-4 py-1 rounded shadow-sm flex justify-between items-center">
                     <h1 class="text-xs font-bold uppercase tracking-wider">Register A2 - Bukti Pengeluaran Bidang Informatika
@@ -357,6 +357,7 @@
                         <textarea id="terbilang" rows="2" readonly name="netto_terbilang"
                             class="mt-2 w-full text-[9px] bg-white italic px-1 py-[2px] border rounded text-slate-600 leading-tight"
                             placeholder="Terbilang..."></textarea>
+                        <input type="hidden" name="bruto_terbilang" id="bruto_terbilang">
                     </div>
 
                     <div class="col-span-9 bg-white rounded border border-slate-300 shadow-sm">
@@ -404,6 +405,33 @@
                 <input type="hidden" id="hasilPph" name="hasilPph">
                 <div class="grid grid-cols-12 gap-2 mt-2">
             </form>
+            <!-- Modal -->
+            <div x-show="open" x-transition @click.self="open = false" style="display:none"
+                class="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+
+                <div class="bg-white rounded-xl shadow-2xl border border-gray-200 w-96 p-6">
+
+                    <h2 class="text-lg font-semibold mb-4">Konfirmasi</h2>
+
+                    <p class="text-gray-600">Yakin ingin menyimpan data?</p>
+
+                    <div class="flex justify-end gap-2 mt-6">
+
+                        <button type="button"
+                                @click="open = false"
+                                class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg">
+                            Batal
+                        </button>
+
+                        <button type="button"
+                                @click="$refs.formA2.submit()"
+                                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow">
+                            Ya, Simpan
+                        </button>
+
+                    </div>
+                </div>
+            </div>
         </div>
     @endsection
 
@@ -425,10 +453,7 @@
                 ========================== */
                 document.getElementById('versi').addEventListener('change', function() {
 
-                    console.log('CHANGE TRIGGERED');
-
                     let opt = this.options[this.selectedIndex];
-                    console.log('DATA NOMOR:', opt.dataset.nomor);
 
                     let nomor = this.options[this.selectedIndex]?.dataset.nomor;
                     document.getElementById('no_dpa').value = nomor ?? '';
@@ -821,6 +846,8 @@
                 document.getElementById('netto').value = formatRupiah(netto);
                 document.getElementById('terbilang').value =
                     netto > 0 ? terbilang(netto) + ' Rupiah' : '';
+                document.getElementById('bruto_terbilang').value =
+                    netto > 0 ? terbilang(bruto) + ' Rupiah' : '';
             }
 
             function terbilangInt(n) {
@@ -971,28 +998,28 @@
                 hitungNetto();
             }
 
-            document.getElementById('form-a2').addEventListener('submit', function(e) {
+// document.getElementById('form-a2').addEventListener('submit', function (e) {
+//     e.preventDefault();
 
-                const bruto = document.getElementById('bruto').value || 0;
-                const pajak = document.getElementById('pajakPotong').value || 0;
-                const netto = document.getElementById('netto').value || 0;
+//     const bruto = document.getElementById('bruto').value || 0;
+//     const pajak = document.getElementById('pajakPotong').value || 0;
+//     const netto = document.getElementById('netto').value || 0;
 
-                const konfirmasi = confirm(
-                    `Pastikan data sudah benar.\n\n` +
-                    `BRUTO  : ${bruto}\n` +
-                    `PAJAK  : ${pajak}\n` +
-                    `NETTO  : ${netto}\n\n` +
-                    `Apakah Anda yakin ingin menyimpan data ini?`
-                );
+//     // Isi nilai ke modal
+//     document.getElementById('modalBruto').innerText = bruto;
+//     document.getElementById('modalPajak').innerText = pajak;
+//     document.getElementById('modalNetto').innerText = netto;
 
-                if (!konfirmasi) {
-                    e.preventDefault();
-                    return;
-                }
+//     // Tampilkan modal
+//     const modal = new bootstrap.Modal(document.getElementById('modalKonfirmasi'));
+//     modal.show();
 
-                // jika setuju → disable tombol supaya tidak double submit
-                document.getElementById('btn-save').disabled = true;
-                document.getElementById('btn-save').innerText = 'Menyimpan...';
-            });
+//     // Saat klik tombol simpan di modal
+//     document.getElementById('btnConfirmSave').onclick = function () {
+//         document.getElementById('btn-save').disabled = true;
+//         document.getElementById('btn-save').innerText = 'Menyimpan...';
+//         e.target.submit();
+//     };
+// });
         </script>
     @endpush

@@ -165,6 +165,7 @@ class A2Controller extends Controller
                 'norek_penerima'    => $request->norek_penerima,
                 'alamat_penerima'    => $request->alamat_penerima,
                 'keperluan'   => $request->keperluan,
+                'bruto_terbilang'   => $request->bruto_terbilang,
                 'netto_terbilang'   => $request->netto_terbilang,
                 'kode_skpd' => $riilValid['kode_skpd'],
                 'nama_skpd' => $riilValid['nama_skpd'],
@@ -256,8 +257,6 @@ class A2Controller extends Controller
 
     public function filterRincian(Request $request)
     {
-        // dd($request);
-        
         $versipilihan = VersiAnggaran::where('nomor_anggaran',$request->versi)->value('id_versi_anggaran');
 
         $subQuery = DB::table('register')
@@ -318,8 +317,8 @@ class A2Controller extends Controller
                             'satuan'            => $row->satuan,
                             'volume'            => $row->volume,
                             'harga_satuan'      => $row->harga_satuan,
-                            'reg_sah_vol'       => (int) $row->reg_sah_vol,
-                            'reg_sah_nom'       => (int) $row->reg_sah_nom,
+                            'reg_sah_vol'       => $row->reg_sah_vol,
+                            'reg_sah_nom'       => $row->reg_sah_nom,
                             'sisa_vol'          => $row->volume - $row->reg_sah_vol,
                             'sisa_nom'          => $total_rencana - $row->reg_sah_nom,
                             'kode_dana'         => $row->kode_dana,

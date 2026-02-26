@@ -232,9 +232,9 @@
 
         <tr>
             <td colspan="9">
-                Sudah diterima dari Bendahara Pengeluaran Diskominfo Kab. Klaten, uang sejumlah <span>Rp {{ number_format($register->nom_netto, 2, ',', '.') }}</span>, secara {{ $register->j_transaksi }}
+                Sudah diterima dari Bendahara Pengeluaran Diskominfo Kab. Klaten, uang sejumlah <span>Rp {{ number_format($register->nom_bruto, 2, ',', '.') }}</span>, secara {{ $register->j_transaksi }}
                 <br>
-                <span class="italic">Terbilang : {{ $register->netto_terbilang }}</span>
+                <span class="italic">Terbilang : {{ $register->bruto_terbilang }}</span>
             </td>
         </tr>
 
@@ -432,4 +432,40 @@
         const angka = parseInt(el.innerText);
         el.innerText = 'Rp ' + angka.toLocaleString('id-ID');
     });
+
+    function terbilangInt(n) {
+        n = Math.floor(n);
+
+        const angka = ["", "Satu", "Dua", "Tiga", "Empat", "Lima",
+            "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"
+        ];
+
+        if (n < 12) return angka[n];
+        if (n < 20) return terbilangInt(n - 10) + " Belas";
+        if (n < 100) return terbilangInt(Math.floor(n / 10)) + " Puluh " + terbilangInt(n % 10);
+        if (n < 200) return "Seratus " + terbilangInt(n - 100);
+        if (n < 1000) return terbilangInt(Math.floor(n / 100)) + " Ratus " + terbilangInt(n % 100);
+        if (n < 2000) return "Seribu " + terbilangInt(n - 1000);
+        if (n < 1000000) return terbilangInt(Math.floor(n / 1000)) + " Ribu " + terbilangInt(n % 1000);
+        if (n < 1000000000) return terbilangInt(Math.floor(n / 1000000)) + " Juta " + terbilangInt(n % 1000000);
+
+        return "";
+    }
+
+    function terbilang(n) {
+        n = Number(n);
+
+        if (isNaN(n)) return "";
+
+        const rupiah = Math.floor(n);
+        const sen = Math.round((n - rupiah) * 100);
+
+        let hasil = terbilangInt(rupiah);
+
+        if (sen > 0) {
+            hasil += " " + terbilangInt(sen) + " Sen";
+        }
+
+        return hasil.trim();
+    }
 </script>

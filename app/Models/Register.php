@@ -152,6 +152,7 @@ class Register extends Model
         'npwp_setor',
         'nom_netto',
         'netto_terbilang',
+        'bruto_terbilang',
         'kode_skpd',
         'nama_skpd',
         'nama_pa',
