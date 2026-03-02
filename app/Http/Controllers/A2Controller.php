@@ -14,6 +14,7 @@ use App\Models\PengeluaranA2;
 use App\Models\Register;
 use App\Models\Pptk;
 use App\Models\Pokja;
+use App\Models\TarifPpn;
 use Illuminate\Support\Facades\Log;
 
 
@@ -21,57 +22,18 @@ class A2Controller extends Controller
 {
     public function create()
     {
-        // 1. DPA Version
         $versi = VersiAnggaran::all();
 
-        // // 2. Programs (Distinct)
-        // $program = RincianRka::select('nama_program')
-        //     ->whereNotNull('nama_program')
-        //     ->where('nama_program', '!=', '')
-        //     ->distinct()
-        //     ->orderBy('nama_program')
-        //     ->get();
-
-        // // 3. Kegiatan
-        // $kegiatan = RincianRka::select('nama_giat')
-        //     ->whereNotNull('nama_giat')
-        //     ->where('nama_giat', '!=', '')
-        //     ->distinct()
-        //     ->orderBy('nama_giat')
-        //     ->get();
-
-        // // 4. Sub Kegiatan
-        // $sub_kegiatan = RincianRka::select('nama_sub_giat')
-        //     ->whereNotNull('nama_sub_giat')
-        //     ->where('nama_sub_giat', '!=', '')
-        //     ->distinct()
-        //     ->orderBy('nama_sub_giat')
-        //     ->get();
-
-        // // 5. Akun
-        // $akun = RincianRka::select('kode_akun', 'nama_akun')
-        //     ->whereNotNull('kode_akun')
-        //     ->where('kode_akun', '!=', '')
-        //     ->distinct()
-        //     ->orderBy('kode_akun')
-        //     ->get();
-
-        // 6. Penerima
         $penerima = Penerima::orderBy('penerima')->get();
 
-        // 7. DPP (Potongan Pajak)
         $dpp = Dpp::all();
-
-        // dd($dpp);
+        $ppn = TarifPpn::find(1);
 
         return view('a2.create', compact(
             'versi',
-            // 'program',
-            // 'kegiatan',
-            // 'sub_kegiatan',
-            // 'akun',
             'penerima',
-            'dpp'
+            'dpp',
+            'ppn'
         ));
     }
 
@@ -198,8 +160,16 @@ class A2Controller extends Controller
 
                 $vol   = (int) $row['vol'];
                 $harga = (int) str_replace('.', '', $row['harga']);
-                $total = $vol * $harga;
 
+                $total_dpp = $vol * $harga;
+
+                $ppn = 0;
+                if (!empty($row['ppn'])) {
+                    $ppn = $vol * $harga * $request->ppn / 100;
+                }
+
+                $total_dibayar = $total_dpp + $ppn;
+                
                 $detilData[] = [
                     'id_reg'           => $register->id_reg,
                     'no_reg'           => $register->gen_no_reg,
@@ -208,14 +178,14 @@ class A2Controller extends Controller
                     'id_rinci_sub_bl'  => $row['id_rinci_sub_bl'],
                     'volume'           => $vol,
                     'harga_riil'       => $harga,
-                    'total'            => $total,
+                    'total_dpp'        => $total_dpp,
+                    'ppn'              => $ppn,
+                    'total_dibayar'    => $total_dibayar,
                 ];
             }
             if (empty($detilData)) {
                 throw new \Exception('Detail riil kosong');
             }
-
-            // dd($detilData);
 
             DetailBelanja::insert($detilData);
 
@@ -269,7 +239,7 @@ class A2Controller extends Controller
                 'detail_belanja.id_rinci_sub_bl',
                 'detail_belanja.volume',
                 'detail_belanja.harga_riil',
-                'detail_belanja.total'
+                'detail_belanja.total_dibayar'
             );
 
         $data = DB::table('rincian_rka as r')
@@ -305,7 +275,7 @@ class A2Controller extends Controller
                 'r.pptk_id',
                 'r.pokja_id',
                 DB::raw('COALESCE(SUM(d.volume), 0) as reg_sah_vol'),
-                DB::raw('COALESCE(SUM(d.total), 0) as reg_sah_nom')
+                DB::raw('COALESCE(SUM(d.total_dibayar), 0) as reg_sah_nom')
             )
             ->get()
             ->map(function ($row) {
@@ -532,9 +502,9 @@ class A2Controller extends Controller
                 'r.nama_skpd',
                 'r.pptk_id',
                 'r.pokja_id',
-                'd.volume',
+                // 'd.volume',
                 DB::raw('COALESCE(SUM(d.volume),0) as reg_sah_vol'),
-                DB::raw('COALESCE(SUM(d.total),0) as reg_sah_nom')
+                DB::raw('COALESCE(SUM(d.total_dibayar),0) as reg_sah_nom')
             )
             ->groupBy(
                 'r.id_rinci_sub_bl',
@@ -598,8 +568,16 @@ class A2Controller extends Controller
 
     public function destroy($id)
     {
-        Register::findOrFail($id)->delete();
-        DetailBelanja::where('id_reg',$id)->delete();
-        return redirect()->route('a2.index')->with('success', 'Data berhasil dihapus');
+        try {
+            $register = Register::findOrFail($id);
+            $register->detailBelanja()->delete();
+            $register->delete();
+
+            return redirect()->route('a2.index')
+                ->with('success', 'Data berhasil dihapus');
+
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Data gagal dihapus');
+        }
     }
 }

@@ -438,20 +438,16 @@
                                         <td class="border px-1 py-[2px] text-right">
                                             {{-- {{ number_format($row['reg_sah_vol'], 0, ',', '.') }} --}}
 
-                                            <input type="number"
-                name="riil[${i}][vol]"
+                                            <input type="number" name="riil[${i}][vol]"
                                                 value="{{ old('reg_sah_vol', $row['reg_sah_vol']) }}"
-        class="w-12 border text-[9px] p-0"
-                oninput="hitungRiilBaris(${i})">
+                                                class="w-12 border text-[9px] p-0" oninput="hitungRiilBaris(${i})">
                                         </td>
 
                                         <td class="border px-1 py-[2px] text-right">
-                                            <input type="text"
-                                                name="riil[${i}][harga]"
-                                                value="{{ old('reg_sah_vol', $row['reg_sah_vol']) }}"
-                                            class="w-16 border text-[9px] p-0 text-right"
-                                                oninput="hitungRiilBaris(${i})"
-                                                onfocus="unformatNumber(this)"
+                                            <input type="text" name="riil[${i}][harga]"
+                                                value="{{ old('reg_sah_nom', $row['reg_sah_nom']) }}"
+                                                class="w-16 border text-[9px] p-0 text-right"
+                                                oninput="hitungRiilBaris(${i})" onfocus="unformatNumber(this)"
                                                 onblur="formatNumber(this)">
                                         </td>
 
@@ -663,7 +659,7 @@
                 let kegiatan = document.getElementById('kegiatan').value;
                 let sub = document.getElementById('sub_kegiatan').value;
 
-                
+
                 if (!akun || !versi || !program || !kegiatan || !sub) {
                     document.getElementById('tabelRincian').innerHTML = '';
                     return;
@@ -686,7 +682,7 @@
                     .then(res => res.json())
                     .then(data => {
 
-    // console.log('HASIL DARI CONTROLLER:', data);
+                        // console.log('HASIL DARI CONTROLLER:', data);
 
                         let html = data.map((row, i) => `
     <tr>

@@ -23,7 +23,6 @@
         }
     </style>
 
-
     @section('content')
         <div class="min-h-screen overflow-hidden p-2 bg-slate-100" x-data="{ open: false }">
             @if ($errors->any())
@@ -38,6 +37,7 @@
 
             <form x-ref="formA2" id="form-a2" method="POST" action="{{ route('a2.store') }}" class="space-y-2" @submit.prevent="open = true">
                 @csrf
+                <input type="hidden" name = "ppn" value = "{{$ppn->tarif}}">
                 <div class="bg-blue-800 text-white px-4 py-1 rounded shadow-sm flex justify-between items-center">
                     <h1 class="text-xs font-bold uppercase tracking-wider">Register A2 - Bukti Pengeluaran Bidang Informatika
                         2025</h1>
@@ -371,7 +371,7 @@
                                         <th rowspan="2" class="px-[2px] py-[1px] border text-[9px]">Satuan</th>
                                         <th colspan="3" class="px-[2px] py-[1px] border text-[9px] bg-blue-700">Rincian
                                             Anggaran</th>
-                                        <th colspan="3" class="px-[2px] py-[1px] border text-[9px] bg-green-700">
+                                        <th colspan="4" class="px-[2px] py-[1px] border text-[9px] bg-green-700">
                                             Pengeluaran Riil</th>
                                         <th colspan="4" class="px-[2px] py-[1px] border text-[9px] bg-indigo-700">
                                             Informasi
@@ -386,6 +386,7 @@
                                         <!-- Riil -->
                                         <th class="px-1 py-[2px] border">Vol</th>
                                         <th class="px-1 py-[2px] border">Harga</th>
+                                        <th class="px-1 py-[2px] border">PPN</th>
                                         <th class="px-1 py-[2px] border">Nominal</th>
 
                                         <!-- Info -->
@@ -650,7 +651,12 @@
                 class="w-16 border text-[9px] p-0 text-right"
                 oninput="hitungRiilBaris(${i})"
                 onfocus="unformatNumber(this)"
-                onblur="formatNumber(this)">
+                onblur="formatNumber(this)"
+                id="harga_riil_${i}">
+        </td>
+        <td class="px-1 py-[2px] border">
+            <input type="checkbox" name="riil[${i}][ppn]" onclick="cekStatus(${i})" 
+                id="ppn_riil_${i}">
         </td>
         <td class="px-1 py-[2px] border text-right font-bold text-green-700">
             <input type="text"
@@ -707,9 +713,19 @@
 
             function hitungRiilBaris(i) {
                 const vol = Number(document.querySelector(`input[name="riil[${i}][vol]"]`)?.value || 0);
-                const harga = parseRupiah(
+                let harga = parseRupiah(
                     document.querySelector(`input[name="riil[${i}][harga]"]`)?.value || 0
                 );
+                
+                let ppn = {{$ppn->tarif}};
+                const cb = document.getElementById(`ppn_riil_${i}`); 
+
+                if (cb.checked) {
+                    console.log("Dicentang");
+                    harga = harga * (100 + ppn) / 100;
+                } else {
+                    console.log("Tidak dicentang");
+                }
 
                 const total = vol * harga;
 
@@ -998,6 +1014,32 @@
                 hitungNetto();
             }
 
+            function cekStatus(i){
+                let ppn = {{$ppn->tarif}};
+                const cb = document.getElementById(`ppn_riil_${i}`);    
+                const vol = Number(document.querySelector(`input[name="riil[${i}][vol]"]`)?.value || 0);
+                let harga = parseRupiah(
+                    document.querySelector(`input[name="riil[${i}][harga]"]`)?.value || 0
+                );
+
+    
+                if (cb.checked) {
+                    console.log("Dicentang");
+                    harga = harga * (100 + ppn) / 100;
+                } else {
+                    console.log("Tidak dicentang");
+                }
+
+                const total = vol * harga;
+
+                // document.getElementById(`harga_riil_${i}`).value =
+                //     harga > 0 ? formatRupiah(harga) : '';
+
+                document.getElementById(`nominal_riil_${i}`).value =
+                    total > 0 ? formatRupiah(total) : '';
+
+                hitungBruto();
+            }
 // document.getElementById('form-a2').addEventListener('submit', function (e) {
 //     e.preventDefault();
 

@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ open: false }" class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard.ringkasan') }}" class="text-xl font-bold text-gray-800">
-                        A2
+                        A<span class="text-gray-800">2</span>
                     </a>
                 </div>
 
@@ -17,7 +17,7 @@
                     <x-dropdown align="left" width="48">
                         <x-slot name="trigger">
                             <button
-                                class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700">
+                                class="inline-flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-100 transition duration-150">
                                 Dashboard
                                 <svg class="ml-1 h-4 w-4 fill-current" viewBox="0 0 20 20">
                                     <path d="M5.293 7.293L10 12l4.707-4.707" />
@@ -40,7 +40,7 @@
                     <x-dropdown align="left" width="48">
                         <x-slot name="trigger">
                             <button
-                                class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700">
+                                class="inline-flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-100 transition duration-150">
                                 Register
                                 <svg class="ml-1 h-4 w-4 fill-current" viewBox="0 0 20 20">
                                     <path d="M5.293 7.293L10 12l4.707-4.707" />
@@ -63,7 +63,7 @@
                     <x-dropdown align="left" width="48">
                         <x-slot name="trigger">
                             <button
-                                class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700">
+                                class="inline-flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-100 transition duration-150">
                                 Penerima
                                 <svg class="ml-1 h-4 w-4 fill-current" viewBox="0 0 20 20">
                                     <path d="M5.293 7.293L10 12l4.707-4.707" />
@@ -90,7 +90,7 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button
-                            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                            class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 transition duration-150">
                             <div>{{ Auth::user()->name }}</div>
 
                             <div class="ms-1">
@@ -123,7 +123,6 @@
                 </x-dropdown>
             </div>
 
-            <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open"
                     class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
