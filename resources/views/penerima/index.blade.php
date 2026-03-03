@@ -45,7 +45,7 @@
                     <td class="px-4 py-3 text-center space-x-2">
 
                         <a href="{{ route('penerima.edit', $item->id) }}"
-                           class="px-3 py-1 text-xs bg-indigo-600 text-white rounded-md hover:bg-emerald-600">
+                           class="px-3 py-1 text-xs bg-indigo-600 text-white rounded-md hover:bg-emerald-600 mb-2">
                             Edit
                         </a>
 

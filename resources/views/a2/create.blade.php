@@ -153,30 +153,6 @@
                             <input type="date" name="tanggal" class="input-compact w-full">
                             <textarea id="keperluan" name="keperluan" rows="1" placeholder="Keperluan Pembayaran" class="text-[10px]"></textarea>
                         </div>
-                        {{-- <p class="text-[10px] font-bold text-green-700 border-b mb-2 uppercase pt-3">Informasi Penerima</p>
-                        <div class="grid grid-cols-2 gap-1">
-                            <div class="col-span-2">
-                                <select name="penerima" id="penerima"
-                                    class="select-compact w-full bg-yellow-50 font-bold" onchange="isiDataPenerima()">
-                                    <option value="">--- PILIH PENERIMA ---</option>
-                                    @foreach ($penerima as $pn)
-                                        <option value="{{ $pn->id }}" data-npwp="{{ $pn->npwp }}"
-                                            data-bank="{{ $pn->bankpenerima }}" data-norek="{{ $pn->norek_penerima }}"
-                                            data-nama="{{ $pn->penerima }}" data-alamat="{{ $pn->alamat }}">
-                                            {{ $pn->penerima }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <input type="hidden" id="nama_penerima" name="nama_penerima">
-                            <input type="text" id="bank_penerima" name="bank_penerima" placeholder="Bank" readonly
-                                class="input-compact bg-slate-50">
-                            <input type="text" id="norek_penerima" name="norek_penerima" placeholder="No. Rekening"
-                                readonly class="input-compact bg-slate-50">
-                            <input type="text" id="npwp" name="npwp" placeholder="NPWP" readonly
-                                class="input-compact bg-slate-50">
-                            <input type="hidden" id="alamat_penerima" name="alamat_penerima">
-                        </div> --}}
                         <p class="text-[10px] font-bold text-green-700 border-b mb-2 uppercase pt-3">
     Informasi Penerima
 </p>
@@ -190,10 +166,9 @@
 
         <select name="penerima"
                 id="penerima"
-                class="select-compact w-full bg-yellow-50 font-bold"
+                class="w-full rounded-md border border-gray-300"
                 onchange="isiDataPenerima()">
-            <option value="">--- Pilih Penerima ---</option>
-
+            <option value=""></option>
             @foreach ($penerima as $pn)
                 <option value="{{ $pn->id }}"
                         data-npwp="{{ $pn->npwp }}"
@@ -438,6 +413,14 @@
 
     @push('scripts')
         <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                new TomSelect("#penerima", {
+                    create: false,
+                    allowEmptyOption: true,
+                    placeholder: "Cari penerima..."
+                });
+            });
+
             document.addEventListener('DOMContentLoaded', function() {
 
                 /* =========================
