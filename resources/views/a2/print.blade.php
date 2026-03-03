@@ -342,7 +342,7 @@
                     </tr>
                     <tr class="no-border">
                         <td class="no-border nowrap">{{ ($register->nom_pajak2 === null || $register->nom_pajak2 == 0)? '' : $register->jpajak_2 }}</td>
-                        <td class="no-border">{{ (($register->nom_pajak2 !== null || $register->nom_pajak2 == 0) && $register->jpajak_2 == 'PAD')? '' : ((($register->nom_pajak2 !== null || $register->nom_pajak2 <> 0) && $register->tpajak_2 !== null)?'Kode : '.$register->kd_pot2:'') }}</td>
+                        <td class="no-border">{{ (($register->nom_pajak2 !== null || $register->nom_pajak2 == 0) && $register->jpajak_2 == 'PAD')? '' : ((($register->nom_pajak2 !== null || $register->nom_pajak2 <> 0) && $register->jpajak_2 !== null)?'Kode : '.$register->kd_pot2:'') }}</td>
                         <td class="no-border colon right">{{ ($register->nom_pajak2 === null || $register->nom_pajak2 == 0)? '' : ':' }}</td>
                         <td class="no-border right">{{ ($register->nom_pajak2 === null || $register->nom_pajak2 == 0)? '' : 'Rp '.number_format($register->nom_pajak2, 2, ',', '.') }}</td>
                     </tr>
