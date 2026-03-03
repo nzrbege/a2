@@ -9,7 +9,7 @@
         </h1>
 
         <a href="{{ route('penerima.create') }}"
-           class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
+           class="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
             + Tambah
         </a>
     </div>
@@ -45,7 +45,7 @@
                     <td class="px-4 py-3 text-center space-x-2">
 
                         <a href="{{ route('penerima.edit', $item->id) }}"
-                           class="px-3 py-1 text-xs bg-emerald-600 text-white rounded-md hover:bg-emerald-600">
+                           class="px-3 py-1 text-xs bg-indigo-600 text-white rounded-md hover:bg-emerald-600">
                             Edit
                         </a>
 
