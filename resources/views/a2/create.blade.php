@@ -336,7 +336,7 @@
                     </div>
 
                     <div class="col-span-9 bg-white rounded border border-slate-300 shadow-sm">
-                        <div class="max-h-[160px] overflow-y-auto overflow-x-auto scrollbar-thin">
+                        <div class="overflow-x-auto">
                             <table class="w-full table-compact leading-tight">
                                 <thead class="bg-slate-800 text-white sticky top-0">
                                     <tr>
