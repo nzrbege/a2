@@ -25,7 +25,7 @@
 
 
 @section('content')
-    <div class="min-h-screen overflow-hidden p-2 bg-slate-100">
+    <div class="min-h-screen overflow-hidden p-2 bg-slate-100" x-data="{ open: false }">
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
@@ -36,7 +36,7 @@
             </div>
         @endif
 
-        <form id="form-a2" method="POST" action="{{ route('a2.update', $register->id_reg) }}" class="space-y-2">
+        <form x-ref="formA2" id="form-a2" method="POST" action="{{ route('a2.update', $register->id_reg) }}" class="space-y-2">
             @csrf
             @method('PUT')
             <div class="bg-blue-800 text-white px-4 py-1 rounded shadow-sm flex justify-between items-center">
@@ -47,11 +47,6 @@
                     <button type="submit" id="btn-save"
                         class="bg-white text-blue-800 px-3 py-1 rounded text-[10px] font-bold hover:bg-blue-50 transition-all">SIMPAN
                         DATA</button>
-                    {{-- <button type="button" disabled title="Simpan data terlebih dahulu"
-                            class="bg-gray-400 text-white px-3 py-1 rounded text-[10px] font-bold cursor-not-allowed">
-                            CETAK DOKUMEN
-                        </button> --}}
-
                 </div>
             </div>
 
@@ -209,10 +204,9 @@
                                 Nama Penerima
                             </label>
 
-                            <select name="penerima" id="penerima" class="select-compact w-full bg-yellow-50 font-bold"
+                            <select name="penerima" id="penerima" class="w-full rounded-md border border-gray-300"
                                 onchange="isiDataPenerima()">
-
-                                <option value="">--- Pilih Penerima ---</option>
+                                <option value=""></option>
 
                                 @foreach ($penerima as $pn)
                                     <option value="{{ $pn->penerima }}" data-npwp="{{ $pn->npwp }}"
@@ -343,7 +337,7 @@
 
             <div class="grid grid-cols-12 gap-2">
                 <div
-                    class="col-span-3 bg-blue-50 p-2 rounded border border-blue-200 shadow-sm flex flex-col justify-between">
+                    class="col-span-3 bg-blue-50 p-2 rounded border border-blue-200 shadow-sm">
                     <div>
                         <p class="text-[10px] font-bold text-blue-800 border-b border-blue-200 mb-1 uppercase">Total
                             Dibayarkan</p>
@@ -364,14 +358,14 @@
                                     class="w-24 text-right bg-transparent border-none p-0 text-sm font-black">
                             </div>
                         </div>
+                        <textarea id="terbilang" rows="2" readonly name="netto_terbilang"
+                            class="mt-2 w-full text-[9px] bg-white italic px-1 py-[2px] border rounded text-slate-600 leading-tight"
+                            placeholder="Terbilang..."></textarea>
                     </div>
-                    <textarea id="terbilang" rows="2" readonly name="netto_terbilang"
-                        class="mt-2 w-full text-[9px] bg-white italic px-1 py-[2px] border rounded text-slate-600 leading-tight"
-                        placeholder="Terbilang..."></textarea>
                 </div>
 
                 <div class="col-span-9 bg-white rounded border border-slate-300 shadow-sm">
-                    <div class="max-h-[160px] overflow-y-auto overflow-x-auto scrollbar-thin">
+                    <div class="overflow-x-auto">
                         <table class="w-full table-compact leading-tight">
                             <thead class="bg-slate-800 text-white sticky top-0">
                                 <tr>
@@ -396,6 +390,7 @@
                                     <!-- Riil -->
                                     <th class="px-1 py-[2px] border">Vol</th>
                                     <th class="px-1 py-[2px] border">Harga</th>
+                                    <th class="px-1 py-[2px] border">PPN</th>
                                     <th class="px-1 py-[2px] border">Nominal</th>
 
                                     <!-- Info -->
@@ -487,11 +482,46 @@
             <input type="hidden" id="hasilPph" name="hasilPph">
             <div class="grid grid-cols-12 gap-2 mt-2">
         </form>
+        <!-- Modal -->
+        <div x-show="open" x-transition @click.self="open = false" style="display:none"
+            class="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+
+            <div class="bg-white rounded-xl shadow-2xl border border-gray-200 w-96 p-6">
+
+                <h2 class="text-lg font-semibold mb-4">Konfirmasi</h2>
+
+                <p class="text-gray-600">Yakin ingin menyimpan data?</p>
+
+                <div class="flex justify-end gap-2 mt-6">
+
+                    <button type="button"
+                            @click="open = false"
+                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg">
+                        Batal
+                    </button>
+
+                    <button type="button"
+                            @click="$refs.formA2.submit()"
+                            class="px-4 py-2 bg-indigo-700 hover:bg-blue-700 text-white rounded-lg shadow">
+                        Ya, Simpan
+                    </button>
+
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
 @push('scripts')
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+                new TomSelect("#penerima", {
+                    create: false,
+                    allowEmptyOption: true,
+                    placeholder: "Cari penerima..."
+                });
+            });
+
         document.addEventListener('DOMContentLoaded', function() {
 
             /* =========================

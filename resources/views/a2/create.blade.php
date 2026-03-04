@@ -35,20 +35,18 @@
                 </div>
             @endif
 
-            <form x-ref="formA2" id="form-a2" method="POST" action="{{ route('a2.store') }}" class="space-y-2" @submit.prevent="open = true">
+            <form x-ref="formA2" id="form-a2" method="POST" action="{{ route('a2.store') }}" class="space-y-2"
+                @submit.prevent="open = true">
                 @csrf
-                <input type="hidden" name = "ppn" value = "{{$ppn->tarif}}">
+                <input type="hidden" name = "ppn" value = "{{ $ppn->tarif }}">
                 <div class="bg-blue-800 text-white px-4 py-1 rounded shadow-sm flex justify-between items-center">
-                    <h1 class="text-xs font-bold uppercase tracking-wider">Register A2 - Bukti Pengeluaran Bidang Informatika
+                    <h1 class="text-xs font-bold uppercase tracking-wider">Register A2 - Bukti Pengeluaran Bidang
+                        Informatika
                         2025</h1>
                     <div class="flex gap-2">
                         <button type="submit" id="btn-save"
                             class="bg-white text-blue-800 px-3 py-1 rounded text-[10px] font-bold hover:bg-blue-50 transition-all">SIMPAN
                             DATA</button>
-                        {{-- <button type="button" disabled title="Simpan data terlebih dahulu"
-                            class="bg-gray-400 text-white px-3 py-1 rounded text-[10px] font-bold cursor-not-allowed">
-                            CETAK DOKUMEN
-                        </button> --}}
                     </div>
                 </div>
 
@@ -154,66 +152,52 @@
                             <textarea id="keperluan" name="keperluan" rows="1" placeholder="Keperluan Pembayaran" class="text-[10px]"></textarea>
                         </div>
                         <p class="text-[10px] font-bold text-green-700 border-b mb-2 uppercase pt-3">
-    Informasi Penerima
-</p>
+                            Informasi Penerima
+                        </p>
 
-<div class="grid grid-cols-2 gap-1 text-[10px]">
+                        <div class="grid grid-cols-2 gap-1 text-[10px]">
 
-    <div class="col-span-2">
-        <label class="block font-semibold text-slate-600">
-            Nama Penerima
-        </label>
+                            <div class="col-span-2">
+                                <label class="block font-semibold text-slate-600">
+                                    Nama Penerima
+                                </label>
 
-        <select name="penerima"
-                id="penerima"
-                class="w-full rounded-md border border-gray-300"
-                onchange="isiDataPenerima()">
-            <option value=""></option>
-            @foreach ($penerima as $pn)
-                <option value="{{ $pn->id }}"
-                        data-npwp="{{ $pn->npwp }}"
-                        data-bank="{{ $pn->bankpenerima }}"
-                        data-norek="{{ $pn->norek_penerima }}"
-                        data-nama="{{ $pn->penerima }}"
-                        data-alamat="{{ $pn->alamat }}">
-                    {{ $pn->penerima }}
-                </option>
-            @endforeach
-        </select>
-    </div>
+                                <select name="penerima" id="penerima" class="w-full rounded-md border border-gray-300"
+                                    onchange="isiDataPenerima()">
+                                    <option value=""></option>
+                                    @foreach ($penerima as $pn)
+                                        <option value="{{ $pn->id }}" data-npwp="{{ $pn->npwp }}"
+                                            data-bank="{{ $pn->bankpenerima }}" data-norek="{{ $pn->norek_penerima }}"
+                                            data-nama="{{ $pn->penerima }}" data-alamat="{{ $pn->alamat }}">
+                                            {{ $pn->penerima }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
 
-    <input type="hidden" id="nama_penerima" name="nama_penerima">
+                            <input type="hidden" id="nama_penerima" name="nama_penerima">
 
-    <div>
-        <label class="block font-semibold text-slate-600">Bank</label>
-        <input type="text"
-               id="bank_penerima"
-               name="bank_penerima"
-               {{-- readonly --}}
-               class="input-compact bg-slate-50 w-full">
-    </div>
+                            <div>
+                                <label class="block font-semibold text-slate-600">Bank</label>
+                                <input type="text" id="bank_penerima" name="bank_penerima" {{-- readonly --}}
+                                    class="input-compact bg-slate-50 w-full">
+                            </div>
 
-    <div>
-        <label class="block font-semibold text-slate-600">No. Rekening/ Kode Bayar</label>
-        <input type="text"
-               id="norek_penerima"
-               name="norek_penerima"
-               {{-- readonly --}}
-               class="input-compact bg-slate-50 w-full">
-    </div>
+                            <div>
+                                <label class="block font-semibold text-slate-600">No. Rekening/ Kode Bayar</label>
+                                <input type="text" id="norek_penerima" name="norek_penerima" {{-- readonly --}}
+                                    class="input-compact bg-slate-50 w-full">
+                            </div>
 
-    <div class="col-span-2">
-        <label class="block font-semibold text-slate-600">NPWP</label>
-        <input type="text"
-               id="npwp"
-               name="npwp"
-               {{-- readonly --}}
-               class="input-compact bg-slate-50 w-full">
-    </div>
+                            <div class="col-span-2">
+                                <label class="block font-semibold text-slate-600">NPWP</label>
+                                <input type="text" id="npwp" name="npwp" {{-- readonly --}}
+                                    class="input-compact bg-slate-50 w-full">
+                            </div>
 
-    <input type="hidden" id="alamat_penerima" name="alamat_penerima">
+                            <input type="hidden" id="alamat_penerima" name="alamat_penerima">
 
-</div>
+                        </div>
 
                     </div>
 
@@ -273,10 +257,12 @@
                                 <!-- BARIS PERTAMA -->
                                 <tr class="pajak-row">
                                     <td class="border px-1 py-[2px]">
-                                        <select name="pajak[kode][]" class="w-full text-[9px]" onchange="hitungPajakBaris(this)">
+                                        <select name="pajak[kode][]" class="w-full text-[9px]"
+                                            onchange="hitungPajakBaris(this)">
                                             <option value="">-- Pilih Pajak --</option>
                                             @foreach ($dpp as $p)
-                                                <option value="{{ $p->kode_potongan }}" data-jenis="{{ $p->jenis_pajak }}">
+                                                <option value="{{ $p->kode_potongan }}"
+                                                    data-jenis="{{ $p->jenis_pajak }}">
                                                     {{ $p->jenis_potongan }}
                                                 </option>
                                             @endforeach
@@ -306,8 +292,7 @@
                 </div>
 
                 <div class="grid grid-cols-12 gap-2">
-                    <div
-                        class="col-span-3 bg-blue-50 p-2 rounded border border-blue-200 shadow-sm flex flex-col justify-between">
+                    <div class="col-span-3 bg-blue-50 p-2 rounded border border-blue-200 shadow-sm">
                         <div>
                             <p class="text-[10px] font-bold text-blue-800 border-b border-blue-200 mb-1 uppercase">Total
                                 Dibayarkan</p>
@@ -328,11 +313,11 @@
                                         class="w-24 text-right bg-transparent border-none p-0 text-sm font-black">
                                 </div>
                             </div>
+                            <textarea id="terbilang" rows="2" readonly name="netto_terbilang"
+                                class="mt-2 w-full text-[9px] bg-white italic px-1 py-[2px] border rounded text-slate-600 leading-tight"
+                                placeholder="Terbilang..."></textarea>
+                            <input type="hidden" name="bruto_terbilang" id="bruto_terbilang">
                         </div>
-                        <textarea id="terbilang" rows="2" readonly name="netto_terbilang"
-                            class="mt-2 w-full text-[9px] bg-white italic px-1 py-[2px] border rounded text-slate-600 leading-tight"
-                            placeholder="Terbilang..."></textarea>
-                        <input type="hidden" name="bruto_terbilang" id="bruto_terbilang">
                     </div>
 
                     <div class="col-span-9 bg-white rounded border border-slate-300 shadow-sm">
@@ -393,15 +378,13 @@
 
                     <div class="flex justify-end gap-2 mt-6">
 
-                        <button type="button"
-                                @click="open = false"
-                                class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg">
+                        <button type="button" @click="open = false"
+                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg">
                             Batal
                         </button>
 
-                        <button type="button"
-                                @click="$refs.formA2.submit()"
-                                class="px-4 py-2 bg-indigo-700 hover:bg-blue-700 text-white rounded-lg shadow">
+                        <button type="button" @click="$refs.formA2.submit()"
+                            class="px-4 py-2 bg-indigo-700 hover:bg-blue-700 text-white rounded-lg shadow">
                             Ya, Simpan
                         </button>
 
@@ -452,7 +435,10 @@
                     if (!versi) return;
 
                     fetch(`/a2/program-by-dpa/${versi}`)
-                        .then(res => res.json())
+                        .then(res => {
+                            if (!res.ok) throw new Error('Server error');
+                            return res.json()
+                        })
                         .then(data => {
                             let program = document.getElementById('program');
                             program.innerHTML = `<option value="">-- Pilih Program --</option>`;
@@ -464,6 +450,10 @@
                                 opt.textContent = p.nama_program;
                                 program.appendChild(opt);
                             });
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            alert('Gagal memuat data');
                         });
                 });
 
@@ -485,7 +475,10 @@
                     if (!programId) return;
 
                     fetch(`/a2/kegiatan-by-program/${programId}`)
-                        .then(res => res.json())
+                        .then(res => {
+                            if (!res.ok) throw new Error('Server error');
+                            return res.json()
+                        })
                         .then(data => {
                             let kegiatan = document.getElementById('kegiatan');
                             kegiatan.innerHTML = `<option value="">-- Pilih Kegiatan --</option>`;
@@ -497,6 +490,10 @@
                                 opt.textContent = k.nama_giat;
                                 kegiatan.appendChild(opt);
                             });
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            alert('Gagal memuat data');
                         });
                 });
 
@@ -517,7 +514,10 @@
                     if (!kegiatanId) return;
 
                     fetch(`/a2/subkegiatan-by-kegiatan/${kegiatanId}`)
-                        .then(res => res.json())
+                        .then(res => {
+                            if (!res.ok) throw new Error('Server error');
+                            return res.json()
+                        })
                         .then(data => {
                             let sub = document.getElementById('sub_kegiatan');
                             sub.innerHTML = `<option value="">-- Pilih Sub Kegiatan --</option>`;
@@ -529,6 +529,10 @@
                                 opt.textContent = s.nama_sub_giat;
                                 sub.appendChild(opt);
                             });
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            alert('Gagal memuat data');
                         });
                 });
 
@@ -548,7 +552,10 @@
                     if (!sub) return;
 
                     fetch(`/a2/akun-by-subkegiatan/${sub}`)
-                        .then(res => res.json())
+                        .then(res => {
+                            if (!res.ok) throw new Error('Server error');
+                            return res.json()
+                        })
                         .then(data => {
                             let akun = document.getElementById('akun_rekening');
                             akun.innerHTML = `<option value="">-- Pilih Akun --</option>`;
@@ -560,6 +567,10 @@
                                 opt.textContent = `${a.kode_akun} - ${a.nama_akun}`;
                                 akun.appendChild(opt);
                             });
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            alert('Gagal memuat data');
                         });
                 });
 
@@ -604,7 +615,10 @@
                                 akun
                             })
                         })
-                        .then(res => res.json())
+                        .then(res => {
+                            if (!res.ok) throw new Error('Server error');
+                            return res.json()
+                        })
                         .then(data => {
                             let html = data.map((row, i) => `
     <tr>
@@ -672,6 +686,10 @@
 
 
                             document.getElementById('tabelRincian').innerHTML = html;
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            alert('Gagal memuat data');
                         });
                 });
 
@@ -699,9 +717,9 @@
                 let harga = parseRupiah(
                     document.querySelector(`input[name="riil[${i}][harga]"]`)?.value || 0
                 );
-                
-                let ppn = {{$ppn->tarif}};
-                const cb = document.getElementById(`ppn_riil_${i}`); 
+
+                let ppn = {{ $ppn->tarif }};
+                const cb = document.getElementById(`ppn_riil_${i}`);
 
                 if (cb.checked) {
                     console.log("Dicentang");
@@ -733,11 +751,6 @@
                     maximumFractionDigits: 2
                 });
             }
-
-            // function formatNumber(el) {
-            //     if (!el.value) return;
-            //     el.value = parseInt(el.value.replace(/\D/g, '')).toLocaleString('id-ID');
-            // }
 
             /* =========================
             FORMAT & PARSE RUPIAH
@@ -997,15 +1010,15 @@
                 hitungNetto();
             }
 
-            function cekStatus(i){
-                let ppn = {{$ppn->tarif}};
-                const cb = document.getElementById(`ppn_riil_${i}`);    
+            function cekStatus(i) {
+                let ppn = {{ $ppn->tarif }};
+                const cb = document.getElementById(`ppn_riil_${i}`);
                 const vol = Number(document.querySelector(`input[name="riil[${i}][vol]"]`)?.value || 0);
                 let harga = parseRupiah(
                     document.querySelector(`input[name="riil[${i}][harga]"]`)?.value || 0
                 );
 
-    
+
                 if (cb.checked) {
                     console.log("Dicentang");
                     harga = harga * (100 + ppn) / 100;
@@ -1015,36 +1028,10 @@
 
                 const total = vol * harga;
 
-                // document.getElementById(`harga_riil_${i}`).value =
-                //     harga > 0 ? formatRupiah(harga) : '';
-
                 document.getElementById(`nominal_riil_${i}`).value =
                     total > 0 ? formatRupiah(total) : '';
 
                 hitungBruto();
             }
-// document.getElementById('form-a2').addEventListener('submit', function (e) {
-//     e.preventDefault();
-
-//     const bruto = document.getElementById('bruto').value || 0;
-//     const pajak = document.getElementById('pajakPotong').value || 0;
-//     const netto = document.getElementById('netto').value || 0;
-
-//     // Isi nilai ke modal
-//     document.getElementById('modalBruto').innerText = bruto;
-//     document.getElementById('modalPajak').innerText = pajak;
-//     document.getElementById('modalNetto').innerText = netto;
-
-//     // Tampilkan modal
-//     const modal = new bootstrap.Modal(document.getElementById('modalKonfirmasi'));
-//     modal.show();
-
-//     // Saat klik tombol simpan di modal
-//     document.getElementById('btnConfirmSave').onclick = function () {
-//         document.getElementById('btn-save').disabled = true;
-//         document.getElementById('btn-save').innerText = 'Menyimpan...';
-//         e.target.submit();
-//     };
-// });
         </script>
     @endpush
