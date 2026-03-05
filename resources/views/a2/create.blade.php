@@ -782,72 +782,72 @@
                 hitungNetto(); // lanjut ke netto
             }
 
-            // function hitungPajak() {
-            //     const kode = document.getElementById('dpp_select')?.value;
+            function hitungPajak() {
+                const kode = document.getElementById('dpp_select')?.value;
 
-            //     if (!kode) {
-            //         document.getElementById('pph_nominal').innerText = 0;
-            //         document.getElementById('pph_kode').innerText = '-';
-            //         document.getElementById('pajakPotong').value = 0;
-            //         hitungNetto();
-            //         return;
-            //     }
+                if (!kode) {
+                    document.getElementById('pph_nominal').innerText = 0;
+                    document.getElementById('pph_kode').innerText = '-';
+                    document.getElementById('pajakPotong').value = 0;
+                    hitungNetto();
+                    return;
+                }
 
-            //     const bruto = parseRupiah(document.getElementById('bruto').value);
+                const bruto = parseRupiah(document.getElementById('bruto').value);
 
-            //     // Pajak manual golongan
-            //     const iv = (Number(vol_iv.value) || 0) * (Number(besaran_iv.value) || 0) * 0.15;
-            //     const iii = (Number(vol_iii.value) || 0) * (Number(besaran_iii.value) || 0) * 0.05;
-            //     const lain = (Number(vol_lain.value) || 0) * (Number(besaran_lain.value) || 0) * 0.06;
+                // Pajak manual golongan
+                const iv = (Number(vol_iv.value) || 0) * (Number(besaran_iv.value) || 0) * 0.15;
+                const iii = (Number(vol_iii.value) || 0) * (Number(besaran_iii.value) || 0) * 0.05;
+                const lain = (Number(vol_lain.value) || 0) * (Number(besaran_lain.value) || 0) * 0.06;
 
-            //     pajak_iv.innerText = iv ? formatRupiah(iv) : 0;
-            //     pajak_iii.innerText = iii ? formatRupiah(iii) : 0;
-            //     pajak_lain.innerText = lain ? formatRupiah(lain) : 0;
+                pajak_iv.innerText = iv ? formatRupiah(iv) : 0;
+                pajak_iii.innerText = iii ? formatRupiah(iii) : 0;
+                pajak_lain.innerText = lain ? formatRupiah(lain) : 0;
 
-            //     let nominal = 0;
-            //     const dpp = (100 / 111) * bruto;
+                let nominal = 0;
+                const dpp = (100 / 111) * bruto;
 
-            //     switch (kode) {
+                switch (kode) {
 
-            //         case '411121-402':
-            //             nominal = iv + iii + lain;
-            //             break;
+                    case '411121-402':
+                        nominal = iv + iii + lain;
+                        break;
 
-            //         case '411121-21-100-20':
-            //             nominal = 0.05 * dpp;
-            //             break;
+                    case '411121-21-100-20':
+                        nominal = 0.05 * dpp;
+                        break;
 
-            //         case '411122-920':
-            //             nominal = 0.015 * dpp;
-            //             break;
+                    case '411122-920':
+                        nominal = 0.015 * dpp;
+                        break;
 
-            //         case '411124-100':
-            //         case '411124-104':
-            //             nominal = 0.02 * dpp;
-            //             break;
+                    case '411124-100':
+                    case '411124-104':
+                        nominal = 0.02 * dpp;
+                        break;
 
-            //         case '411211-920':
-            //             nominal = 0.12 * (11 / 12 * dpp);
-            //             break;
+                    case '411211-920':
+                        nominal = 0.12 * (11 / 12 * dpp);
+                        break;
 
-            //         case '999999-100':
-            //             nominal = 0.10 * bruto;
-            //             break;
+                    case '999999-100':
+                        nominal = 0.10 * bruto;
+                        break;
 
-            //         default:
-            //             nominal = 0;
-            //     }
+                    default:
+                        nominal = 0;
+                }
 
-            //     nominal = Math.round(nominal);
+                nominal = Math.round(nominal);
 
-            //     document.getElementById('pph_nominal').innerText =
-            //         nominal ? formatRupiah(nominal) : 0;
+                document.getElementById('pph_nominal').innerText =
+                    nominal ? formatRupiah(nominal) : 0;
 
-            //     document.getElementById('pph_kode').innerText = kode;
-            //     document.getElementById('pajakPotong').value = nominal;
+                document.getElementById('pph_kode').innerText = kode;
+                document.getElementById('pajakPotong').value = nominal;
 
-            //     hitungNetto();
-            // }
+                hitungNetto();
+            }
 
             function hitungNetto() {
                 const bruto = parseRupiah(document.getElementById('bruto').value);
@@ -863,7 +863,7 @@
             }
 
             function terbilangInt(n) {
-                n = Math.round(n);
+                n = Math.floor(n);
 
                 const angka = ["", "Satu", "Dua", "Tiga", "Empat", "Lima",
                     "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"
@@ -871,12 +871,12 @@
 
                 if (n < 12) return angka[n];
                 if (n < 20) return terbilangInt(n - 10) + " Belas";
-                if (n < 100) return terbilangInt(Math.round(n / 10)) + " Puluh " + terbilangInt(n % 10);
+                if (n < 100) return terbilangInt(Math.floor(n / 10)) + " Puluh " + terbilangInt(n % 10);
                 if (n < 200) return "Seratus " + terbilangInt(n - 100);
-                if (n < 1000) return terbilangInt(Math.round(n / 100)) + " Ratus " + terbilangInt(n % 100);
+                if (n < 1000) return terbilangInt(Math.floor(n / 100)) + " Ratus " + terbilangInt(n % 100);
                 if (n < 2000) return "Seribu " + terbilangInt(n - 1000);
-                if (n < 1000000) return terbilangInt(Math.round(n / 1000)) + " Ribu " + terbilangInt(n % 1000);
-                if (n < 1000000000) return terbilangInt(Math.round(n / 1000000)) + " Juta " + terbilangInt(n % 1000000);
+                if (n < 1000000) return terbilangInt(Math.floor(n / 1000)) + " Ribu " + terbilangInt(n % 1000);
+                if (n < 1000000000) return terbilangInt(Math.floor(n / 1000000)) + " Juta " + terbilangInt(n % 1000000);
 
                 return "";
             }
@@ -886,7 +886,7 @@
 
                 if (isNaN(n)) return "";
 
-                const rupiah = Math.round(n);
+                const rupiah = Math.floor(n);
                 const sen = Math.round((n - rupiah) * 100);
 
                 let hasil = terbilangInt(rupiah);
@@ -951,7 +951,7 @@
                 row.querySelector('input[name="pajak[jenis][]"]').value = jenisPajak;
 
                 const bruto = parseRupiah(document.getElementById('bruto')?.value || 0);
-                const dpp = (100 / 111) * bruto);
+                const dpp = (100 / 111) * bruto;
 
                 let nominal = 0;
 
@@ -990,7 +990,7 @@
 
                 nominal = Math.round(nominal);
 
-                row.querySelector('input[name="pajak[nominal][]"]').value = nominal;
+                row.querySelector('input[name="pajak[nominal][]"]').value = formatRupiah(nominal);
 
                 const kodeCell = row.querySelector('.kode-pajak');
                 if (kodeCell) kodeCell.innerText = kode || '-';
@@ -1006,7 +1006,7 @@
                     total += parseRupiah(el.value || 0);
                 });
 
-                document.getElementById('pajakPotong').value = total;
+                document.getElementById('pajakPotong').value = formatRupiah(total);
                 hitungNetto();
             }
 
