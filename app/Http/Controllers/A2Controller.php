@@ -142,11 +142,11 @@ class A2Controller extends Controller
                 'jpajak_1'   => $jenis[0]   ?? null,
                 'kd_pot1'    => $kode[0]    ?? null,
                 'id_bill1'   => '',
-                'nom_pajak1' => $nominal[0] ?? 0,
+                'nom_pajak1' => (int) str_replace('.', '', $nominal[0]) ?? 0,
                 'jpajak_2'   => $jenis[1]   ?? null,
                 'kd_pot2'    => $kode[1]    ?? null,
                 'id_bill2'   => '',
-                'nom_pajak2' => $nominal[1] ?? 0,
+                'nom_pajak2' => (int) str_replace('.', '', $nominal[1]) ?? 0,
             ]);
 
             // ================= DETAIL RIIL =================
