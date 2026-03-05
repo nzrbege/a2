@@ -805,7 +805,7 @@
                 pajak_lain.innerText = lain ? formatRupiah(lain) : 0;
 
                 let nominal = 0;
-                const dpp = Math.ceil((100 / 111) * bruto);
+                const dpp = Math.floor((100 / 111) * bruto);
 
                 switch (kode) {
 
@@ -838,7 +838,7 @@
                         nominal = 0;
                 }
 
-                nominal = Math.ceil(nominal);
+                nominal = Math.floor(nominal);
 
                 document.getElementById('pph_nominal').innerText =
                     nominal ? formatRupiah(nominal) : 0;
@@ -951,7 +951,7 @@
                 row.querySelector('input[name="pajak[jenis][]"]').value = jenisPajak;
 
                 const bruto = parseRupiah(document.getElementById('bruto')?.value || 0);
-                const dpp = Math.ceil((100 / 111) * bruto);
+                const dpp = Math.floor((100 / 111) * bruto);
 
                 let nominal = 0;
 
@@ -988,7 +988,7 @@
                         nominal = 0;
                 }
 
-                nominal = Math.ceil(nominal);
+                nominal = Math.floor(nominal);
 
                 row.querySelector('input[name="pajak[nominal][]"]').value = nominal;
 

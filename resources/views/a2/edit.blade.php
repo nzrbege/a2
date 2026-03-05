@@ -339,12 +339,12 @@
                 <div
                     class="col-span-3 bg-blue-50 p-2 rounded border border-blue-200 shadow-sm">
                     <div>
-                        <p class="text-[10px] font-bold text-blue-800 border-b border-blue-200 mb-1 uppercase">Total
-                            Dibayarkan</p>
+                        <p class="text-[10px] font-bold text-blue-800 border-b border-blue-200 mb-1 uppercase">Total Dibayarkan</p>
                         <div class="space-y-1">
                             <div class="flex justify-between items-center">
                                 <span class="text-[9px] text-slate-500">BRUTO:</span>
                                 <input type="text" id="bruto" name="bruto" readonly
+                                    value="{{ old('nom_bruto', $register->norek_penerima) }}"
                                     class="w-24 text-right bg-transparent border-none p-0 text-[11px] font-bold">
                             </div>
                             <div class="flex justify-between items-center text-red-600">
@@ -515,11 +515,17 @@
 @push('scripts')
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-                new TomSelect("#penerima", {
-                    create: false,
-                    allowEmptyOption: true,
-                    placeholder: "Cari penerima..."
-                });
+                const ts = new TomSelect("#penerima", {
+                create: false,
+                allowEmptyOption: true,
+                placeholder: "Cari penerima..."
+            });
+
+            const selectedValue = @json(old('penerima', $register->nama_penerima));
+
+            if (selectedValue) {
+                ts.setValue(selectedValue);
+            }
             });
 
         document.addEventListener('DOMContentLoaded', function() {
