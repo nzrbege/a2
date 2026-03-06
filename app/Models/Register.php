@@ -47,7 +47,7 @@ class Register extends Model
         'kd_pot1',
         'id_bill1',
         'nom_pajak1',
-        'jpajak2',
+        'jpajak_2',
         'kd_pot2',
         'id_bill2',
         'nom_pajak2',

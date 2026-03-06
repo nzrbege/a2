@@ -40,9 +40,7 @@
                 @csrf
                 <input type="hidden" name = "ppn" value = "{{ $ppn->tarif }}">
                 <div class="bg-blue-800 text-white px-4 py-1 rounded shadow-sm flex justify-between items-center">
-                    <h1 class="text-xs font-bold uppercase tracking-wider">Register A2 - Bukti Pengeluaran Bidang
-                        Informatika
-                        2025</h1>
+                    <h1 class="text-xs font-bold uppercase tracking-wider">Register A2 - Bukti Pengeluaran Bidang Informatika {{ date('Y') }}</h1>
                     <div class="flex gap-2">
                         <button type="submit" id="btn-save"
                             class="bg-white text-blue-800 px-3 py-1 rounded text-[10px] font-bold hover:bg-blue-50 transition-all">SIMPAN
@@ -927,11 +925,11 @@
                 if (kodeCell) kodeCell.innerText = '-';
 
                 clone.querySelector('button').outerHTML = `
-        <button type="button"
-            onclick="hapusPajak(this)"
-            class="bg-red-600 text-white px-2 py-1 rounded text-[9px]">
-            -
-        </button>`;
+                    <button type="button"
+                        onclick="hapusPajak(this)"
+                        class="bg-red-600 text-white px-2 py-1 rounded text-[9px]">
+                        -
+                    </button>`;
 
                 body.appendChild(clone);
             }

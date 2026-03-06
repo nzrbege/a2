@@ -88,7 +88,7 @@ class A2Controller extends Controller
             $nomorUrut = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
             $tahun = now()->year;
             $jenis = ($request->tata_usaha == 'LS' ? 'LS/' : '') . $request->transaksi;
-            $sdana = $riilValid['kode_dana'] == '1.1.01' ? 'PAD': ($riilValid['kode_dana'] == '1.2.01.08' ? 'DAU' : ($riilValid['kode_dana'] == '1.4.01' ? 'SILPA' : ($riilValid['kode_dana'] == '2.2.01.07.01.0004' ? 'DBHCHT' : "")));
+            $sdana = $riilValid['kode_dana'] == '1.1.01' ? 'PAD' : ($riilValid['kode_dana'] == '1.2.01.08' ? 'DAU' : ($riilValid['kode_dana'] == '1.4.01' ? 'SILPA' : ($riilValid['kode_dana'] == '2.2.01.07.01.0004' ? 'DBHCHT' : "")));
 
             $nomorSurat = "{$nomorUrut}/BP/{$jenis}/$sdana/{$request->sub_kegiatan}/DISKOMINFO/{$tahun}";
 
@@ -100,7 +100,7 @@ class A2Controller extends Controller
 
             $kode   = $pajak['kode']    ?? [];
             $jenis  = $pajak['jenis']   ?? [];
-            $nominal= $pajak['nominal'] ?? [];
+            $nominal = $pajak['nominal'] ?? [];
 
             // ================= HEADER =================
             $register = Register::create([
@@ -142,11 +142,11 @@ class A2Controller extends Controller
                 'jpajak_1'   => $jenis[0]   ?? null,
                 'kd_pot1'    => $kode[0]    ?? null,
                 'id_bill1'   => '',
-                'nom_pajak1' => (int) str_replace('.', '', $nominal[0]) ?? 0,
+                'nom_pajak1' => (int) str_replace('.', '', $nominal[0] ?? 0),
                 'jpajak_2'   => $jenis[1]   ?? null,
                 'kd_pot2'    => $kode[1]    ?? null,
                 'id_bill2'   => '',
-                'nom_pajak2' => (int) str_replace('.', '', $nominal[1]) ?? 0,
+                'nom_pajak2' => (int) str_replace('.', '', $nominal[1] ?? 0),
             ]);
 
             // ================= DETAIL RIIL =================
@@ -163,13 +163,10 @@ class A2Controller extends Controller
 
                 $total_dpp = $vol * $harga;
 
-                $ppn = 0;
-                if (!empty($row['ppn'])) {
-                    $ppn = $vol * $harga * $request->ppn / 100;
-                }
+                $ppn = ($row['ppn'] ?? false)? $vol * $harga * $request->ppn / 100: 0;
 
                 $total_dibayar = $total_dpp + $ppn;
-                
+
                 $detilData[] = [
                     'id_reg'           => $register->id_reg,
                     'no_reg'           => $register->gen_no_reg,
@@ -222,12 +219,12 @@ class A2Controller extends Controller
 
         // dd($register->nom_pajak1);
 
-        return view('a2.print', compact('register','nomorsurat'));
+        return view('a2.print', compact('register', 'nomorsurat'));
     }
 
     public function filterRincian(Request $request)
     {
-        $versipilihan = VersiAnggaran::where('nomor_anggaran',$request->versi)->value('id_versi_anggaran');
+        $versipilihan = VersiAnggaran::where('nomor_anggaran', $request->versi)->value('id_versi_anggaran');
 
         $subQuery = DB::table('register')
             ->join('detail_belanja', 'register.id_reg', '=', 'detail_belanja.id_reg')
@@ -280,26 +277,26 @@ class A2Controller extends Controller
             )
             ->get()
             ->map(function ($row) {
-                        $total_rencana = $row->volume * $row->harga_satuan;
+                $total_rencana = $row->volume * $row->harga_satuan;
 
-                        return [
-                            'id_rinci_sub_bl'   => $row->id_rinci_sub_bl,
-                            'nama_komponen'     => $row->nama_komponen,
-                            'satuan'            => $row->satuan,
-                            'volume'            => $row->volume,
-                            'harga_satuan'      => $row->harga_satuan,
-                            'reg_sah_vol'       => $row->reg_sah_vol,
-                            'reg_sah_nom'       => $row->reg_sah_nom,
-                            'sisa_vol'          => $row->volume - $row->reg_sah_vol,
-                            'sisa_nom'          => $total_rencana - $row->reg_sah_nom,
-                            'kode_dana'         => $row->kode_dana,
-                            'nama_dana'         => $row->nama_dana,
-                            'kode_skpd'         => $row->kode_skpd,
-                            'nama_skpd'         => $row->nama_skpd,
-                            'pptk_id'           => $row->pptk_id,
-                            'pokja_id'          => $row->pokja_id,
-                        ];
-                    });
+                return [
+                    'id_rinci_sub_bl'   => $row->id_rinci_sub_bl,
+                    'nama_komponen'     => $row->nama_komponen,
+                    'satuan'            => $row->satuan,
+                    'volume'            => $row->volume,
+                    'harga_satuan'      => $row->harga_satuan,
+                    'reg_sah_vol'       => $row->reg_sah_vol,
+                    'reg_sah_nom'       => $row->reg_sah_nom,
+                    'sisa_vol'          => $row->volume - $row->reg_sah_vol,
+                    'sisa_nom'          => $total_rencana - $row->reg_sah_nom,
+                    'kode_dana'         => $row->kode_dana,
+                    'nama_dana'         => $row->nama_dana,
+                    'kode_skpd'         => $row->kode_skpd,
+                    'nama_skpd'         => $row->nama_skpd,
+                    'pptk_id'           => $row->pptk_id,
+                    'pokja_id'          => $row->pokja_id,
+                ];
+            });
 
         // $data = RincianRka::from('rincian_rka as r')
         //     ->leftJoin('register as reg', function ($join) use ($request) {
@@ -458,7 +455,7 @@ class A2Controller extends Controller
         $penerima = Penerima::orderBy('penerima')->get();
         $dpp = Dpp::all();
 
-        $versipilihan = VersiAnggaran::where('nomor_anggaran',$register->no_dpa)->value('id_versi_anggaran');
+        $versipilihan = VersiAnggaran::where('nomor_anggaran', $register->no_dpa)->value('id_versi_anggaran');
 
         $program = RincianRka::where('id_versi_anggaran', $versipilihan)
             ->select('kode_program', 'nama_program')
@@ -471,27 +468,67 @@ class A2Controller extends Controller
             ->groupBy('kode_giat', 'nama_giat')
             ->orderBy('kode_giat')
             ->get();
-            
+
         $subkegiatan = RincianRka::where('kode_giat', $register->kd_keg)
             ->select('kode_sub_giat', 'nama_sub_giat')
             ->groupBy('kode_sub_giat', 'nama_sub_giat')
             ->orderBy('kode_sub_giat')
             ->get();
-        
+
         $akun = RincianRka::where('kode_sub_giat', $register->kd_subkeg)
             ->select('kode_akun', 'nama_akun')
             ->groupBy('kode_akun', 'nama_akun')
             ->orderBy('kode_akun')
             ->get();
 
-        $komponen = RincianRka::from('rincian_rka as r')
-            ->leftJoin('detail_belanja as d', 'd.id_rinci_sub_bl', '=', 'r.id_rinci_sub_bl')
-            ->where('r.id_versi_anggaran', $versipilihan)
-            ->where('r.kode_program', $register->kd_prog)
+        $b = DB::table('register as r')
+            ->join('detail_belanja as db', 'r.id_reg', '=', 'db.id_reg')
+            ->select(
+                'r.id_reg',
+                'r.kd_prog',
+                'r.kd_keg',
+                'r.kd_subkeg',
+                'r.kd_rekbel',
+                'db.id_rinci_sub_bl',
+                'db.volume',
+                'db.harga_riil',
+                'db.total_dibayar',
+                'db.ppn'
+            )
+            ->where('r.id_reg', $id);
+
+        $komponen = DB::table('rincian_rka as r')
+
+            ->leftJoin('register as reg', function ($join) {
+                $join->on('reg.kd_prog', '=', 'r.kode_program')
+                    ->on('reg.kd_keg', '=', 'r.kode_giat')
+                    ->on('reg.kd_subkeg', '=', 'r.kode_sub_giat')
+                    ->on('reg.kd_rekbel', '=', 'r.kode_akun');
+            })
+
+            ->leftJoin('detail_belanja as d', function ($join) {
+                $join->on('d.id_reg', '=', 'reg.id_reg')
+                    ->on('d.id_rinci_sub_bl', '=', 'r.id_rinci_sub_bl');
+            })
+
+            ->leftJoinSub($b, 'b', function ($join) {
+                $join->on('b.kd_prog', '=', 'r.kode_program')
+                    ->on('b.kd_keg', '=', 'r.kode_giat')
+                    ->on('b.kd_subkeg', '=', 'r.kode_sub_giat')
+                    ->on('b.kd_rekbel', '=', 'r.kode_akun')
+                    ->on('b.id_rinci_sub_bl', '=', 'r.id_rinci_sub_bl');
+            })
+
             ->where('r.kode_giat', $register->kd_keg)
             ->where('r.kode_sub_giat', $register->kd_subkeg)
             ->where('r.kode_akun', $register->kd_rekbel)
-            ->select(
+            // ->where('r.id_versi_anggaran', 'M')
+
+            ->groupBy(
+                'r.kode_program',
+                'r.kode_giat',
+                'r.kode_sub_giat',
+                'r.kode_akun',
                 'r.id_rinci_sub_bl',
                 'r.nama_komponen',
                 'r.satuan',
@@ -503,23 +540,37 @@ class A2Controller extends Controller
                 'r.nama_skpd',
                 'r.pptk_id',
                 'r.pokja_id',
-                // 'd.volume',
-                DB::raw('COALESCE(SUM(d.volume),0) as reg_sah_vol'),
-                DB::raw('COALESCE(SUM(d.total_dibayar),0) as reg_sah_nom')
+                'b.id_reg',
+                'b.volume',
+                'b.harga_riil',
+                'b.total_dibayar',
+                'b.ppn'
             )
-            ->groupBy(
-                'r.id_rinci_sub_bl',
-                'r.nama_komponen',
-                'r.satuan',
-                'r.volume',
-                'r.harga_satuan',
-                'r.kode_dana',
-                'r.nama_dana',
-                'r.kode_skpd',
-                'r.nama_skpd',
-                'r.pptk_id',
-                'r.pokja_id'
-            )
+
+            ->selectRaw('
+                r.kode_program,
+                r.kode_giat,
+                r.kode_sub_giat,
+                r.kode_akun,
+                r.id_rinci_sub_bl,
+                r.nama_komponen,
+                r.satuan,
+                r.volume,
+                r.harga_satuan,
+                r.kode_dana,
+                r.nama_dana,
+                r.kode_skpd,
+                r.nama_skpd,
+                r.pptk_id,
+                r.pokja_id,
+                COALESCE(SUM(d.volume),0) as reg_sah_vol,
+                COALESCE(SUM(d.total_dibayar),0) as reg_sah_nom,
+                b.id_reg,
+                b.volume as volume_input,
+                b.harga_riil,
+                b.total_dibayar as total_input,
+                b.ppn
+            ')
             ->get()
             ->map(function ($row) {
                 $total_rencana = $row->volume * $row->harga_satuan;
@@ -530,8 +581,8 @@ class A2Controller extends Controller
                     'satuan'            => $row->satuan,
                     'volume'            => $row->volume,
                     'harga_satuan'      => $row->harga_satuan,
-                    'reg_sah_vol'       => (int) $row->reg_sah_vol,
-                    'reg_sah_nom'       => (int) $row->reg_sah_nom,
+                    'reg_sah_vol'       => $row->reg_sah_vol,
+                    'reg_sah_nom'       => $row->reg_sah_nom,
                     'sisa_vol'          => $row->volume - $row->reg_sah_vol,
                     'sisa_nom'          => $total_rencana - $row->reg_sah_nom,
                     'kode_dana'         => $row->kode_dana,
@@ -540,9 +591,14 @@ class A2Controller extends Controller
                     'nama_skpd'         => $row->nama_skpd,
                     'pptk_id'           => $row->pptk_id,
                     'pokja_id'          => $row->pokja_id,
+                    'volume_input'      => $row->volume_input,     
+                    'harga_riil'        => $row->harga_riil,
+                    'total_input'       => $row->total_input,
+                    'ppn'               => $row->ppn,
                 ];
             });
-        // dd($komponen);
+
+
         return view('a2.edit', compact(
             'register',
             'versi',
@@ -576,7 +632,6 @@ class A2Controller extends Controller
 
             return redirect()->route('a2.index')
                 ->with('success', 'Data berhasil dihapus');
-
         } catch (\Throwable $e) {
             return back()->with('error', 'Data gagal dihapus');
         }

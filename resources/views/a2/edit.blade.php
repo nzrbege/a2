@@ -36,13 +36,13 @@
             </div>
         @endif
 
-        <form x-ref="formA2" id="form-a2" method="POST" action="{{ route('a2.update', $register->id_reg) }}" class="space-y-2">
+        <form x-ref="formA2" id="form-a2" method="POST" action="{{ route('a2.update', $register->id_reg) }}"
+            class="space-y-2">
             @csrf
             @method('PUT')
             <div class="bg-blue-800 text-white px-4 py-1 rounded shadow-sm flex justify-between items-center">
                 <h1 class="text-xs font-bold uppercase tracking-wider">Edit Register A2 - Bukti Pengeluaran Bidang
-                    Informatika
-                    2025</h1>
+                    Informatika {{ date('Y') }}</h1>
                 <div class="flex gap-2">
                     <button type="submit" id="btn-save"
                         class="bg-white text-blue-800 px-3 py-1 rounded text-[10px] font-bold hover:bg-blue-50 transition-all">SIMPAN
@@ -57,7 +57,6 @@
                     <div class="bg-green-700 p-1 rounded">
                         <label class="block mb-[2px] text-[9px] leading-none text-white">TATA USAHA</label>
                         <select name="tata_usaha" class="w-full text-[9px] text-black rounded px-1 py-[1px] leading-none">
-
                             <option value="GU" {{ old('tata_usaha', $register->tata_usaha) == 'GU' ? 'selected' : '' }}>
                                 Ganti Uang (GU)
                             </option>
@@ -90,7 +89,6 @@
                                 KPPD</option>
                         </select>
                     </div>
-
                 </div>
             </div>
 
@@ -307,6 +305,7 @@
                                         <option value="">-- Pilih Pajak --</option>
                                         @foreach ($dpp as $p)
                                             <option value="{{ $p->kode_potongan }}" data-jenis="{{ $p->jenis_pajak }}">
+                                                {{ old('penerima', $p->kode_potongan) == $pn->penerima ? 'selected' : '' }}>
                                                 {{ $p->jenis_potongan }}
                                             </option>
                                         @endforeach
@@ -336,31 +335,35 @@
             </div>
 
             <div class="grid grid-cols-12 gap-2">
-                <div
-                    class="col-span-3 bg-blue-50 p-2 rounded border border-blue-200 shadow-sm">
+                <div class="col-span-3 bg-blue-50 p-2 rounded border border-blue-200 shadow-sm">
                     <div>
-                        <p class="text-[10px] font-bold text-blue-800 border-b border-blue-200 mb-1 uppercase">Total Dibayarkan</p>
+                        <p class="text-[10px] font-bold text-blue-800 border-b border-blue-200 mb-1 uppercase">Total
+                            Dibayarkan</p>
                         <div class="space-y-1">
                             <div class="flex justify-between items-center">
                                 <span class="text-[9px] text-slate-500">BRUTO:</span>
                                 <input type="text" id="bruto" name="bruto" readonly
-                                    value="{{ old('nom_bruto', $register->norek_penerima) }}"
+                                    value="{{ number_format(old('nom_bruto', $register->nom_bruto), 0, ',', '.') }}"
                                     class="w-24 text-right bg-transparent border-none p-0 text-[11px] font-bold">
                             </div>
                             <div class="flex justify-between items-center text-red-600">
                                 <span class="text-[9px]">PAJAK:</span>
                                 <input type="text" id="pajakPotong" name="pajakPotong" readonly
+                                    value="{{ number_format(old('t_pajak', $register->t_pajak), 0, ',', '.') }}"
                                     class="w-24 text-right bg-transparent border-none p-0 text-[11px] font-bold">
                             </div>
                             <div class="flex justify-between items-center text-green-700 border-t pt-1">
                                 <span class="text-[10px] font-bold">NETTO:</span>
                                 <input type="text" id="netto" name="nom_netto" readonly
+                                    value="{{ number_format(old('nom_netto', $register->nom_netto), 0, ',', '.') }}"
                                     class="w-24 text-right bg-transparent border-none p-0 text-sm font-black">
                             </div>
                         </div>
                         <textarea id="terbilang" rows="2" readonly name="netto_terbilang"
                             class="mt-2 w-full text-[9px] bg-white italic px-1 py-[2px] border rounded text-slate-600 leading-tight"
-                            placeholder="Terbilang..."></textarea>
+                            placeholder="Terbilang...">{{ old('netto_terbilang', $register->netto_terbilang) }}</textarea>
+                        <input type="hidden" name="bruto_terbilang" id="bruto_terbilang"
+                            value="{{ old('bruto_terbilang', $register->bruto_terbilang) }}">
                     </div>
                 </div>
 
@@ -375,7 +378,7 @@
                                     <th rowspan="2" class="px-[2px] py-[1px] border text-[9px]">Satuan</th>
                                     <th colspan="3" class="px-[2px] py-[1px] border text-[9px] bg-blue-700">Rincian
                                         Anggaran</th>
-                                    <th colspan="3" class="px-[2px] py-[1px] border text-[9px] bg-green-700">
+                                    <th colspan="4" class="px-[2px] py-[1px] border text-[9px] bg-green-700">
                                         Pengeluaran Riil</th>
                                     <th colspan="4" class="px-[2px] py-[1px] border text-[9px] bg-indigo-700">
                                         Informasi
@@ -429,25 +432,30 @@
                                             {{ number_format($row['volume'] * $row['harga_satuan'], 0, ',', '.') }}
                                         </td>
 
-                                        {{-- Pengeluaran Riil (kalau belum ada harga riil, bisa isi 0 dulu) --}}
+                                        {{-- Pengeluaran Riil --}}
                                         <td class="border px-1 py-[2px] text-right">
-                                            {{-- {{ number_format($row['reg_sah_vol'], 0, ',', '.') }} --}}
-
                                             <input type="number" name="riil[${i}][vol]"
-                                                value="{{ old('reg_sah_vol', $row['reg_sah_vol']) }}"
+                                                value="{{ old('volume_input', $row['volume_input']) }}"
                                                 class="w-12 border text-[9px] p-0" oninput="hitungRiilBaris(${i})">
                                         </td>
 
                                         <td class="border px-1 py-[2px] text-right">
                                             <input type="text" name="riil[${i}][harga]"
-                                                value="{{ old('reg_sah_nom', $row['reg_sah_nom']) }}"
+                                                value="{{ old('harga_riil', $row['harga_riil']) }}"
                                                 class="w-16 border text-[9px] p-0 text-right"
                                                 oninput="hitungRiilBaris(${i})" onfocus="unformatNumber(this)"
                                                 onblur="formatNumber(this)">
                                         </td>
 
+                                        <td class="px-1 py-[2px] border">
+                                            <input type="checkbox" name="riil[{{ $i }}][ppn]"
+                                                onclick="cekStatus({{ $i }})" value="1"
+                                                id="ppn_riil_{{ $i }}"
+                                                {{ old('ppn', $row['ppn']) ? 'checked' : '' }}>
+                                        </td>
+
                                         <td class="border px-1 py-[2px] text-right">
-                                            {{ number_format($row['reg_sah_nom'], 0, ',', '.') }}
+                                            {{ number_format($row['total_input'], 0, ',', '.') }}
                                         </td>
 
                                         {{-- Informasi --}}
@@ -494,15 +502,13 @@
 
                 <div class="flex justify-end gap-2 mt-6">
 
-                    <button type="button"
-                            @click="open = false"
-                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg">
+                    <button type="button" @click="open = false"
+                        class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg">
                         Batal
                     </button>
 
-                    <button type="button"
-                            @click="$refs.formA2.submit()"
-                            class="px-4 py-2 bg-indigo-700 hover:bg-blue-700 text-white rounded-lg shadow">
+                    <button type="button" @click="$refs.formA2.submit()"
+                        class="px-4 py-2 bg-indigo-700 hover:bg-blue-700 text-white rounded-lg shadow">
                         Ya, Simpan
                     </button>
 
@@ -515,7 +521,7 @@
 @push('scripts')
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-                const ts = new TomSelect("#penerima", {
+            const ts = new TomSelect("#penerima", {
                 create: false,
                 allowEmptyOption: true,
                 placeholder: "Cari penerima..."
@@ -526,7 +532,7 @@
             if (selectedValue) {
                 ts.setValue(selectedValue);
             }
-            });
+        });
 
         document.addEventListener('DOMContentLoaded', function() {
 
