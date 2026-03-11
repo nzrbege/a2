@@ -499,7 +499,8 @@
                                                 name="riil[{{$i}}][nominal]"
                                                 id="nominal_riil_{{$i}}"
                                                 value="{{ old('total_input', $row['total_input'] ?? '') }}"
-                                                class="w-12 border text-[9px] p-0" oninput="hitungRiilBaris({{$i}})">
+                                                class="w-12 border text-[9px] p-0 bg-gray-100"
+                                                readonly>
                                             {{-- {{ number_format($row['total_input'], 0, ',', '.') }} --}}
                                         </td>
 
@@ -603,10 +604,10 @@
             ========================== */
             document.getElementById('versi').addEventListener('change', function() {
 
-                console.log('CHANGE TRIGGERED');
+                // console.log('CHANGE TRIGGERED');
 
                 let opt = this.options[this.selectedIndex];
-                console.log('DATA NOMOR:', opt.dataset.nomor);
+                // console.log('DATA NOMOR:', opt.dataset.nomor);
 
                 let nomor = this.options[this.selectedIndex]?.dataset.nomor;
                 document.getElementById('no_dpa').value = nomor ?? '';
@@ -819,7 +820,8 @@
                 name="riil[{{$i}}][nominal]"
                 id="nominal_riil{{$i}}"
                 value="{{ old('total_input', $row['total_input'] ?? '') }}"
-                class="w-12 border text-[9px] p-0" oninput="hitungRiilBaris({{$i}})">
+                class="w-12 border text-[9px] p-0 bg-gray-100"
+                readonly>
         </td>
 
         <!-- INFO -->
@@ -867,16 +869,16 @@
         }
 
         function hitungRiilBaris(i){
-            console.log("vol:", document.getElementById('vol_'+i).value);
-            console.log("harga:", document.getElementById('harga_'+i).value);
-            console.log("nominal:", document.getElementById('nominal_riil_'+i));
+            // console.log("vol:", document.getElementById('vol_'+i).value);
+            // console.log("harga:", document.getElementById('harga_'+i).value);
+            // console.log("nominal:", document.getElementById('nominal_riil_'+i));
 
             let volEl = document.getElementById('vol_' + i);
             let hargaEl = document.getElementById('harga_' + i);
             let nominalEl = document.getElementById('nominal_riil_' + i);
 
             if(!volEl || !hargaEl || !nominalEl){
-                console.log("Element tidak ditemukan", i);
+                // console.log("Element tidak ditemukan", i);
                 return;
             }
 
