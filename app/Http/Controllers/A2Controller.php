@@ -615,9 +615,6 @@ class A2Controller extends Controller
     {
         DB::beginTransaction();
 
-        
-            // dd($request);
-
         try {
 
             $register = Register::findOrFail($id);

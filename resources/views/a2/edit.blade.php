@@ -953,6 +953,7 @@
             document.getElementById('bruto').value = formatRupiah(total);
 
             hitungSemuaPajak();
+            hitungNetto();
         }
 
         function hitungNetto() {
