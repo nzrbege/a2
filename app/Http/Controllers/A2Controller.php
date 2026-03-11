@@ -163,7 +163,7 @@ class A2Controller extends Controller
 
                 $total_dpp = $vol * $harga;
 
-                $ppn = ($row['ppn'] ?? false)? $vol * $harga * $request->ppn / 100: 0;
+                $ppn = ($row['ppn'] ?? false) ? $vol * $harga * $request->ppn / 100 : 0;
 
                 $total_dibayar = $total_dpp + $ppn;
 
@@ -522,7 +522,7 @@ class A2Controller extends Controller
             ->where('r.kode_giat', $register->kd_keg)
             ->where('r.kode_sub_giat', $register->kd_subkeg)
             ->where('r.kode_akun', $register->kd_rekbel)
-            // ->where('r.id_versi_anggaran', 'M')
+            ->where('r.id_versi_anggaran', $versipilihan)
 
             ->groupBy(
                 'r.kode_program',
@@ -591,13 +591,12 @@ class A2Controller extends Controller
                     'nama_skpd'         => $row->nama_skpd,
                     'pptk_id'           => $row->pptk_id,
                     'pokja_id'          => $row->pokja_id,
-                    'volume_input'      => $row->volume_input,     
+                    'volume_input'      => $row->volume_input,
                     'harga_riil'        => $row->harga_riil,
                     'total_input'       => $row->total_input,
                     'ppn'               => $row->ppn,
                 ];
             });
-
 
         return view('a2.edit', compact(
             'register',
@@ -614,13 +613,166 @@ class A2Controller extends Controller
 
     public function update(Request $request, $id)
     {
-        $register = Register::findOrFail($id);
+        DB::beginTransaction();
 
-        $register->update($request->all());
+        
+            // dd($request);
 
-        return redirect()
-            ->route('a2.index')
-            ->with('success', 'Data berhasil diperbarui');
+        try {
+
+            $register = Register::findOrFail($id);
+
+            // ================= VALIDASI =================
+            $request->validate([
+                'versi' => 'required',
+                'program' => 'required',
+                'nama_program' => 'required',
+                'kegiatan' => 'required',
+                'nama_giat' => 'required',
+                'sub_kegiatan' => 'required',
+                'nama_sub_giat' => 'required',
+                'kode_akun' => 'required',
+                'nama_akun' => 'required',
+                'bruto' => 'required',
+                'nom_netto' => 'required',
+                'riil' => 'required|array',
+                'nama_penerima' => 'required',
+                'bank_penerima' => 'required',
+                'norek_penerima' => 'required',
+            ]);
+
+            // ================= CEK DATA RIIL =================
+            $riilValid = collect($request->riil)
+                ->first(function ($row) {
+                    return
+                        !empty($row['vol']) &&
+                        !empty($row['harga']) &&
+                        (int)$row['vol'] > 0 &&
+                        (int)str_replace('.', '', $row['harga']) > 0;
+                });
+
+            if (!$riilValid) {
+                throw new \Exception('Tidak ada data riil yang memiliki volume dan harga');
+            }
+
+            $pejabat = MasterPejabat::where('kode_skpd', $riilValid['kode_skpd'])->first();
+            $pptk = Pptk::findOrFail($riilValid['pptk_id']);
+            $pokja = Pokja::findOrFail($riilValid['pokja_id']);
+
+            // ================= PAJAK =================
+            $pajak = $request->input('pajak', []);
+
+            $kode   = $pajak['kode'] ?? [];
+            $jenis  = $pajak['jenis'] ?? [];
+            $nominal = $pajak['nominal'] ?? [];
+
+            // ================= UPDATE HEADER =================
+            $register->update([
+                'tanggal'     => $request->tanggal,
+                'kd_prog'     => $request->program,
+                'kd_keg'      => $request->kegiatan,
+                'kd_subkeg'   => $request->sub_kegiatan,
+                'urai_prog'   => $request->nama_program,
+                'urai_keg'    => $request->nama_giat,
+                'urai_subkeg' => $request->nama_sub_giat,
+                'kd_rekbel'   => $request->kode_akun,
+                'urai_rekbel' => $request->nama_akun,
+                'jenis_tu'    => $request->tata_usaha,
+                'jenis_a2'    => $request->jenis_a2,
+                'j_transaksi' => $request->transaksi,
+                'npwp_penerima' => $request->npwp,
+                'nom_bruto'   => (int)str_replace('.', '', $request->bruto),
+                't_pajak'     => (int)str_replace('.', '', $request->pajakPotong),
+                'nom_netto'   => (int)str_replace('.', '', $request->nom_netto),
+                'nama_penerima' => $request->nama_penerima,
+                'bank_penerima' => $request->bank_penerima,
+                'norek_penerima' => $request->norek_penerima,
+                'alamat_penerima' => $request->alamat_penerima,
+                'keperluan' => $request->keperluan,
+                'bruto_terbilang' => $request->bruto_terbilang,
+                'netto_terbilang' => $request->netto_terbilang,
+                'kode_skpd' => $riilValid['kode_skpd'],
+                'nama_skpd' => $riilValid['nama_skpd'],
+
+                'nama_pa'   => $pejabat->nama_pa,
+                'nip_pa'    => $pejabat->nip_pa,
+                'nama_pptk' => $pptk->nama_pptk,
+                'nip_pptk'  => $pptk->nip,
+                'nama_bendahara' => $pejabat->nama_bendahara,
+                'nip_bendahara' => $pejabat->nip_bendahara,
+                'verifikator1'  => $pejabat->nama_ppk,
+                'verifikator2'  => $pokja->nama_kapokja,
+
+                'jpajak_1'   => $jenis[0] ?? null,
+                'kd_pot1'    => $kode[0] ?? null,
+                'nom_pajak1' => (int)str_replace('.', '', $nominal[0] ?? 0),
+
+                'jpajak_2'   => $jenis[1] ?? null,
+                'kd_pot2'    => $kode[1] ?? null,
+                'nom_pajak2' => (int)str_replace('.', '', $nominal[1] ?? 0),
+            ]);
+
+            // ================= HAPUS DETAIL LAMA =================
+            DetailBelanja::where('id_reg', $register->id_reg)->delete();
+
+            // ================= INSERT DETAIL BARU =================
+            $detilData = [];
+
+            foreach ($request->riil as $row) {
+
+                if (empty($row['vol']) || empty($row['harga'])) {
+                    continue;
+                }
+
+                $vol   = (int)$row['vol'];
+                $harga = (int)str_replace('.', '', $row['harga']);
+
+                $total_dpp = $vol * $harga;
+
+                $ppn = ($row['ppn'] ?? false)
+                    ? $total_dpp * $request->ppn / 100
+                    : 0;
+
+                $total_dibayar = $total_dpp + $ppn;
+
+                $detilData[] = [
+                    'id_reg'          => $register->id_reg,
+                    'no_reg'          => $register->gen_no_reg,
+                    'kd_subkeg'       => $register->kd_subkeg,
+                    'kd_rek'          => $register->kd_rekbel,
+                    'id_rinci_sub_bl' => $row['id_rinci_sub_bl'],
+                    'volume'          => $vol,
+                    'harga_riil'      => $harga,
+                    'total_dpp'       => $total_dpp,
+                    'ppn'             => $ppn,
+                    'total_dibayar'   => $total_dibayar,
+                ];
+            }
+
+            if (empty($detilData)) {
+                throw new \Exception('Detail riil kosong');
+            }
+
+            DetailBelanja::insert($detilData);
+
+            DB::commit();
+
+            return redirect()
+                ->route('a2.show', $register->id_reg)
+                ->with('success', 'Data berhasil diperbarui');
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            Log::error('Gagal update A2', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine()
+            ]);
+
+            return back()
+                ->withInput()
+                ->withErrors($e->getMessage());
+        }
     }
 
     public function destroy($id)

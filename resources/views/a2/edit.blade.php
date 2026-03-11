@@ -143,7 +143,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <input type="hidden" name="nama_program" id="nama_program">
+                            <input type="hidden" name="nama_program" id="nama_program" value="{{ old('nama_program', $register->urai_prog) }}">
                             <select name="kegiatan" id="kegiatan" class="select-compact w-full">
                                 <option value="">-- Pilih Kegiatan --</option>
                                 @foreach ($kegiatan as $v)
@@ -153,7 +153,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <input type="hidden" name="nama_giat" id="nama_giat">
+                            <input type="hidden" name="nama_giat" id="nama_giat" value="{{ old('nama_giat', $register->urai_keg) }}">
 
                         </div>
                         <div class="col-span-1">
@@ -177,8 +177,8 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <input type="hidden" name="nama_akun" id="nama_akun">
-                            <input type="hidden" name="nama_sub_giat" id="nama_sub_giat">
+                            <input type="hidden" name="nama_akun" id="nama_akun" value="{{ old('nama_akun', $register->urai_rekbel) }}">
+                            <input type="hidden" name="nama_sub_giat" id="nama_sub_giat" value="{{ old('nama_sub_giat', $register->urai_subkeg) }}">
                         </div>
                     </div>
                 </div>
@@ -217,7 +217,7 @@
                             </select>
                         </div>
 
-                        <input type="hidden" id="nama_penerima" name="nama_penerima">
+                        <input type="hidden" id="nama_penerima" name="nama_penerima" value="{{ old('nama_penerima', $register->nama_penerima) }}">
 
                         <div>
                             <label class="block font-semibold text-slate-600">Bank</label>
@@ -239,7 +239,7 @@
                                 value="{{ old('npwp', $register->npwp) }}" class="input-compact bg-slate-50 w-full">
                         </div>
 
-                        <input type="hidden" id="alamat_penerima" name="alamat_penerima">
+                        <input type="hidden" id="alamat_penerima" name="alamat_penerima" value="{{ old('alamat_penerima', $register->alamat_penerima) }}">
 
                     </div>
                 </div>
@@ -304,8 +304,8 @@
                                         onchange="hitungPajakBaris(this)">
                                         <option value="">-- Pilih Pajak --</option>
                                         @foreach ($dpp as $p)
-                                            <option value="{{ $p->kode_potongan }}" data-jenis="{{ $p->jenis_pajak }}">
-                                                {{ old('penerima', $p->kode_potongan) == $pn->penerima ? 'selected' : '' }}>
+                                            <option value="{{ $p->kode_potongan }}" data-jenis="{{ $p->jenis_pajak }}"
+                                                {{ old('kd_pot1', $register->kd_pot1) == $p->kode_potongan ? 'selected' : '' }}>
                                                 {{ $p->jenis_potongan }}
                                             </option>
                                         @endforeach
@@ -314,11 +314,13 @@
 
                                 <td class="border px-1 py-[2px]">
                                     <input type="text" name="pajak[nominal][]"
+                                value="{{ old('pajak[nominal][]', $register->nom_pajak1) }}"
                                         class="w-full text-right text-[9px] bg-gray-100" value="0" readonly>
                                     <input type="hidden" name="pajak[jenis][]">
                                 </td>
 
-                                <td class="border px-1 py-[2px] kode-pajak">-</td>
+                                <td class="border px-1 py-[2px] kode-pajak">
+                                {{ old('kode_pot', $register->kd_pot1) }}</td>
 
                                 <td class="border px-1 py-[2px]">
                                     <button type="button" onclick="tambahPajak()"
@@ -327,6 +329,41 @@
                                     </button>
                                 </td>
                             </tr>
+
+                            @if(!empty($register->kd_pot2))
+                            <!-- BARIS KEDUA -->
+                            <tr class="pajak-row">
+                                <td class="border px-1 py-[2px]">
+                                    <select name="pajak[kode][]" class="w-full text-[9px]"
+                                        onchange="hitungPajakBaris(this)">
+                                        <option value="">-- Pilih Pajak --</option>
+                                        @foreach ($dpp as $p)
+                                            <option value="{{ $p->kode_potongan }}" data-jenis="{{ $p->jenis_pajak }}"
+                                                {{ old('kd_pot1', $register->kd_pot2) == $p->kode_potongan ? 'selected' : '' }}>
+                                                {{ $p->jenis_potongan }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </td>
+
+                                <td class="border px-1 py-[2px]">
+                                    <input type="text" name="pajak[nominal][]"
+                                value="{{ old('pajak[nominal][]', $register->nom_pajak2) }}"
+                                        class="w-full text-right text-[9px] bg-gray-100" value="0" readonly>
+                                    <input type="hidden" name="pajak[jenis][]" value="{{ old('alamat_penerima', $register->alamat_penerima)}}">
+                                </td>
+
+                                <td class="border px-1 py-[2px] kode-pajak">
+                                {{ old('kode_pot', $register->kd_pot2) }}</td>
+
+                                <td class="border px-1 py-[2px]">
+                                    <button type="button" onclick="hapusPajak(this)"
+                                        class="bg-red-600 text-white px-2 py-1 rounded text-[9px]">
+                                        -
+                                    </button>
+                                </td>
+                            </tr>
+                            @endif
                         </tbody>
                     </table>
 
@@ -434,16 +471,19 @@
 
                                         {{-- Pengeluaran Riil --}}
                                         <td class="border px-1 py-[2px] text-right">
-                                            <input type="number" name="riil[${i}][vol]"
-                                                value="{{ old('volume_input', $row['volume_input']) }}"
-                                                class="w-12 border text-[9px] p-0" oninput="hitungRiilBaris(${i})">
+                                            <input type="number"
+                                                name="riil[{{$i}}][vol]"
+                                                id="vol_{{$i}}"
+                                                value="{{ old('volume_input', $row['volume_input'] + 0 ?? '') }}"
+                                                class="w-12 border text-[9px] p-0" oninput="hitungRiilBaris({{$i}})">
                                         </td>
 
                                         <td class="border px-1 py-[2px] text-right">
-                                            <input type="text" name="riil[${i}][harga]"
+                                            <input type="text" name="riil[{{$i}}][harga]"
+                                                id="harga_{{$i}}"
                                                 value="{{ old('harga_riil', $row['harga_riil']) }}"
                                                 class="w-16 border text-[9px] p-0 text-right"
-                                                oninput="hitungRiilBaris(${i})" onfocus="unformatNumber(this)"
+                                                oninput="hitungRiilBaris({{$i}})" onfocus="unformatNumber(this)"
                                                 onblur="formatNumber(this)">
                                         </td>
 
@@ -455,7 +495,12 @@
                                         </td>
 
                                         <td class="border px-1 py-[2px] text-right">
-                                            {{ number_format($row['total_input'], 0, ',', '.') }}
+                                            <input type="number"
+                                                name="riil[{{$i}}][nominal]"
+                                                id="nominal_riil_{{$i}}"
+                                                value="{{ old('total_input', $row['total_input'] ?? '') }}"
+                                                class="w-12 border text-[9px] p-0" oninput="hitungRiilBaris({{$i}})">
+                                            {{-- {{ number_format($row['total_input'], 0, ',', '.') }} --}}
                                         </td>
 
                                         {{-- Informasi --}}
@@ -474,6 +519,14 @@
                                         <td class="border px-1 py-[2px] text-right">
                                             {{ number_format($row['sisa_nom'], 0, ',', '.') }}
                                         </td>
+                                        <input type="hidden" name="riil[{{$i}}][id_rinci_sub_bl]" value="{{$row['id_rinci_sub_bl']}}">
+                                        <input type="hidden" name="riil[{{$i}}][nama_komponen]" value="{{$row['nama_komponen']}}">
+                                        <input type="hidden" name="riil[{{$i}}][kode_dana]" value="{{$row['kode_dana']}}">
+                                        <input type="hidden" name="riil[{{$i}}][nama_dana]" value="{{$row['nama_dana']}}">
+                                        <input type="hidden" name="riil[{{$i}}][kode_skpd]" value="{{$row['kode_skpd']}}">
+                                        <input type="hidden" name="riil[{{$i}}][nama_skpd]" value="{{$row['nama_skpd']}}">
+                                        <input type="hidden" name="riil[{{$i}}][pptk_id]" value="{{$row['pptk_id']}}">
+                                        <input type="hidden" name="riil[{{$i}}][pokja_id]" value="{{$row['pokja_id']}}">
                                     </tr>
                                 @empty
                                     <tr>
@@ -742,23 +795,31 @@
         <!-- RIIL -->
         <td class="px-1 py-[2px] border">
             <input type="number"
+                id="vol_{{$i}}"
                 name="riil[${i}][vol]"
-        class="w-12 border text-[9px] p-0"
+                value="1010"
+                class="w-12 border text-[9px] p-0"
                 oninput="hitungRiilBaris(${i})">
         </td>
         <td class="px-1 py-[2px] border">
             <input type="text"
+                id="harga_{{$i}}"
                 name="riil[${i}][harga]"
         class="w-16 border text-[9px] p-0 text-right"
                 oninput="hitungRiilBaris(${i})"
                 onfocus="unformatNumber(this)"
                 onblur="formatNumber(this)">
         </td>
+        <td class="px-1 py-[2px] border">
+            <input type="checkbox" name="riil[${i}][ppn]" onclick="cekStatus(${i})" 
+                id="ppn_riil_${i}">
+        </td>
         <td class="px-1 py-[2px] border text-right font-bold text-green-700">
-            <input type="text"
-                readonly
-                id="nominal_riil_${i}"
-        class="w-20 text-right bg-green-50 border-none font-bold text-[9px]">
+            <input type="number"
+                name="riil[{{$i}}][nominal]"
+                id="nominal_riil{{$i}}"
+                value="{{ old('total_input', $row['total_input'] ?? '') }}"
+                class="w-12 border text-[9px] p-0" oninput="hitungRiilBaris({{$i}})">
         </td>
 
         <!-- INFO -->
@@ -782,8 +843,6 @@
         <input type="hidden" name="riil[${i}][pokja_id]" value="${row.pokja_id}">
     </tr>
     `).join('');
-
-
                         document.getElementById('tabelRincian').innerHTML = html;
                     });
             });
@@ -807,19 +866,43 @@
             el.disabled = true;
         }
 
-        function hitungRiilBaris(i) {
-            const vol = Number(document.querySelector(`input[name="riil[${i}][vol]"]`)?.value || 0);
-            const harga = parseRupiah(
-                document.querySelector(`input[name="riil[${i}][harga]"]`)?.value || 0
-            );
+        function hitungRiilBaris(i){
+            console.log("vol:", document.getElementById('vol_'+i).value);
+            console.log("harga:", document.getElementById('harga_'+i).value);
+            console.log("nominal:", document.getElementById('nominal_riil_'+i));
 
-            const total = vol * harga;
+            let volEl = document.getElementById('vol_' + i);
+            let hargaEl = document.getElementById('harga_' + i);
+            let nominalEl = document.getElementById('nominal_riil_' + i);
 
-            document.getElementById(`nominal_riil_${i}`).value =
-                total > 0 ? formatRupiah(total) : '';
+            if(!volEl || !hargaEl || !nominalEl){
+                console.log("Element tidak ditemukan", i);
+                return;
+            }
+
+            let vol = parseFloat(volEl.value) || 0;
+            let harga = parseFloat(hargaEl.value.replace(/\./g,'')) || 0;
+
+            let total = vol * harga;
+
+            nominalEl.value = total;
 
             hitungBruto();
         }
+
+        // function hitungRiilBaris(i) {
+        //     const vol = Number(document.querySelector(`input[name="riil[${i}][vol]"]`)?.value || 0);
+        //     const harga = parseRupiah(
+        //         document.querySelector(`input[name="riil[${i}][harga]"]`)?.value || 0
+        //     );
+
+        //     const total = vol * harga;
+
+        //     document.getElementById(`nominal_riil_${i}`).value =
+        //         total > 0 ? formatRupiah(total) : '';
+
+        //     hitungBruto();
+        // }
 
 
         function unformatNumber(el) {
@@ -869,74 +952,7 @@
 
             document.getElementById('bruto').value = formatRupiah(total);
 
-            hitungNetto(); // lanjut ke netto
-        }
-
-        function hitungPajak() {
-            const kode = document.getElementById('dpp_select')?.value;
-
-            if (!kode) {
-                document.getElementById('pph_nominal').innerText = 0;
-                document.getElementById('pph_kode').innerText = '-';
-                document.getElementById('pajakPotong').value = 0;
-                hitungNetto();
-                return;
-            }
-
-            const bruto = parseRupiah(document.getElementById('bruto').value);
-
-            // Pajak manual golongan
-            const iv = (Number(vol_iv.value) || 0) * (Number(besaran_iv.value) || 0) * 0.15;
-            const iii = (Number(vol_iii.value) || 0) * (Number(besaran_iii.value) || 0) * 0.05;
-            const lain = (Number(vol_lain.value) || 0) * (Number(besaran_lain.value) || 0) * 0.06;
-
-            pajak_iv.innerText = iv ? formatRupiah(iv) : 0;
-            pajak_iii.innerText = iii ? formatRupiah(iii) : 0;
-            pajak_lain.innerText = lain ? formatRupiah(lain) : 0;
-
-            let nominal = 0;
-            const dpp = Math.ceil((100 / 111) * bruto);
-
-            switch (kode) {
-
-                case '411121-402':
-                    nominal = iv + iii + lain;
-                    break;
-
-                case '411121-21-100-20':
-                    nominal = 0.05 * dpp;
-                    break;
-
-                case '411122-920':
-                    nominal = 0.015 * dpp;
-                    break;
-
-                case '411124-100':
-                case '411124-104':
-                    nominal = 0.02 * dpp;
-                    break;
-
-                case '411211-920':
-                    nominal = 0.12 * (11 / 12 * dpp);
-                    break;
-
-                case '999999-100':
-                    nominal = 0.10 * bruto;
-                    break;
-
-                default:
-                    nominal = 0;
-            }
-
-            nominal = Math.ceil(nominal);
-
-            document.getElementById('pph_nominal').innerText =
-                nominal ? formatRupiah(nominal) : 0;
-
-            document.getElementById('pph_kode').innerText = kode;
-            document.getElementById('pajakPotong').value = nominal;
-
-            hitungNetto();
+            hitungSemuaPajak();
         }
 
         function hitungNetto() {
@@ -948,6 +964,8 @@
             document.getElementById('netto').value = formatRupiah(netto);
             document.getElementById('terbilang').value =
                 netto > 0 ? terbilang(netto) + ' Rupiah' : '';
+            document.getElementById('bruto_terbilang').value =
+                netto > 0 ? terbilang(bruto) + ' Rupiah' : '';
         }
 
         function terbilangInt(n) {
@@ -1027,6 +1045,7 @@
 
         function hapusPajak(btn) {
             btn.closest('.pajak-row').remove();
+            hitungTotalPajak(); // hitung ulang setelah hapus
         }
 
         function hitungPajakBaris(select) {
@@ -1096,6 +1115,14 @@
 
             document.getElementById('pajakPotong').value = total;
             hitungNetto();
+        }
+
+        function hitungSemuaPajak(){
+            document.querySelectorAll('select[name="pajak[kode][]"]').forEach(select=>{
+                if(select.value){
+                    hitungPajakBaris(select);
+                }
+            });
         }
     </script>
 @endpush

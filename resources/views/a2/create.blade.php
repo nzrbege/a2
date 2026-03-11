@@ -777,74 +777,8 @@
 
                 document.getElementById('bruto').value = formatRupiah(total);
 
-                hitungNetto(); // lanjut ke netto
-            }
-
-            function hitungPajak() {
-                const kode = document.getElementById('dpp_select')?.value;
-
-                if (!kode) {
-                    document.getElementById('pph_nominal').innerText = 0;
-                    document.getElementById('pph_kode').innerText = '-';
-                    document.getElementById('pajakPotong').value = 0;
-                    hitungNetto();
-                    return;
-                }
-
-                const bruto = parseRupiah(document.getElementById('bruto').value);
-
-                // Pajak manual golongan
-                const iv = (Number(vol_iv.value) || 0) * (Number(besaran_iv.value) || 0) * 0.15;
-                const iii = (Number(vol_iii.value) || 0) * (Number(besaran_iii.value) || 0) * 0.05;
-                const lain = (Number(vol_lain.value) || 0) * (Number(besaran_lain.value) || 0) * 0.06;
-
-                pajak_iv.innerText = iv ? formatRupiah(iv) : 0;
-                pajak_iii.innerText = iii ? formatRupiah(iii) : 0;
-                pajak_lain.innerText = lain ? formatRupiah(lain) : 0;
-
-                let nominal = 0;
-                const dpp = (100 / 111) * bruto;
-
-                switch (kode) {
-
-                    case '411121-402':
-                        nominal = iv + iii + lain;
-                        break;
-
-                    case '411121-21-100-20':
-                        nominal = 0.05 * dpp;
-                        break;
-
-                    case '411122-920':
-                        nominal = 0.015 * dpp;
-                        break;
-
-                    case '411124-100':
-                    case '411124-104':
-                        nominal = 0.02 * dpp;
-                        break;
-
-                    case '411211-920':
-                        nominal = 0.12 * (11 / 12 * dpp);
-                        break;
-
-                    case '999999-100':
-                        nominal = 0.10 * bruto;
-                        break;
-
-                    default:
-                        nominal = 0;
-                }
-
-                nominal = Math.round(nominal);
-
-                document.getElementById('pph_nominal').innerText =
-                    nominal ? formatRupiah(nominal) : 0;
-
-                document.getElementById('pph_kode').innerText = kode;
-                document.getElementById('pajakPotong').value = nominal;
-
-                hitungNetto();
+                hitungSemuaPajak();     // jika ada pajak
+                hitungTotalPajak();     // jika belum ada pajak
             }
 
             function hitungNetto() {
@@ -937,6 +871,8 @@
 
             function hapusPajak(btn) {
                 btn.closest('.pajak-row').remove();
+                
+                hitungTotalPajak(); // hitung ulang setelah hapus
             }
 
             function hitungPajakBaris(select) {
@@ -1030,6 +966,15 @@
                     total > 0 ? formatRupiah(total) : '';
 
                 hitungBruto();
+            }
+
+            
+            function hitungSemuaPajak(){
+                document.querySelectorAll('select[name="pajak[kode][]"]').forEach(select=>{
+                    if(select.value){
+                        hitungPajakBaris(select);
+                    }
+                });
             }
         </script>
     @endpush
