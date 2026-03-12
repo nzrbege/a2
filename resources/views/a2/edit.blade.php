@@ -191,8 +191,7 @@
                     <div class="grid gap-1">
                         <input type="date" name="tanggal" class="input-compact w-full"
                             value="{{ old('tanggal', $register->tanggal) }}">
-                        <textarea id="keperluan" name="keperluan" rows="1" placeholder="Keperluan Pembayaran" class="text-[10px]"
-                            value="{{ old('keperluan', $register->keperluan) }}"></textarea>
+                        <textarea id="keperluan" name="keperluan" rows="1" placeholder="Keperluan Pembayaran" class="text-[10px]">{{ old('keperluan', $register->keperluan) }}</textarea>
                     </div>
                     <p class="text-[10px] font-bold text-green-700 border-b mb-2 uppercase pt-3">Informasi Penerima</p>
                     <div class="grid grid-cols-2 gap-1 text-[10px]">

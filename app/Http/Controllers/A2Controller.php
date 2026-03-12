@@ -455,6 +455,8 @@ class A2Controller extends Controller
         $penerima = Penerima::orderBy('penerima')->get();
         $dpp = Dpp::all();
 
+        // dd($register->keperluan);
+
         $versipilihan = VersiAnggaran::where('nomor_anggaran', $register->no_dpa)->value('id_versi_anggaran');
 
         $program = RincianRka::where('id_versi_anggaran', $versipilihan)
