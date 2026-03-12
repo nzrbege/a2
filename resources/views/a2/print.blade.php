@@ -335,14 +335,14 @@
                     </tr>
                     <tr class="no-border">
                         {{-- <td class="no-border nowrap" rowspan="2">Penerimaan PPK-</td> --}}
-                        <td class="no-border">{{ ($register->nom_pajak1 === null || $register->nom_pajak1 == 0)? '' : $register->jpajak_1 }}</td>
-                        <td class="no-border">{{ (($register->nom_pajak1 !== null || $register->nom_pajak1 <> 0) && $register->jpajak_1 == 'PAD')? '' : ((($register->nom_pajak1 !== null || $register->nom_pajak1 <> 0) && $register->jpajak_1 !== null)?'Kode : '.$register->kd_pot1:'') }}</td>
+                        {{-- <td class="no-border">{{ ($register->nom_pajak1 === null || $register->nom_pajak1 == 0)? '' : $register->jpajak_1 }}</td> --}}
+                        <td class="no-border" colspan="2">{{ (($register->nom_pajak1 !== null || $register->nom_pajak1 <> 0) && $register->jpajak_1 == 'PAD')? '' : ((($register->nom_pajak1 !== null || $register->nom_pajak1 <> 0) && $register->jpajak_1 !== null)?$dpp1:'') }}</td>
                         <td class="no-border colon right">{{ ($register->nom_pajak1 === null || $register->nom_pajak1 == 0)? '' : ':' }}</td>
                         <td class="no-border right">{{ ($register->nom_pajak1 === null || $register->nom_pajak1 == 0)? '' : 'Rp '.number_format($register->nom_pajak1, 2, ',', '.') }}</td>
                     </tr>
                     <tr class="no-border">
-                        <td class="no-border nowrap">{{ ($register->nom_pajak2 === null || $register->nom_pajak2 == 0)? '' : $register->jpajak_2 }}</td>
-                        <td class="no-border">{{ (($register->nom_pajak2 !== null || $register->nom_pajak2 == 0) && $register->jpajak_2 == 'PAD')? '' : ((($register->nom_pajak2 !== null || $register->nom_pajak2 <> 0) && $register->jpajak_2 !== null)?'Kode : '.$register->kd_pot2:'') }}</td>
+                        {{-- <td class="no-border nowrap">{{ ($register->nom_pajak2 === null || $register->nom_pajak2 == 0)? '' : $register->jpajak_2 }}</td> --}}
+                        <td class="no-border">{{ (($register->nom_pajak2 !== null || $register->nom_pajak2 == 0) && $register->jpajak_2 == 'PAD')? '' : ((($register->nom_pajak2 !== null || $register->nom_pajak2 <> 0) && $register->jpajak_2 !== null)?$dpp2:'') }}</td>
                         <td class="no-border colon right">{{ ($register->nom_pajak2 === null || $register->nom_pajak2 == 0)? '' : ':' }}</td>
                         <td class="no-border right">{{ ($register->nom_pajak2 === null || $register->nom_pajak2 == 0)? '' : 'Rp '.number_format($register->nom_pajak2, 2, ',', '.') }}</td>
                     </tr>

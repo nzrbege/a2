@@ -39,7 +39,7 @@
                     'Kegiatan' => $register->kd_keg.' – '.$register->urai_keg,
                     'Sub Kegiatan' => $register->kd_subkeg.' – '.$register->urai_subkeg,
                     'Rekening' => $register->kd_rekbel.' – '.$register->urai_rekbel,
-                    'Penerima' => $register->penerima,
+                    'Penerima' => $register->nama_penerima,
                     'Keperluan' => $register->keperluan,
                 ];
             @endphp
@@ -69,6 +69,7 @@
                         <th class="px-4 py-2 text-left">Uraian Barang</th>
                         <th class="px-4 py-2 text-center">Volume</th>
                         <th class="px-4 py-2 text-right">Harga</th>
+                        <th class="px-4 py-2 text-right">Ppn</th>
                         <th class="px-4 py-2 text-right">Total</th>
                     </tr>
                 </thead>
@@ -82,8 +83,11 @@
                             <td class="px-4 py-2 text-right">
                                 Rp {{ number_format($d->harga_riil,0,',','.') }}
                             </td>
+                            <td class="px-4 py-2 text-right">
+                                Rp {{ number_format($d->ppn,0,',','.') }}
+                            </td>
                             <td class="px-4 py-2 text-right font-semibold">
-                                Rp {{ number_format($d->total,0,',','.') }}
+                                Rp {{ number_format($d->total_dibayar,0,',','.') }}
                             </td>
                         </tr>
                     @empty

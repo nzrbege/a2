@@ -284,8 +284,6 @@
                                 </tr>
                             </tbody>
                         </table>
-
-
                     </div>
                 </div>
 
@@ -917,6 +915,12 @@
                     case '999999-100':
                         nominal = 0.10 * bruto;
                         break;
+
+                    
+                    case '999999-200':
+                        nominal = 0.10 * bruto;
+                        break;
+
 
                     default:
                         nominal = 0;

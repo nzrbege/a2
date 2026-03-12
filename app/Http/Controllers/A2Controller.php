@@ -216,10 +216,11 @@ class A2Controller extends Controller
 
         $nomorsurat = strstr($register->gen_no_reg, "/BP/");
         $nomorsurat = str_replace("/BP/", "", $nomorsurat);
+        
+        $dpp1 = Dpp::where('kode_potongan', $register->kd_pot1)->value('jenis_potongan');
+        $dpp2 = Dpp::where('kode_potongan', $register->kd_pot2)->value('jenis_potongan');
 
-        // dd($register->nom_pajak1);
-
-        return view('a2.print', compact('register', 'nomorsurat'));
+        return view('a2.print', compact('register', 'nomorsurat', 'dpp1', 'dpp2'));
     }
 
     public function filterRincian(Request $request)
@@ -411,8 +412,6 @@ class A2Controller extends Controller
     public function show($id)
     {
         $register = Register::with('detailBelanja.rincianRka')->findOrFail($id);
-
-        // dd($register->detailBelanja);
 
         return view('a2.show', compact('register'));
     }
