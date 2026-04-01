@@ -43,6 +43,8 @@ class Register extends Model
         'npwp_penerima',
         'alamat_penerima',
         't_pajak',
+        't_iwp',
+        't_potongan',
         'jpajak_1',
         'kd_pot1',
         'id_bill1',

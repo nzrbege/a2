@@ -294,7 +294,7 @@
                                 Dibayarkan</p>
                             <div class="space-y-1">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-[9px] text-slate-500">BRUTO:</span>
+                                    <span class="text-[10px] text-slate-500">BRUTO:</span>
                                     <input type="text" id="bruto" name="bruto" readonly
                                         class="w-24 text-right bg-transparent border-none p-0 text-[11px] font-bold">
                                 </div>
@@ -302,6 +302,16 @@
                                     <span class="text-[9px]">PAJAK:</span>
                                     <input type="text" id="pajakPotong" name="pajakPotong" readonly
                                         class="w-24 text-right bg-transparent border-none p-0 text-[11px] font-bold">
+                                </div>
+                                <div class="flex justify-between items-center text-orange-600">
+                                    <span class="text-[9px]">IWP (1%):</span>
+                                    <input type="text" id="iwpTotal" readonly name="iwpTotal" 
+                                        class="w-24 text-right bg-transparent border-none p-0 text-[11px] font-bold">
+                                </div>
+                                <div class="flex justify-between items-center text-red-700 border-t pt-1">
+                                    <span class="text-[10px] font-bold">TOTAL POTONGAN:</span>
+                                    <input type="text" id="totalPotongan" readonly name="totalPotongan"
+                                        class="w-24 text-right bg-transparent border-none p-0 text-sm font-black">
                                 </div>
                                 <div class="flex justify-between items-center text-green-700 border-t pt-1">
                                     <span class="text-[10px] font-bold">NETTO:</span>
@@ -327,7 +337,7 @@
                                         <th rowspan="2" class="px-[2px] py-[1px] border text-[9px]">Satuan</th>
                                         <th colspan="3" class="px-[2px] py-[1px] border text-[9px] bg-blue-700">Rincian
                                             Anggaran</th>
-                                        <th colspan="4" class="px-[2px] py-[1px] border text-[9px] bg-green-700">
+                                        <th colspan="5" class="px-[2px] py-[1px] border text-[9px] bg-green-700">
                                             Pengeluaran Riil</th>
                                         <th colspan="4" class="px-[2px] py-[1px] border text-[9px] bg-indigo-700">
                                             Informasi
@@ -343,6 +353,7 @@
                                         <th class="px-1 py-[2px] border">Vol</th>
                                         <th class="px-1 py-[2px] border">Harga</th>
                                         <th class="px-1 py-[2px] border">PPN</th>
+                                        <th class="px-1 py-[2px] border">IWP</th>
                                         <th class="px-1 py-[2px] border">Nominal</th>
 
                                         <!-- Info -->
@@ -360,6 +371,7 @@
                     </div>
                 </div>
                 <input type="hidden" id="hasilPph" name="hasilPph">
+                <input type="hidden" name="iwp_total" id="iwp_total_hidden">
                 <div class="grid grid-cols-12 gap-2 mt-2">
             </form>
             <!-- Modal -->
@@ -651,6 +663,10 @@
             <input type="checkbox" name="riil[${i}][ppn]" onclick="cekStatus(${i})" 
                 id="ppn_riil_${i}">
         </td>
+        <td class="px-1 py-[2px] border">
+            <input type="checkbox" name="riil[${i}][iwp]" onclick="cekIWP(${i})" 
+                id="iwp_riil_${i}">
+        </td>
         <td class="px-1 py-[2px] border text-right font-bold text-green-700">
             <input type="text"
                 readonly
@@ -730,6 +746,7 @@
                     total > 0 ? formatRupiah(total) : '';
 
                 hitungBruto();
+                hitungTotalPajak();
             }
 
 
@@ -774,6 +791,8 @@
                 });
 
                 document.getElementById('bruto').value = formatRupiah(total);
+                document.getElementById('bruto_terbilang').value =
+                    total > 0 ? terbilang(total) + ' Rupiah' : '';
 
                 hitungSemuaPajak();     // jika ada pajak
                 hitungTotalPajak();     // jika belum ada pajak
@@ -781,15 +800,14 @@
 
             function hitungNetto() {
                 const bruto = parseRupiah(document.getElementById('bruto').value);
-                const pajak = parseRupiah(document.getElementById('pajakPotong').value);
 
-                const netto = bruto - pajak;
+                const potongan = parseRupiah(document.getElementById('totalPotongan').value);
+
+                const netto = bruto - potongan;
 
                 document.getElementById('netto').value = formatRupiah(netto);
                 document.getElementById('terbilang').value =
                     netto > 0 ? terbilang(netto) + ' Rupiah' : '';
-                document.getElementById('bruto_terbilang').value =
-                    netto > 0 ? terbilang(bruto) + ' Rupiah' : '';
             }
 
             function terbilangInt(n) {
@@ -938,14 +956,43 @@
 
 
             function hitungTotalPajak() {
-                let total = 0;
+                let pajakManual = 0;
 
+                // Pajak manual
                 document.querySelectorAll('input[name="pajak[nominal][]"]').forEach(el => {
-                    total += parseRupiah(el.value || 0);
+                    pajakManual += parseRupiah(el.value || 0);
                 });
 
-                document.getElementById('pajakPotong').value = formatRupiah(total);
+                const iwp = hitungTotalIWP();
+
+                const totalPotongan = pajakManual + iwp;
+
+                document.getElementById('pajakPotong').value = formatRupiah(pajakManual);
+                document.getElementById('totalPotongan').value = formatRupiah(totalPotongan);
+
                 hitungNetto();
+            }        
+
+            function hitungTotalIWP() {
+                let totalIWP = 0;
+
+                document.querySelectorAll('[id^="iwp_riil_"]').forEach((cb, i) => {
+                    if (cb.checked) {
+                        const vol = Number(document.querySelector(`input[name="riil[${i}][vol]"]`)?.value || 0);
+                        const harga = parseRupiah(
+                            document.querySelector(`input[name="riil[${i}][harga]"]`)?.value || 0
+                        );
+
+                        const nilai = vol * harga;
+                        totalIWP += nilai * 0.01;
+                    }
+                });
+
+                document.getElementById('iwpTotal').value = formatRupiah(totalIWP);
+
+                document.getElementById('iwp_total_hidden').value = totalIWP;
+
+                return totalIWP;
             }
 
             function cekStatus(i) {
@@ -972,6 +1019,9 @@
                 hitungBruto();
             }
 
+            function cekIWP(i) {
+                hitungTotalPajak();
+            }
             
             function hitungSemuaPajak(){
                 document.querySelectorAll('select[name="pajak[kode][]"]').forEach(select=>{

@@ -342,10 +342,17 @@
                     </tr>
                     <tr class="no-border">
                         {{-- <td class="no-border nowrap">{{ ($register->nom_pajak2 === null || $register->nom_pajak2 == 0)? '' : $register->jpajak_2 }}</td> --}}
-                        <td class="no-border">{{ (($register->nom_pajak2 !== null || $register->nom_pajak2 == 0) && $register->jpajak_2 == 'PAD')? '' : ((($register->nom_pajak2 !== null || $register->nom_pajak2 <> 0) && $register->jpajak_2 !== null)?$dpp2:'') }}</td>
+                        <td class="no-border">{{ (($register->nom_pajak2 !== null || $register->nom_pajak2 <> 0) && $register->jpajak_2 == 'PAD')? '' : ((($register->nom_pajak2 !== null || $register->nom_pajak2 <> 0) && $register->jpajak_2 !== null)?$dpp2:'') }}</td>
                         <td class="no-border colon right">{{ ($register->nom_pajak2 === null || $register->nom_pajak2 == 0)? '' : ':' }}</td>
                         <td class="no-border right">{{ ($register->nom_pajak2 === null || $register->nom_pajak2 == 0)? '' : 'Rp '.number_format($register->nom_pajak2, 2, ',', '.') }}</td>
                     </tr>
+                    @if($register->t_iwp !== null && $register->t_iwp != 0)
+                    <tr class="no-border">
+                        <td class="no-border" colspan="2">IWP (1%)</td>
+                        <td class="no-border colon right">:</td>
+                        <td class="no-border right">{{ 'Rp '.number_format($register->t_iwp, 2, ',', '.') }}</td>
+                    </tr>
+                    @endif
                     <tr class="no-border">
                         <td colspan="4" class="left no-border" style="padding: 10px;">Pemungutan oleh Bendaharawan APBD
                         </td>
@@ -353,7 +360,7 @@
                     <tr class="no-border">
                         <td colspan="2" class="right no-border">Jumlah Potongan</td>
                         <td class="no-border right">:</td>
-                        <td class="right bold no-border">Rp {{ number_format($register->t_pajak, 2, ',', '.') }}</td>
+                        <td class="right bold no-border">Rp {{ number_format($register->t_potongan, 2, ',', '.') }}</td>
                     </tr>
                     <tr class="no-border">
                         <td colspan="2" style="padding-top: 10px;" class="no-border">Jumlah yang dibayarkan</td>

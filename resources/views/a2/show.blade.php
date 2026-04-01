@@ -110,8 +110,8 @@
         <div class="p-5 flex justify-end">
             <div class="w-full md:w-1/3 space-y-2 text-sm">
 
-                <div class="flex justify-between">
-                    <span class="text-gray-500">Bruto</span>
+                <div class="border-b flex justify-between">
+                    <span class="text-gray-500 font-bold">Bruto</span>
                     <span class="font-medium">
                         Rp {{ number_format($register->nom_bruto,0,',','.') }}
                     </span>
@@ -124,10 +124,24 @@
                     </span>
                 </div>
 
+                <div class="flex justify-between">
+                    <span class="text-gray-500">IWP  (1%)</span>
+                    <span class="font-medium">
+                        Rp {{ number_format($register->t_iwp,0,',','.') }}
+                    </span>
+                </div>
+
+                <div class="flex justify-between">
+                    <span class="text-red-500">Total Potongan</span>
+                    <span class="font-medium text-red-500">
+                        Rp {{ number_format($register->t_potongan,0,',','.') }}
+                    </span>
+                </div>
+
                 <div class="border-t pt-2 flex justify-between text-base">
                     <span class="font-semibold">Netto</span>
                     <span class="font-bold text-green-600">
-                        Rp {{ number_format($register->nom_bruto - $register->t_pajak,0,',','.') }}
+                        Rp {{ number_format($register->nom_netto,0,',','.') }}
                     </span>
                 </div>
 

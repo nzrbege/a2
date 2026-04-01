@@ -21,6 +21,7 @@ class DetailBelanja extends Model
         'id_rinci_sub_bl',
         'volume',
         'ppn',
+        'iwp',
         'harga_riil',
         'total_dpp',
         'total_dibayar',

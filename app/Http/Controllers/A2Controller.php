@@ -121,6 +121,8 @@ class A2Controller extends Controller
                 'npwp_penerima' => $request->npwp,
                 'nom_bruto'   => (int) str_replace('.', '', $request->bruto),
                 't_pajak'     => (int) str_replace('.', '', $request->pajakPotong),
+                't_iwp'     => (int) str_replace('.', '', $request->iwpTotal),
+                't_potongan'     => (int) str_replace('.', '', $request->totalPotongan),
                 'nom_netto'     => (int) str_replace('.', '', $request->nom_netto),
                 'nama_penerima'    => $request->nama_penerima,
                 'bank_penerima'    => $request->bank_penerima,
@@ -151,7 +153,7 @@ class A2Controller extends Controller
 
             // ================= DETAIL RIIL =================
             $detilData = [];
-
+            
             foreach ($request->riil as $row) {
 
                 if (empty($row['vol']) || empty($row['harga'])) {
@@ -161,11 +163,13 @@ class A2Controller extends Controller
                 $vol   = (int) $row['vol'];
                 $harga = (int) str_replace('.', '', $row['harga']);
 
-                $total_dpp = $vol * $harga;
-
                 $ppn = ($row['ppn'] ?? false) ? $vol * $harga * $request->ppn / 100 : 0;
+                
+                $iwp = ($row['iwp'] ?? false) ? $vol * $harga *  1 / 100 : 0;
 
-                $total_dibayar = $total_dpp + $ppn;
+                $total_dpp = ($vol * $harga) - $iwp;
+
+                $total_dibayar = $total_dpp + $ppn + $iwp;
 
                 $detilData[] = [
                     'id_reg'           => $register->id_reg,
@@ -177,6 +181,7 @@ class A2Controller extends Controller
                     'harga_riil'       => $harga,
                     'total_dpp'        => $total_dpp,
                     'ppn'              => $ppn,
+                    'iwp'              => $iwp,
                     'total_dibayar'    => $total_dibayar,
                 ];
             }
@@ -453,8 +458,7 @@ class A2Controller extends Controller
         $versi = VersiAnggaran::all();
         $penerima = Penerima::orderBy('penerima')->get();
         $dpp = Dpp::all();
-
-        // dd($register->keperluan);
+        $ppn = TarifPpn::find(1);
 
         $versipilihan = VersiAnggaran::where('nomor_anggaran', $register->no_dpa)->value('id_versi_anggaran');
 
@@ -494,7 +498,8 @@ class A2Controller extends Controller
                 'db.volume',
                 'db.harga_riil',
                 'db.total_dibayar',
-                'db.ppn'
+                'db.ppn',
+                'db.iwp'
             )
             ->where('r.id_reg', $id);
 
@@ -545,7 +550,8 @@ class A2Controller extends Controller
                 'b.volume',
                 'b.harga_riil',
                 'b.total_dibayar',
-                'b.ppn'
+                'b.ppn',
+                'b.iwp'
             )
 
             ->selectRaw('
@@ -570,7 +576,8 @@ class A2Controller extends Controller
                 b.volume as volume_input,
                 b.harga_riil,
                 b.total_dibayar as total_input,
-                b.ppn
+                b.ppn,
+                b.iwp
             ')
             ->get()
             ->map(function ($row) {
@@ -596,6 +603,7 @@ class A2Controller extends Controller
                     'harga_riil'        => $row->harga_riil,
                     'total_input'       => $row->total_input,
                     'ppn'               => $row->ppn,
+                    'iwp'               => $row->iwp,
                 ];
             });
 
@@ -608,7 +616,8 @@ class A2Controller extends Controller
             'subkegiatan',
             'akun',
             'dpp',
-            'komponen'
+            'komponen',
+            'ppn'
         ));
     }
 
@@ -681,6 +690,8 @@ class A2Controller extends Controller
                 'npwp_penerima' => $request->npwp,
                 'nom_bruto'   => (int)str_replace('.', '', $request->bruto),
                 't_pajak'     => (int)str_replace('.', '', $request->pajakPotong),
+                't_iwp'     => (int) str_replace('.', '', $request->iwpTotal),
+                't_potongan'     => (int) str_replace('.', '', $request->totalPotongan),
                 'nom_netto'   => (int)str_replace('.', '', $request->nom_netto),
                 'nama_penerima' => $request->nama_penerima,
                 'bank_penerima' => $request->bank_penerima,
@@ -691,7 +702,6 @@ class A2Controller extends Controller
                 'netto_terbilang' => $request->netto_terbilang,
                 'kode_skpd' => $riilValid['kode_skpd'],
                 'nama_skpd' => $riilValid['nama_skpd'],
-
                 'nama_pa'   => $pejabat->nama_pa,
                 'nip_pa'    => $pejabat->nip_pa,
                 'nama_pptk' => $pptk->nama_pptk,
@@ -700,11 +710,9 @@ class A2Controller extends Controller
                 'nip_bendahara' => $pejabat->nip_bendahara,
                 'verifikator1'  => $pejabat->nama_ppk,
                 'verifikator2'  => $pokja->nama_kapokja,
-
                 'jpajak_1'   => $jenis[0] ?? null,
                 'kd_pot1'    => $kode[0] ?? null,
                 'nom_pajak1' => (int)str_replace('.', '', $nominal[0] ?? 0),
-
                 'jpajak_2'   => $jenis[1] ?? null,
                 'kd_pot2'    => $kode[1] ?? null,
                 'nom_pajak2' => (int)str_replace('.', '', $nominal[1] ?? 0),
@@ -723,15 +731,15 @@ class A2Controller extends Controller
                 }
 
                 $vol   = (int)$row['vol'];
-                $harga = (int)str_replace('.', '', $row['harga']);
+                $harga = (int)str_replace('.', '', $row['harga']);            
 
-                $total_dpp = $vol * $harga;
+                $ppn = ($row['ppn'] ?? false) ? $vol * $harga * $request->ppn / 100 : 0;
+                
+                $iwp = ($row['iwp'] ?? false) ? $vol * $harga *  1 / 100 : 0;
 
-                $ppn = ($row['ppn'] ?? false)
-                    ? $total_dpp * $request->ppn / 100
-                    : 0;
+                $total_dpp = ($vol * $harga) - $iwp;
 
-                $total_dibayar = $total_dpp + $ppn;
+                $total_dibayar = $total_dpp + $ppn + $iwp;
 
                 $detilData[] = [
                     'id_reg'          => $register->id_reg,
@@ -743,6 +751,7 @@ class A2Controller extends Controller
                     'harga_riil'      => $harga,
                     'total_dpp'       => $total_dpp,
                     'ppn'             => $ppn,
+                    'iwp'             => $iwp,
                     'total_dibayar'   => $total_dibayar,
                 ];
             }
