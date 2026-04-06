@@ -18,7 +18,7 @@
                         <x-slot name="trigger">
                             <button
                                 class="inline-flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-100 transition duration-150">
-                                Reporting
+                                Laporan
                                 <svg class="ml-1 h-4 w-4 fill-current" viewBox="0 0 20 20">
                                     <path d="M5.293 7.293L10 12l4.707-4.707" />
                                 </svg>

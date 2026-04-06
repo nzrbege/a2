@@ -1,144 +1,210 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-7xl mx-auto p-4">
+<div class="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
 
-    <h1 class="text-xl font-bold mb-4">
-        Laporan Bulanan
-    </h1>
-<div class="flex justify-between items-center mb-4">
-
-    {{-- FILTER --}}
-    <form method="GET" class="flex gap-2 mb-4">
-        <select name="bulan" class="border px-2 py-1 rounded">
-            @foreach(range(1,12) as $b)
-                <option value="{{ $b }}" {{ $bulan == $b ? 'selected' : '' }}>
-                    {{ date('F', mktime(0,0,0,$b,1)) }}
-                </option>
-            @endforeach
-        </select>
-
-        <select name="tahun" class="border px-2 py-1 rounded">
-            @foreach(range(date('Y')-5, date('Y')) as $t)
-                <option value="{{ $t }}" {{ $tahun == $t ? 'selected' : '' }}>
-                    {{ $t }}
-                </option>
-            @endforeach
-        </select>
-
-        <button class="bg-blue-600 text-white px-3 py-1 rounded">
-            Tampilkan
-        </button>
-    </form>
-     {{-- EXPORT --}}
-    <a href="{{ route('reporting.bulanan.pdf', ['bulan'=>$bulan,'tahun'=>$tahun]) }}"
-       class="bg-red-600 text-white px-3 py-1 rounded">
-        Export PDF
-    </a>
-
-</div>
-
-    {{-- TOTAL --}}
-    <div class="bg-green-100 p-4 rounded mb-4">
-        <b>Total Pengeluaran:</b>
-        Rp {{ number_format($total,0,',','.') }}
-    </div>
-
-    {{-- LOOP HIERARKI --}}
-    @foreach($grouped as $prog => $progRows)
-
-    @php
-        $namaProg = $progRows->first()->urai_prog ?? '-';
-        $kegGroup = $progRows->groupBy('kd_keg');
-    @endphp
-
-    <div class="bg-indigo-100 p-2 font-bold">
-        Program: {{ $prog }} - {{ $namaProg }}
-    </div>
-
-    @foreach($kegGroup as $keg => $kegRows)
-
-        @php
-            $namaKeg = $kegRows->first()->urai_keg ?? '-';
-            $subGroup = $kegRows->groupBy('kd_subkeg');
-        @endphp
-
-        <div class="ml-4">
-            <div class="bg-blue-100 p-2">
-                Kegiatan: {{ $keg }} - {{ $namaKeg }}
+    {{-- HEADER --}}
+    <div class="max-w-7xl mx-auto mb-8">
+        <div class="flex items-center gap-3 mb-2">
+            <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
             </div>
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800">Laporan Bulanan</h1>
+                <p class="text-slate-500 text-sm">Ringkasan pengeluaran berdasarkan program dan kegiatan</p>
+            </div>
+        </div>
+    </div>
 
-            @foreach($subGroup as $sub => $subRows)
+    <div class="max-w-7xl mx-auto space-y-5">
 
-                @php
-                    $namaSub = $subRows->first()->urai_subkeg ?? '-';
-                    $rekGroup = $subRows->groupBy('kd_rek');
-                @endphp
-
-                <div class="ml-6">
-                    <div class="bg-yellow-100 p-2">
-                        Sub Kegiatan: {{ $sub }} - {{ $namaSub }}
+        {{-- FILTER & EXPORT --}}
+        <div class="bg-white rounded-xl border border-slate-200 p-5">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <form method="GET" class="flex flex-wrap items-center gap-3">
+                    <div class="relative">
+                        <select name="bulan" class="appearance-none bg-slate-50 border border-slate-200 text-slate-700 pl-4 pr-10 py-2.5 rounded-lg text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all cursor-pointer hover:bg-slate-100">
+                            @foreach(range(1,12) as $b)
+                                <option value="{{ $b }}" {{ $bulan == $b ? 'selected' : '' }}>
+                                    {{ date('F', mktime(0,0,0,$b,1)) }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </div>
                     </div>
 
-                    @foreach($rekGroup as $rek => $rekRows)
-
-                        @php
-                            $namaRek = $rekRows->first()->urai_rekbel ?? '-';
-                        @endphp
-
-                        <div class="ml-8 mb-3">
-
-                            <div class="bg-gray-100 p-2">
-                                Rekening: {{ $rek }} - {{ $namaRek }}
-                            </div>
-
-                            <table class="w-full text-sm border">
-                                <thead>
-                                    <tr class="bg-gray-200">
-                                        <th class="p-2">Tanggal</th>
-                                        <th class="p-2">Uraian</th>
-                                        <th class="p-2 text-right">Jumlah</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($rekRows as $r)
-                                        <tr>
-                                            <td class="p-2">
-                                                {{ date('d-m-Y', strtotime($r->created_at)) }}
-                                            </td>
-                                            <td class="p-2">{{ $r->keperluan }}</td>
-                                            <td class="p-2 text-right">
-                                                Rp {{ number_format($r->nom_bruto,0,',','.') }}
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-
-                                <tfoot>
-                                    <tr class="bg-gray-100 font-bold">
-                                        <td colspan="2" class="text-right p-2">
-                                            Total
-                                        </td>
-                                        <td class="text-right p-2">
-                                            Rp {{ number_format($rekRows->sum('nom_bruto'),0,',','.') }}
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-
+                    <div class="relative">
+                        <select name="tahun" class="appearance-none bg-slate-50 border border-slate-200 text-slate-700 pl-4 pr-10 py-2.5 rounded-lg text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all cursor-pointer hover:bg-slate-100">
+                            @foreach(range(date('Y')-5, date('Y')) as $t)
+                                <option value="{{ $t }}" {{ $tahun == $t ? 'selected' : '' }}>
+                                    {{ $t }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </div>
+                    </div>
 
-                    @endforeach
+                    <button type="submit" class="inline-flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors duration-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        Tampilkan
+                    </button>
+                </form>
 
-                </div>
-
-            @endforeach
-
+                <a href="{{ route('reporting.bulanan.pdf', ['bulan' => $bulan, 'tahun' => $tahun]) }}"
+                   class="inline-flex items-center gap-2 bg-rose-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-rose-700 transition-colors duration-200">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Export PDF
+                </a>
+            </div>
         </div>
 
-    @endforeach
+        {{-- TOTAL --}}
+        <div class="bg-indigo-600 rounded-xl p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-indigo-200 text-sm font-medium uppercase tracking-wider">Total Pengeluaran</p>
+                    <p class="text-3xl sm:text-4xl font-bold mt-1 tracking-tight">Rp {{ number_format($total,0,',','.') }}</p>
+                </div>
+                <div class="w-14 h-14 bg-white/15 rounded-xl flex items-center justify-center">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+            </div>
+        </div>
 
-@endforeach
+        {{-- LOOP HIERARKI --}}
+        @foreach($grouped as $prog => $progRows)
 
+        @php
+            $namaProg = $progRows->first()->urai_prog ?? '-';
+            $kegGroup = $progRows->groupBy('kd_keg');
+        @endphp
+
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            {{-- Program Header --}}
+            <div class="bg-slate-800 px-6 py-4">
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 text-white text-xs font-bold">P</span>
+                    <div>
+                        <p class="text-slate-400 text-xs font-medium uppercase tracking-wider">Program</p>
+                        <h2 class="text-white font-semibold text-lg">{{ $prog }} — {{ $namaProg }}</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-5 space-y-5">
+                @foreach($kegGroup as $keg => $kegRows)
+
+                @php
+                    $namaKeg = $kegRows->first()->urai_keg ?? '-';
+                    $subGroup = $kegRows->groupBy('kd_subkeg');
+                @endphp
+
+                <div class="border border-slate-200 rounded-lg overflow-hidden">
+                    {{-- Kegiatan Header --}}
+                    <div class="bg-indigo-50 px-5 py-3 border-b border-indigo-100">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-indigo-100 text-indigo-600 text-xs font-bold">K</span>
+                            <div>
+                                <p class="text-indigo-400 text-xs font-medium uppercase tracking-wider">Kegiatan</p>
+                                <h3 class="text-slate-700 font-semibold">{{ $keg }} — {{ $namaKeg }}</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 space-y-4">
+                        @foreach($subGroup as $sub => $subRows)
+
+                        @php
+                            $namaSub = $subRows->first()->urai_subkeg ?? '-';
+                            $rekGroup = $subRows->groupBy('kd_rek');
+                        @endphp
+
+                        <div class="border border-slate-100 rounded-lg overflow-hidden">
+                            {{-- Sub Kegiatan Header --}}
+                            <div class="bg-slate-50 px-4 py-2.5 border-b border-slate-100">
+                                <div class="flex items-center gap-2">
+                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded bg-blue-100 text-blue-600 text-xs font-bold">S</span>
+                                    <div>
+                                        <p class="text-slate-400 text-xs font-medium uppercase tracking-wider">Sub Kegiatan</p>
+                                        <h4 class="text-slate-600 font-medium text-sm">{{ $sub }} — {{ $namaSub }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="p-3 space-y-3">
+                                @foreach($rekGroup as $rek => $rekRows)
+
+                                @php
+                                    $namaRek = $rekRows->first()->urai_rekbel ?? '-';
+                                @endphp
+
+                                <div class="bg-white rounded-lg border border-slate-100 overflow-hidden">
+                                    {{-- Rekening Header --}}
+                                    <div class="px-4 py-2.5 border-b border-slate-100 flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                        <p class="text-slate-500 text-xs font-medium">
+                                            <span class="text-slate-400">Rekening:</span>
+                                            <span class="text-slate-700 font-semibold">{{ $rek }}</span> — {{ $namaRek }}
+                                        </p>
+                                    </div>
+
+                                    {{-- Table --}}
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-sm">
+                                            <thead>
+                                                <tr class="bg-slate-50">
+                                                    <th class="text-left px-4 py-2.5 text-xs font-semibold text-slate-500 uppercase tracking-wider w-36">Tanggal</th>
+                                                    <th class="text-left px-4 py-2.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">Uraian</th>
+                                                    <th class="text-right px-4 py-2.5 text-xs font-semibold text-slate-500 uppercase tracking-wider w-44">Jumlah</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-slate-100">
+                                                @foreach($rekRows as $r)
+                                                <tr class="hover:bg-slate-50 transition-colors duration-150">
+                                                    <td class="px-4 py-2.5 text-slate-500 font-mono text-xs">
+                                                        {{ date('d-m-Y', strtotime($r->created_at)) }}
+                                                    </td>
+                                                    <td class="px-4 py-2.5 text-slate-700">{{ $r->keperluan }}</td>
+                                                    <td class="px-4 py-2.5 text-right text-slate-700 font-medium font-mono">
+                                                        Rp {{ number_format($r->nom_bruto,0,',','.') }}
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                            <tfoot>
+                                                <tr class="bg-slate-50">
+                                                    <td colspan="2" class="text-right px-4 py-3 text-sm font-bold text-slate-600 uppercase tracking-wide">
+                                                        Total
+                                                    </td>
+                                                    <td class="text-right px-4 py-3 text-sm font-bold text-indigo-600 font-mono">
+                                                        Rp {{ number_format($rekRows->sum('nom_bruto'),0,',','.') }}
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                @endforeach
+                            </div>
+                        </div>
+
+                        @endforeach
+                    </div>
+                </div>
+
+                @endforeach
+            </div>
+        </div>
+
+        @endforeach
+
+    </div>
 </div>
 @endsection
