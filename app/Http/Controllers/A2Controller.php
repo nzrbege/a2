@@ -230,7 +230,7 @@ class A2Controller extends Controller
 
     public function filterRincian(Request $request)
     {
-        $versipilihan = VersiAnggaran::where('nomor_anggaran', $request->versi)->value('id_versi_anggaran');
+        // $versipilihan = VersiAnggaran::where('nomor_anggaran', $request->versi)->value('id_versi_anggaran');
 
         $subQuery = DB::table('register')
             ->join('detail_belanja', 'register.id_reg', '=', 'detail_belanja.id_reg')
@@ -278,8 +278,8 @@ class A2Controller extends Controller
                 'r.nama_skpd',
                 'r.pptk_id',
                 'r.pokja_id',
-                DB::raw('COALESCE(SUM(d.volume), 0) as reg_sah_vol'),
-                DB::raw('COALESCE(SUM(d.total_dibayar), 0) as reg_sah_nom')
+                DB::raw('COALESCE(SUM(d.volume), 0) as reg_vol'),
+                DB::raw('COALESCE(SUM(d.total_dibayar), 0) as reg_nom')
             )
             ->get()
             ->map(function ($row) {
@@ -291,10 +291,10 @@ class A2Controller extends Controller
                     'satuan'            => $row->satuan,
                     'volume'            => $row->volume,
                     'harga_satuan'      => $row->harga_satuan,
-                    'reg_sah_vol'       => $row->reg_sah_vol,
-                    'reg_sah_nom'       => $row->reg_sah_nom,
-                    'sisa_vol'          => $row->volume - $row->reg_sah_vol,
-                    'sisa_nom'          => $total_rencana - $row->reg_sah_nom,
+                    'reg_vol'           => $row->reg_vol,
+                    'reg_nom'           => $row->reg_nom,
+                    'sisa_vol'          => $row->volume - $row->reg_vol,
+                    'sisa_nom'          => $total_rencana - $row->reg_nom,
                     'kode_dana'         => $row->kode_dana,
                     'nama_dana'         => $row->nama_dana,
                     'kode_skpd'         => $row->kode_skpd,

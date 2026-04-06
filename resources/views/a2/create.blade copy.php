@@ -14,17 +14,15 @@
         </div>
     @endif
 
-    <form x-ref="formA2" id="form-a2" method="POST"
-        action="{{ route('a2.update', $register->id_reg) }}"
+    <form x-ref="formA2" id="form-a2" method="POST" action="{{ route('a2.store') }}"
         class="space-y-3" @submit.prevent="open = true">
         @csrf
-        @method('PUT')
         <input type="hidden" name="ppn" value="{{ $ppn->tarif }}">
 
         {{-- ── HEADER BAR ── --}}
         <div class="bg-blue-800 text-white px-4 py-2 rounded-lg shadow flex justify-between items-center">
             <h1 class="text-xs font-bold uppercase tracking-wider">
-                Edit Register A2 — Bukti Pengeluaran Bidang Informatika {{ date('Y') }}
+                Register A2 — Bukti Pengeluaran Bidang Informatika {{ date('Y') }}
             </h1>
             <button type="submit" id="btn-save"
                 class="bg-white text-blue-800 px-3 py-1 rounded text-xs font-bold hover:bg-blue-50 transition-colors">
@@ -35,29 +33,32 @@
         {{-- ── TATA USAHA / JENIS / TRANSAKSI ── --}}
         <div class="bg-white border border-slate-200 rounded-lg p-3 shadow-sm">
             <div class="grid grid-cols-3 gap-3">
+                {{-- Tata Usaha --}}
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Tata Usaha</label>
                     <select name="tata_usaha"
                         class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
-                        <option value="GU" {{ old('tata_usaha', $register->tata_usaha) == 'GU' ? 'selected' : '' }}>Ganti Uang (GU)</option>
-                        <option value="LS" {{ old('tata_usaha', $register->tata_usaha) == 'LS' ? 'selected' : '' }}>Langsung (LS)</option>
+                        <option value="GU" {{ old('tata_usaha') == 'GU' ? 'selected' : '' }}>Ganti Uang (GU)</option>
+                        <option value="LS" {{ old('tata_usaha') == 'LS' ? 'selected' : '' }}>Langsung (LS)</option>
                     </select>
                 </div>
+                {{-- Jenis A2 --}}
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Jenis A2</label>
                     <select name="jenis_a2"
                         class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
-                        <option value="Non"   {{ old('jenis_a2', $register->jenis_a2) == 'Non'   ? 'selected' : '' }}>Non</option>
-                        <option value="Cetak" {{ old('jenis_a2', $register->jenis_a2) == 'Cetak' ? 'selected' : '' }}>Cetak</option>
+                        <option value="Non"   {{ old('jenis_a2') == 'Non'   ? 'selected' : '' }}>Non</option>
+                        <option value="Cetak" {{ old('jenis_a2') == 'Cetak' ? 'selected' : '' }}>Cetak</option>
                     </select>
                 </div>
+                {{-- Transaksi --}}
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Transaksi</label>
                     <select name="transaksi"
                         class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
-                        <option value="BANK"  {{ old('transaksi', $register->transaksi) == 'BANK'  ? 'selected' : '' }}>BANK</option>
-                        <option value="TUNAI" {{ old('transaksi', $register->transaksi) == 'TUNAI' ? 'selected' : '' }}>TUNAI</option>
-                        <option value="KPPD"  {{ old('transaksi', $register->transaksi) == 'KPPD'  ? 'selected' : '' }}>KPPD</option>
+                        <option value="BANK"  {{ old('transaksi') == 'BANK'  ? 'selected' : '' }}>BANK</option>
+                        <option value="TUNAI" {{ old('transaksi') == 'TUNAI' ? 'selected' : '' }}>TUNAI</option>
+                        <option value="KPPD"  {{ old('transaksi') == 'KPPD'  ? 'selected' : '' }}>KPPD</option>
                     </select>
                 </div>
             </div>
@@ -74,13 +75,14 @@
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih DPA</label>
-                        <select id="versi" name="versi"
+                        <select name="versi" id="versi"
                             class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400"
                             required>
-                            <option value="">-- Pilih Versi --</option>
+                            <option value="">-- Pilih --</option>
                             @foreach ($versi as $v)
                                 <option value="{{ $v->id_versi_anggaran }}"
-                                    {{ old('versi', $register->no_dpa) == $v->nomor_anggaran ? 'selected' : '' }}>
+                                    {{ old('versi') == $v->id_versi_anggaran ? 'selected' : '' }}
+                                    data-nomor="{{ $v->nomor_anggaran }}">
                                     {{ $v->versi_anggaran }}
                                 </option>
                             @endforeach
@@ -88,8 +90,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">Nomor DPA</label>
-                        <input type="text" readonly id="no_dpa" name="no_dpa"
-                            value="{{ old('no_dpa', $register->no_dpa) }}"
+                        <input type="text" readonly id="no_dpa" name="no_dpa" value="{{ old('no_dpa') }}"
                             class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-100 text-slate-500 cursor-not-allowed">
                     </div>
                 </div>
@@ -104,56 +105,32 @@
                     <div class="space-y-1">
                         <label class="block text-xs font-semibold text-slate-600">Program / Kegiatan</label>
                         <select name="program" id="program"
-                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
+                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400"
+                            disabled>
                             <option value="">-- Pilih Program --</option>
-                            @foreach ($program as $v)
-                                <option value="{{ $v->kode_program }}"
-                                    {{ old('program', $register->kd_prog) == $v->kode_program ? 'selected' : '' }}>
-                                    {{ $v->nama_program }}
-                                </option>
-                            @endforeach
                         </select>
-                        <input type="hidden" name="nama_program" id="nama_program"
-                            value="{{ old('nama_program', $register->urai_prog) }}">
+                        <input type="hidden" name="nama_program" id="nama_program">
                         <select name="kegiatan" id="kegiatan"
-                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
+                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400"
+                            disabled>
                             <option value="">-- Pilih Kegiatan --</option>
-                            @foreach ($kegiatan as $v)
-                                <option value="{{ $v->kode_giat }}"
-                                    {{ old('kegiatan', $register->kd_keg) == $v->kode_giat ? 'selected' : '' }}>
-                                    {{ $v->nama_giat }}
-                                </option>
-                            @endforeach
                         </select>
-                        <input type="hidden" name="nama_giat" id="nama_giat"
-                            value="{{ old('nama_giat', $register->urai_keg) }}">
+                        <input type="hidden" name="nama_giat" id="nama_giat">
                     </div>
                     <div class="space-y-1">
                         <label class="block text-xs font-semibold text-slate-600">Sub Kegiatan — Akun Rekening</label>
                         <select name="sub_kegiatan" id="sub_kegiatan"
-                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
+                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400"
+                            disabled>
                             <option value="">-- Pilih Sub Kegiatan --</option>
-                            @foreach ($subkegiatan as $v)
-                                <option value="{{ $v->kode_sub_giat }}"
-                                    {{ old('sub_kegiatan', $register->kd_subkeg) == $v->kode_sub_giat ? 'selected' : '' }}>
-                                    {{ $v->nama_sub_giat }}
-                                </option>
-                            @endforeach
                         </select>
                         <select name="kode_akun" id="akun_rekening"
-                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
+                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400"
+                            disabled>
                             <option value="">-- Pilih Akun --</option>
-                            @foreach ($akun as $v)
-                                <option value="{{ $v->kode_akun }}"
-                                    {{ old('kode_akun', $register->kd_rekbel) == $v->kode_akun ? 'selected' : '' }}>
-                                    {{ $v->kode_akun.' - '.$v->nama_akun }}
-                                </option>
-                            @endforeach
                         </select>
-                        <input type="hidden" name="nama_akun" id="nama_akun"
-                            value="{{ old('nama_akun', $register->urai_rekbel) }}">
-                        <input type="hidden" name="nama_sub_giat" id="nama_sub_giat"
-                            value="{{ old('nama_sub_giat', $register->urai_subkeg) }}">
+                        <input type="hidden" name="nama_akun" id="nama_akun">
+                        <input type="hidden" name="nama_sub_giat" id="nama_sub_giat">
                     </div>
                 </div>
             </div>
@@ -174,14 +151,13 @@
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal</label>
                             <input type="date" name="tanggal"
-                                value="{{ old('tanggal', $register->tanggal) }}"
                                 class="w-full border border-slate-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-green-400">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Keperluan Pembayaran</label>
                             <textarea id="keperluan" name="keperluan" rows="2"
                                 placeholder="Keperluan Pembayaran"
-                                class="w-full border border-slate-300 rounded px-2 py-1 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-green-400">{{ old('keperluan', $register->keperluan) }}</textarea>
+                                class="w-full border border-slate-300 rounded px-2 py-1 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-green-400"></textarea>
                         </div>
                     </div>
                 </div>
@@ -199,42 +175,36 @@
                                 onchange="isiDataPenerima()">
                                 <option value=""></option>
                                 @foreach ($penerima as $pn)
-                                    <option value="{{ $pn->penerima }}"
+                                    <option value="{{ $pn->id }}"
                                         data-npwp="{{ $pn->npwp }}"
                                         data-bank="{{ $pn->bankpenerima }}"
                                         data-norek="{{ $pn->norek_penerima }}"
                                         data-nama="{{ $pn->penerima }}"
-                                        data-alamat="{{ $pn->alamat }}"
-                                        {{ old('penerima', $register->nama_penerima) == $pn->penerima ? 'selected' : '' }}>
+                                        data-alamat="{{ $pn->alamat }}">
                                         {{ $pn->penerima }}
                                     </option>
                                 @endforeach
                             </select>
-                            <input type="hidden" id="nama_penerima" name="nama_penerima"
-                                value="{{ old('nama_penerima', $register->nama_penerima) }}">
+                            <input type="hidden" id="nama_penerima" name="nama_penerima">
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 mb-1">Bank</label>
                                 <input type="text" id="bank_penerima" name="bank_penerima"
-                                    value="{{ old('bank_penerima', $register->bank_penerima) }}"
                                     class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-green-400">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 mb-1">No. Rek / Kode Bayar</label>
                                 <input type="text" id="norek_penerima" name="norek_penerima"
-                                    value="{{ old('norek_penerima', $register->norek_penerima) }}"
                                     class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-green-400">
                             </div>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">NPWP</label>
                             <input type="text" id="npwp" name="npwp"
-                                value="{{ old('npwp', $register->npwp) }}"
                                 class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-green-400">
                         </div>
-                        <input type="hidden" id="alamat_penerima" name="alamat_penerima"
-                            value="{{ old('alamat_penerima', $register->alamat_penerima) }}">
+                        <input type="hidden" id="alamat_penerima" name="alamat_penerima">
                     </div>
                 </div>
             </div>
@@ -306,8 +276,6 @@
                         </tr>
                     </thead>
                     <tbody id="body_pajak" class="bg-red-50 text-center">
-
-                        {{-- Baris Pertama --}}
                         <tr class="pajak-row">
                             <td class="border border-red-100 px-1 py-1">
                                 <select name="pajak[kode][]"
@@ -316,23 +284,18 @@
                                     <option value="">-- Pilih Pajak --</option>
                                     @foreach ($dpp as $p)
                                         <option value="{{ $p->kode_potongan }}"
-                                            data-jenis="{{ $p->jenis_pajak }}"
-                                            {{ old('kd_pot1', $register->kd_pot1) == $p->kode_potongan ? 'selected' : '' }}>
+                                            data-jenis="{{ $p->jenis_pajak }}">
                                             {{ $p->jenis_potongan }}
                                         </option>
                                     @endforeach
                                 </select>
                             </td>
                             <td class="border border-red-100 px-1 py-1">
-                                <input type="text" name="pajak[nominal][]"
-                                    value="{{ old('pajak[nominal][]', $register->nom_pajak1) }}"
-                                    readonly
+                                <input type="text" name="pajak[nominal][]" value="0" readonly
                                     class="w-full text-right text-xs bg-slate-100 border border-slate-200 rounded px-1 py-0.5 cursor-not-allowed">
                                 <input type="hidden" name="pajak[jenis][]">
                             </td>
-                            <td class="border border-red-100 px-2 py-1 kode-pajak text-slate-500">
-                                {{ old('kode_pot', $register->kd_pot1) }}
-                            </td>
+                            <td class="border border-red-100 px-2 py-1 kode-pajak text-slate-500">-</td>
                             <td class="border border-red-100 px-1 py-1">
                                 <button type="button" onclick="tambahPajak()"
                                     class="bg-green-600 hover:bg-green-700 text-white w-6 h-6 rounded text-xs font-bold transition-colors">
@@ -340,222 +303,92 @@
                                 </button>
                             </td>
                         </tr>
-
-                        {{-- Baris Kedua (jika ada) --}}
-                        @if(!empty($register->kd_pot2))
-                        <tr class="pajak-row">
-                            <td class="border border-red-100 px-1 py-1">
-                                <select name="pajak[kode][]"
-                                    class="w-full border border-slate-300 rounded px-1 py-0.5 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-red-400"
-                                    onchange="hitungPajakBaris(this)">
-                                    <option value="">-- Pilih Pajak --</option>
-                                    @foreach ($dpp as $p)
-                                        <option value="{{ $p->kode_potongan }}"
-                                            data-jenis="{{ $p->jenis_pajak }}"
-                                            {{ old('kd_pot2', $register->kd_pot2) == $p->kode_potongan ? 'selected' : '' }}>
-                                            {{ $p->jenis_potongan }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </td>
-                            <td class="border border-red-100 px-1 py-1">
-                                <input type="text" name="pajak[nominal][]"
-                                    value="{{ old('pajak[nominal][]', $register->nom_pajak2) }}"
-                                    readonly
-                                    class="w-full text-right text-xs bg-slate-100 border border-slate-200 rounded px-1 py-0.5 cursor-not-allowed">
-                                <input type="hidden" name="pajak[jenis][]"
-                                    value="{{ old('alamat_penerima', $register->alamat_penerima) }}">
-                            </td>
-                            <td class="border border-red-100 px-2 py-1 kode-pajak text-slate-500">
-                                {{ old('kode_pot', $register->kd_pot2) }}
-                            </td>
-                            <td class="border border-red-100 px-1 py-1">
-                                <button type="button" onclick="hapusPajak(this)"
-                                    class="bg-red-600 hover:bg-red-700 text-white w-6 h-6 rounded text-xs font-bold transition-colors">
-                                    &minus;
-                                </button>
-                            </td>
-                        </tr>
-                        @endif
-
                     </tbody>
                 </table>
-
-                {{-- ── TOTAL DIBAYARKAN ── --}}
-                <div class="mt-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 space-y-1.5">
-                    <div class="flex gap-2">
-                        {{-- Bruto --}}
-                        <div class="flex-1 bg-white border border-blue-200 rounded px-2 py-1">
-                            <p class="text-[10px] text-slate-400 uppercase font-semibold leading-none mb-0.5">Bruto</p>
-                            <input type="text" id="bruto" name="bruto" readonly
-                                value="{{ number_format(old('nom_bruto', $register->nom_bruto), 0, ',', '.') }}"
-                                class="w-full text-right bg-transparent border-none text-xs font-bold text-slate-800 focus:outline-none">
-                        </div>
-                        {{-- Grup Potongan --}}
-                        <div class="flex-1 bg-red-50 border border-red-200 rounded px-2 py-1 space-y-0.5">
-                            <p class="text-[10px] font-semibold text-red-400 uppercase leading-none mb-0.5">Potongan</p>
-                            <div class="flex justify-between items-center">
-                                <span class="text-xs text-red-400">Pajak</span>
-                                <input type="text" id="pajakPotong" name="pajakPotong" readonly
-                                    value="{{ number_format(old('pajakPotong', $register->t_pajak), 0, ',', '.') }}"
-                                    class="w-28 text-right bg-transparent border-none text-xs font-semibold text-red-600 focus:outline-none">
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-xs text-orange-400">IWP (1%)</span>
-                                <input type="text" id="iwpTotal" name="iwpTotal" readonly
-                                    value="{{ number_format(old('nom_bruto', $register->t_iwp), 0, ',', '.') }}"
-                                    class="w-28 text-right bg-transparent border-none text-xs font-semibold text-orange-500 focus:outline-none">
-                            </div>
-                            <div class="flex justify-between items-center border-t border-red-200 pt-0.5">
-                                <span class="text-xs font-bold text-red-700">Total</span>
-                                <input type="text" id="totalPotongan" name="totalPotongan" readonly
-                                    value="{{ number_format(old('totalPotongan', $register->t_potongan), 0, ',', '.') }}"
-                                    class="w-28 text-right bg-transparent border-none text-xs font-black text-red-700 focus:outline-none">
-                            </div>
-                        </div>
-                        {{-- Netto --}}
-                        <div class="flex-1 bg-green-50 border border-green-300 rounded px-2 py-1">
-                            <p class="text-[10px] font-semibold text-green-600 uppercase leading-none mb-0.5">Netto</p>
-                            <input type="text" id="netto" name="nom_netto" readonly
-                                value="{{ number_format(old('nom_netto', $register->nom_netto), 0, ',', '.') }}"
-                                class="w-full text-right bg-transparent border-none text-xs font-black text-green-700 focus:outline-none">
-                        </div>
-                    </div>
-                    {{-- Terbilang --}}
-                    <div class="flex items-start gap-2">
-                        <span class="text-[10px] text-slate-400 italic whitespace-nowrap pt-0.5">Terbilang:</span>
-                        <textarea id="terbilang" rows="2" readonly name="netto_terbilang"
-                            placeholder="Terbilang netto akan muncul di sini..."
-                            class="flex-1 text-xs bg-white italic px-2 py-1 border border-blue-200 rounded text-slate-600 resize-none focus:outline-none leading-snug">{{ old('netto_terbilang', $register->netto_terbilang) }}</textarea>
-                    </div>
-                    <input type="hidden" name="bruto_terbilang" id="bruto_terbilang"
-                        value="{{ old('bruto_terbilang', $register->bruto_terbilang) }}">
-                </div>
             </div>
         </div>
 
-        {{-- ── TABEL RINCIAN KOMPONEN (full width, data dari server) ── --}}
-        <div class="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-xs leading-tight" style="min-width:800px">
-                    <thead class="bg-slate-800 text-white sticky top-0 text-center">
-                        <tr>
-                            <th rowspan="2" class="border border-slate-700 px-2 py-1 whitespace-nowrap">ID</th>
-                            <th rowspan="2" class="border border-slate-700 px-2 py-1 whitespace-nowrap">Uraian Komponen</th>
-                            <th rowspan="2" class="border border-slate-700 px-2 py-1 whitespace-nowrap">Satuan</th>
-                            <th colspan="3" class="border border-blue-600 px-2 py-1 bg-blue-700">Rincian Anggaran</th>
-                            <th colspan="5" class="border border-green-600 px-2 py-1 bg-green-700">Pengeluaran Riil</th>
-                            <th colspan="4" class="border border-indigo-600 px-2 py-1 bg-indigo-700">Informasi Komponen</th>
-                        </tr>
-                        <tr>
-                            <th class="border border-blue-600 px-2 py-1 bg-blue-700">Vol</th>
-                            <th class="border border-blue-600 px-2 py-1 bg-blue-700">Harga</th>
-                            <th class="border border-blue-600 px-2 py-1 bg-blue-700">Total</th>
-                            <th class="border border-green-600 px-2 py-1 bg-green-700 min-w-[5rem]">Vol</th>
-                            <th class="border border-green-600 px-2 py-1 bg-green-700">Harga</th>
-                            <th class="border border-green-600 px-2 py-1 bg-green-700">PPN</th>
-                            <th class="border border-green-600 px-2 py-1 bg-green-700">IWP</th>
-                            <th class="border border-green-600 px-2 py-1 bg-green-700">Nominal</th>
-                            <th class="border border-indigo-600 px-2 py-1 bg-indigo-700">Reg Vol</th>
-                            <th class="border border-indigo-600 px-2 py-1 bg-indigo-700">Reg Nom</th>
-                            <th class="border border-indigo-600 px-2 py-1 bg-indigo-700">Sisa Vol</th>
-                            <th class="border border-indigo-600 px-2 py-1 bg-indigo-700">Sisa Nom</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelRincian" class="divide-y divide-slate-100">
-                        @forelse ($komponen as $i => $row)
-                            <tr class="{{ $i % 2 === 0 ? '' : 'bg-slate-50' }} hover:bg-blue-50 transition-colors">
-                                <td class="border border-slate-200 px-2 py-1 text-center text-slate-500 font-semibold text-blue-700">
-                                    {{ $row['id_rinci_sub_bl'] }}
-                                </td>
-                                <td class="border border-slate-200 px-2 py-1">{{ $row['nama_komponen'] }}</td>
-                                <td class="border border-slate-200 px-2 py-1 text-center">{{ $row['satuan'] }}</td>
+        {{-- ── TOTAL DIBAYARKAN + TABEL RINCIAN ── --}}
+        <div class="grid grid-cols-12 gap-3">
 
-                                {{-- Rincian Anggaran --}}
-                                <td class="border border-blue-100 px-2 py-1 text-center bg-blue-50">
-                                    {{ number_format($row['volume'], 0, ',', '.') }}
-                                </td>
-                                <td class="border border-blue-100 px-2 py-1 text-right bg-blue-50">
-                                    {{ number_format($row['harga_satuan'], 0, ',', '.') }}
-                                </td>
-                                <td class="border border-blue-100 px-2 py-1 text-right bg-blue-50 font-semibold">
-                                    {{ number_format($row['volume'] * $row['harga_satuan'], 0, ',', '.') }}
-                                </td>
+            {{-- Total Dibayarkan --}}
+            <div class="col-span-3 bg-blue-50 border border-blue-200 rounded-lg p-3 shadow-sm">
+                <p class="text-xs font-bold text-blue-800 uppercase border-b border-blue-200 pb-1 mb-2">
+                    Total Dibayarkan
+                </p>
+                <div class="space-y-1.5">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-slate-500">Bruto</span>
+                        <input type="text" id="bruto" name="bruto" readonly
+                            class="w-28 text-right bg-transparent border-none text-xs font-bold text-slate-800 focus:outline-none">
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-red-500">Pajak</span>
+                        <input type="text" id="pajakPotong" name="pajakPotong" readonly
+                            class="w-28 text-right bg-transparent border-none text-xs font-bold text-red-600 focus:outline-none">
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-orange-500">IWP (1%)</span>
+                        <input type="text" id="iwpTotal" name="iwpTotal" readonly
+                            class="w-28 text-right bg-transparent border-none text-xs font-bold text-orange-600 focus:outline-none">
+                    </div>
+                    <div class="flex justify-between items-center border-t border-blue-200 pt-1.5">
+                        <span class="text-xs font-bold text-red-700">Total Potongan</span>
+                        <input type="text" id="totalPotongan" name="totalPotongan" readonly
+                            class="w-28 text-right bg-transparent border-none text-sm font-black text-red-700 focus:outline-none">
+                    </div>
+                    <div class="flex justify-between items-center border-t border-blue-200 pt-1.5">
+                        <span class="text-xs font-bold text-green-700">Netto</span>
+                        <input type="text" id="netto" name="nom_netto" readonly
+                            class="w-28 text-right bg-transparent border-none text-sm font-black text-green-700 focus:outline-none">
+                    </div>
+                </div>
+                <textarea id="terbilang" rows="2" readonly name="netto_terbilang"
+                    placeholder="Terbilang..."
+                    class="mt-2 w-full text-xs bg-white italic px-2 py-1 border border-blue-200 rounded text-slate-500 resize-none focus:outline-none"></textarea>
+                <input type="hidden" name="bruto_terbilang" id="bruto_terbilang">
+            </div>
 
-                                {{-- Pengeluaran Riil --}}
-                                <td class="border border-green-100 px-1 py-1 bg-green-50">
-                                    <input type="number"
-                                        name="riil[{{ $i }}][vol]"
-                                        id="vol_{{ $i }}"
-                                        value="{{ old('volume_input', $row['volume_input'] + 0 ?? '') }}"
-                                        class="w-20 border border-slate-300 rounded px-1 py-0.5 text-xs text-center focus:outline-none focus:ring-1 focus:ring-green-400"
-                                        oninput="hitungRiilBaris({{ $i }})">
-                                </td>
-                                <td class="border border-green-100 px-1 py-1 bg-green-50">
-                                    <input type="text"
-                                        name="riil[{{ $i }}][harga]"
-                                        id="harga_{{ $i }}"
-                                        value="{{ old('harga_riil', $row['harga_riil']) }}"
-                                        class="w-20 border border-slate-300 rounded px-1 py-0.5 text-xs text-right focus:outline-none focus:ring-1 focus:ring-green-400"
-                                        oninput="hitungRiilBaris({{ $i }})"
-                                        onfocus="unformatNumber(this)"
-                                        onblur="formatNumber(this)">
-                                </td>
-                                <td class="border border-green-100 px-2 py-1 text-center bg-green-50">
-                                    <input type="checkbox" name="riil[{{ $i }}][ppn]"
-                                        onclick="cekStatus({{ $i }})" value="1"
-                                        id="ppn_riil_{{ $i }}"
-                                        {{ old('ppn', $row['ppn']) ? 'checked' : '' }}
-                                        class="w-3 h-3 accent-green-600">
-                                </td>
-                                <td class="border border-green-100 px-2 py-1 text-center bg-green-50">
-                                    <input type="checkbox" name="riil[{{ $i }}][iwp]"
-                                        onclick="cekIWP({{ $i }})" value="1"
-                                        id="iwp_riil_{{ $i }}"
-                                        {{ old('iwp', $row['iwp']) ? 'checked' : '' }}
-                                        class="w-3 h-3 accent-green-600">
-                                </td>
-                                <td class="border border-green-100 px-1 py-1 bg-green-50">
-                                    <input type="text"
-                                        name="riil[{{ $i }}][nominal]"
-                                        id="nominal_riil_{{ $i }}"
-                                        value="{{ old('total_input', $row['total_input'] ?? '') }}"
-                                        readonly
-                                        class="w-24 text-right bg-green-100 border border-green-200 rounded px-1 py-0.5 text-xs font-semibold text-green-700 cursor-not-allowed">
-                                </td>
-
-                                {{-- Informasi Komponen --}}
-                                <td class="border border-indigo-100 px-2 py-1 text-center text-slate-600 bg-indigo-50">
-                                    {{ number_format($row['reg_vol'], 0, ',', '.') }}
-                                </td>
-                                <td class="border border-indigo-100 px-2 py-1 text-right text-slate-600 bg-indigo-50">
-                                    {{ number_format($row['reg_nom'], 0, ',', '.') }}
-                                </td>
-                                <td class="border border-indigo-100 px-2 py-1 text-center font-bold text-red-600 bg-indigo-50">
-                                    {{ number_format($row['sisa_vol'], 0, ',', '.') }}
-                                </td>
-                                <td class="border border-indigo-100 px-2 py-1 text-right font-bold text-red-600 bg-indigo-50">
-                                    {{ number_format($row['sisa_nom'], 0, ',', '.') }}
-                                </td>
-
-                                <input type="hidden" name="riil[{{ $i }}][id_rinci_sub_bl]" value="{{ $row['id_rinci_sub_bl'] }}">
-                                <input type="hidden" name="riil[{{ $i }}][nama_komponen]"   value="{{ $row['nama_komponen'] }}">
-                                <input type="hidden" name="riil[{{ $i }}][kode_dana]"       value="{{ $row['kode_dana'] }}">
-                                <input type="hidden" name="riil[{{ $i }}][nama_dana]"       value="{{ $row['nama_dana'] }}">
-                                <input type="hidden" name="riil[{{ $i }}][kode_skpd]"       value="{{ $row['kode_skpd'] }}">
-                                <input type="hidden" name="riil[{{ $i }}][nama_skpd]"       value="{{ $row['nama_skpd'] }}">
-                                <input type="hidden" name="riil[{{ $i }}][pptk_id]"         value="{{ $row['pptk_id'] }}">
-                                <input type="hidden" name="riil[{{ $i }}][pokja_id]"        value="{{ $row['pokja_id'] }}">
+            {{-- Tabel Rincian Komponen --}}
+            <div class="col-span-9 bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs leading-tight" style="min-width:800px">
+                        <thead class="bg-slate-800 text-white sticky top-0 text-center">
+                            <tr>
+                                <th rowspan="2" class="border border-slate-700 px-2 py-1 whitespace-nowrap">ID</th>
+                                <th rowspan="2" class="border border-slate-700 px-2 py-1 whitespace-nowrap">Uraian Komponen</th>
+                                <th rowspan="2" class="border border-slate-700 px-2 py-1 whitespace-nowrap">Satuan</th>
+                                <th colspan="3" class="border border-blue-600 px-2 py-1 bg-blue-700">Rincian Anggaran</th>
+                                <th colspan="5" class="border border-green-600 px-2 py-1 bg-green-700">Pengeluaran Riil</th>
+                                <th colspan="4" class="border border-indigo-600 px-2 py-1 bg-indigo-700">Informasi Komponen</th>
                             </tr>
-                        @empty
+                            <tr>
+                                {{-- Rincian Anggaran --}}
+                                <th class="border border-blue-600 px-2 py-1 bg-blue-700">Vol</th>
+                                <th class="border border-blue-600 px-2 py-1 bg-blue-700">Harga</th>
+                                <th class="border border-blue-600 px-2 py-1 bg-blue-700">Total</th>
+                                {{-- Riil --}}
+                                <th class="border border-green-600 px-2 py-1 bg-green-700">Vol</th>
+                                <th class="border border-green-600 px-2 py-1 bg-green-700">Harga</th>
+                                <th class="border border-green-600 px-2 py-1 bg-green-700">PPN</th>
+                                <th class="border border-green-600 px-2 py-1 bg-green-700">IWP</th>
+                                <th class="border border-green-600 px-2 py-1 bg-green-700">Nominal</th>
+                                {{-- Info --}}
+                                <th class="border border-indigo-600 px-2 py-1 bg-indigo-700">Reg Vol</th>
+                                <th class="border border-indigo-600 px-2 py-1 bg-indigo-700">Reg Nom</th>
+                                <th class="border border-indigo-600 px-2 py-1 bg-indigo-700">Sisa Vol</th>
+                                <th class="border border-indigo-600 px-2 py-1 bg-indigo-700">Sisa Nom</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelRincian" class="divide-y divide-slate-100">
                             <tr>
                                 <td colspan="15" class="text-center py-6 text-slate-400 text-xs italic">
-                                    Tidak ada data komponen.
+                                    Pilih Akun Rekening untuk memuat data rincian...
                                 </td>
                             </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -564,12 +397,12 @@
 
     </form>
 
-    {{-- ── MODAL KONFIRMASI — harus di dalam x-data wrapper ── --}}
+    {{-- ── MODAL KONFIRMASI ── --}}
     <div x-show="open" x-transition @click.self="open = false" style="display:none"
         class="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
         <div class="bg-white rounded-xl shadow-2xl border border-gray-200 w-96 p-6">
             <h2 class="text-base font-semibold text-slate-800 mb-2">Konfirmasi Simpan</h2>
-            <p class="text-sm text-slate-500">Yakin ingin menyimpan perubahan data A2 ini?</p>
+            <p class="text-sm text-slate-500">Yakin ingin menyimpan data A2 ini?</p>
             <div class="flex justify-end gap-2 mt-6">
                 <button type="button" @click="open = false"
                     class="px-4 py-2 text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors">
@@ -583,22 +416,20 @@
         </div>
     </div>
 
-</div>{{-- tutup x-data --}}
+</div>
 @endsection
 
 @push('scripts')
 <script>
     /* ─────────────────────────────────────────
-     * TOM SELECT — Penerima (dengan pre-select nilai edit)
+     * TOM SELECT — Penerima
      * ───────────────────────────────────────── */
     document.addEventListener('DOMContentLoaded', function () {
-        const ts = new TomSelect('#penerima', {
+        new TomSelect('#penerima', {
             create: false,
             allowEmptyOption: true,
             placeholder: 'Cari penerima...'
         });
-        const selectedValue = @json(old('penerima', $register->nama_penerima));
-        if (selectedValue) ts.setValue(selectedValue);
     });
 
     /* ─────────────────────────────────────────
@@ -630,8 +461,9 @@
             resetSelect('akun_rekening', '-- Pilih Akun --');
 
             if (!versi) return;
+
             fetch(`/a2/program-by-dpa/${versi}`)
-                .then(res => res.json())
+                .then(res => { if (!res.ok) throw new Error('Server error'); return res.json(); })
                 .then(data => {
                     const program = document.getElementById('program');
                     program.innerHTML = `<option value="">-- Pilih Program --</option>`;
@@ -642,7 +474,8 @@
                         opt.textContent = p.nama_program;
                         program.appendChild(opt);
                     });
-                });
+                })
+                .catch(() => alert('Gagal memuat data program'));
         });
 
         /* Program */
@@ -656,8 +489,9 @@
             resetSelect('akun_rekening', '-- Pilih Akun --');
 
             if (!programId) return;
+
             fetch(`/a2/kegiatan-by-program/${programId}`)
-                .then(res => res.json())
+                .then(res => { if (!res.ok) throw new Error('Server error'); return res.json(); })
                 .then(data => {
                     const kegiatan = document.getElementById('kegiatan');
                     kegiatan.innerHTML = `<option value="">-- Pilih Kegiatan --</option>`;
@@ -668,7 +502,8 @@
                         opt.textContent = k.nama_giat;
                         kegiatan.appendChild(opt);
                     });
-                });
+                })
+                .catch(() => alert('Gagal memuat data kegiatan'));
         });
 
         /* Kegiatan */
@@ -681,8 +516,9 @@
             resetSelect('akun_rekening', '-- Pilih Akun --');
 
             if (!kegiatanId) return;
+
             fetch(`/a2/subkegiatan-by-kegiatan/${kegiatanId}`)
-                .then(res => res.json())
+                .then(res => { if (!res.ok) throw new Error('Server error'); return res.json(); })
                 .then(data => {
                     const sub = document.getElementById('sub_kegiatan');
                     sub.innerHTML = `<option value="">-- Pilih Sub Kegiatan --</option>`;
@@ -693,7 +529,8 @@
                         opt.textContent = s.nama_sub_giat;
                         sub.appendChild(opt);
                     });
-                });
+                })
+                .catch(() => alert('Gagal memuat data sub kegiatan'));
         });
 
         /* Sub Kegiatan */
@@ -705,8 +542,9 @@
             setLoadingSelect('akun_rekening', 'Memuat Akun...');
 
             if (!sub) return;
+
             fetch(`/a2/akun-by-subkegiatan/${sub}`)
-                .then(res => res.json())
+                .then(res => { if (!res.ok) throw new Error('Server error'); return res.json(); })
                 .then(data => {
                     const akun = document.getElementById('akun_rekening');
                     akun.innerHTML = `<option value="">-- Pilih Akun --</option>`;
@@ -717,12 +555,12 @@
                         opt.textContent = `${a.kode_akun} - ${a.nama_akun}`;
                         akun.appendChild(opt);
                     });
-                });
+                })
+                .catch(() => alert('Gagal memuat data akun'));
         });
 
-        /* Akun → Rincian (via fetch, untuk kasus ganti akun saat edit) */
+        /* Akun → Rincian */
         document.getElementById('akun_rekening').addEventListener('change', function () {
-            console.log('AKUN CHANGE TRIGGERED');
             const selected = this.options[this.selectedIndex];
             if (!selected) { document.getElementById('nama_akun').value = ''; return; }
 
@@ -735,37 +573,38 @@
             const kegiatan = document.getElementById('kegiatan').value;
             const sub      = document.getElementById('sub_kegiatan').value;
 
-
-            console.log({ akun, versi, program, kegiatan, sub });
-
-            if (!akun || !versi || !program || !kegiatan || !sub) return;
+            if (!akun || !versi || !program || !kegiatan || !sub) {
+                document.getElementById('tabelRincian').innerHTML = '';
+                return;
+            }
 
             fetch(`/a2/filter-rincian`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 body: JSON.stringify({ versi, program, kegiatan, sub_kegiatan: sub, akun })
             })
-                .then(res => res.json())
+                .then(res => { if (!res.ok) throw new Error('Server error'); return res.json(); })
                 .then(data => {
-                    console.log(data);
                     const html = data.map((row, i) => `
                         <tr class="${i % 2 === 0 ? '' : 'bg-slate-50'}">
-                            <td class="border border-slate-200 px-2 py-1 text-center font-semibold text-blue-700">${row.id_rinci_sub_bl}</td>
+                            <td class="border border-slate-200 px-2 py-1 text-center text-slate-500">${row.id_rinci_sub_bl}</td>
                             <td class="border border-slate-200 px-2 py-1">${row.nama_komponen}</td>
                             <td class="border border-slate-200 px-2 py-1 text-center">${row.satuan}</td>
                             <td class="border border-blue-100 px-2 py-1 text-center bg-blue-50">${row.volume}</td>
                             <td class="border border-blue-100 px-2 py-1 text-right bg-blue-50">${Number(row.harga_satuan).toLocaleString('id-ID')}</td>
                             <td class="border border-blue-100 px-2 py-1 text-right bg-blue-50 font-semibold">${(row.volume * row.harga_satuan).toLocaleString('id-ID')}</td>
                             <td class="border border-green-100 px-1 py-1 bg-green-50">
-                                <input type="number" name="riil[${i}][vol]" id="vol_${i}" step="any"
-                                    class="w-20 border border-slate-300 rounded px-1 py-0.5 text-xs text-center focus:outline-none focus:ring-1 focus:ring-green-400"
+                                <input type="number" name="riil[${i}][vol]" step="any"
+                                    class="w-12 border border-slate-300 rounded px-1 py-0.5 text-xs text-center focus:outline-none focus:ring-1 focus:ring-green-400"
                                     oninput="hitungRiilBaris(${i})">
                             </td>
                             <td class="border border-green-100 px-1 py-1 bg-green-50">
-                                <input type="text" name="riil[${i}][harga]" id="harga_${i}" step="any"
+                                <input type="text" name="riil[${i}][harga]" step="any"
                                     class="w-20 border border-slate-300 rounded px-1 py-0.5 text-xs text-right focus:outline-none focus:ring-1 focus:ring-green-400"
                                     oninput="hitungRiilBaris(${i})"
-                                    onfocus="unformatNumber(this)" onblur="formatNumber(this)">
+                                    onfocus="unformatNumber(this)"
+                                    onblur="formatNumber(this)"
+                                    id="harga_riil_${i}">
                             </td>
                             <td class="border border-green-100 px-2 py-1 text-center bg-green-50">
                                 <input type="checkbox" name="riil[${i}][ppn]" onclick="cekStatus(${i})"
@@ -776,11 +615,11 @@
                                     id="iwp_riil_${i}" class="w-3 h-3 accent-green-600">
                             </td>
                             <td class="border border-green-100 px-1 py-1 bg-green-50">
-                                <input type="text" readonly id="nominal_riil_${i}" name="riil[${i}][nominal]"
+                                <input type="text" readonly id="nominal_riil_${i}"
                                     class="w-24 text-right bg-green-100 border border-green-200 rounded px-1 py-0.5 text-xs font-semibold text-green-700 cursor-not-allowed">
                             </td>
-                            <td class="border border-indigo-100 px-2 py-1 text-center text-slate-600 bg-indigo-50">${row.reg_sah}</td>
-                            <td class="border border-indigo-100 px-2 py-1 text-right text-slate-600 bg-indigo-50">${Number(row.reg_sah).toLocaleString('id-ID')}</td>
+                            <td class="border border-indigo-100 px-2 py-1 text-center text-slate-600 bg-indigo-50">${row.reg_sah_vol}</td>
+                            <td class="border border-indigo-100 px-2 py-1 text-right text-slate-600 bg-indigo-50">${Number(row.reg_sah_nom).toLocaleString('id-ID')}</td>
                             <td class="border border-indigo-100 px-2 py-1 text-center font-bold text-red-600 bg-indigo-50">${row.sisa_vol}</td>
                             <td class="border border-indigo-100 px-2 py-1 text-right font-bold text-red-600 bg-indigo-50">${Number(row.sisa_nom).toLocaleString('id-ID')}</td>
                             <input type="hidden" name="riil[${i}][id_rinci_sub_bl]" value="${row.id_rinci_sub_bl}">
@@ -794,7 +633,8 @@
                         </tr>
                     `).join('');
                     document.getElementById('tabelRincian').innerHTML = html;
-                });
+                })
+                .catch(() => alert('Gagal memuat data rincian'));
         });
     });
 
@@ -850,14 +690,14 @@
         document.getElementById('bruto').value = formatRupiah(total);
         document.getElementById('bruto_terbilang').value = total > 0 ? terbilang(total) + ' Rupiah' : '';
         hitungSemuaPajak();
-        hitungNetto();
+        hitungTotalPajak();
     }
 
     function hitungNetto() {
         const bruto    = parseRupiah(document.getElementById('bruto').value);
         const potongan = parseRupiah(document.getElementById('totalPotongan').value);
         const netto    = bruto - potongan;
-        document.getElementById('netto').value     = formatRupiah(netto);
+        document.getElementById('netto').value    = formatRupiah(netto);
         document.getElementById('terbilang').value = netto > 0 ? terbilang(netto) + ' Rupiah' : '';
     }
 
@@ -866,8 +706,8 @@
         let harga  = parseRupiah(document.querySelector(`input[name="riil[${i}][harga]"]`)?.value || 0);
         const ppn  = {{ $ppn->tarif }};
         const cb   = document.getElementById(`ppn_riil_${i}`);
-        if (cb && cb.checked) harga = harga * (100 + ppn) / 100;
-        const total = Math.round(vol * harga);
+        if (cb.checked) harga = harga * (100 + ppn) / 100;
+        const total = vol * harga;
         document.getElementById(`nominal_riil_${i}`).value = total > 0 ? formatRupiah(total) : '';
         hitungBruto();
         hitungTotalPajak();
@@ -878,7 +718,7 @@
         const cb    = document.getElementById(`ppn_riil_${i}`);
         const vol   = Number(document.querySelector(`input[name="riil[${i}][vol]"]`)?.value || 0);
         let harga   = parseRupiah(document.querySelector(`input[name="riil[${i}][harga]"]`)?.value || 0);
-        if (cb && cb.checked) harga = harga * (100 + ppn) / 100;
+        if (cb.checked) harga = harga * (100 + ppn) / 100;
         const total = vol * harga;
         document.getElementById(`nominal_riil_${i}`).value = total > 0 ? formatRupiah(total) : '';
         hitungBruto();
@@ -899,14 +739,14 @@
     }
 
     function hitungPajakBaris(select) {
-        const row         = select.closest('tr');
-        const kode        = select.value;
-        const selectedOpt = select.options[select.selectedIndex];
-        const jenisPajak  = selectedOpt?.dataset?.jenis || '';
+        const row          = select.closest('tr');
+        const kode         = select.value;
+        const selectedOpt  = select.options[select.selectedIndex];
+        const jenisPajak   = selectedOpt?.dataset?.jenis || '';
         row.querySelector('input[name="pajak[jenis][]"]').value = jenisPajak;
 
         const bruto = parseRupiah(document.getElementById('bruto')?.value || 0);
-        const dpp   = Math.ceil((100 / 111) * bruto);
+        const dpp   = (100 / 111) * bruto;
         let nominal = 0;
 
         switch (kode) {
@@ -916,16 +756,17 @@
                 const lain = (Number(vol_lain.value) || 0) * (Number(besaran_lain.value) || 0) * 0.06;
                 nominal = iv + iii + lain;
                 break;
-            case '411121-21-100-20': nominal = 0.05  * dpp;              break;
+            case '411121-21-100-20': nominal = 0.05 * dpp;               break;
             case '411122-920':       nominal = 0.015 * dpp;              break;
             case '411124-100':
-            case '411124-104':       nominal = 0.02  * dpp;              break;
-            case '411211-920':       nominal = 0.12  * (11 / 12 * dpp); break;
-            case '999999-100':       nominal = 0.10  * bruto;            break;
+            case '411124-104':       nominal = 0.02 * dpp;               break;
+            case '411211-920':       nominal = 0.12 * (11 / 12 * dpp);   break;
+            case '999999-100':
+            case '999999-200':       nominal = 0.10 * bruto;             break;
             default:                 nominal = 0;
         }
 
-        nominal = Math.ceil(nominal);
+        nominal = Math.round(nominal);
         row.querySelector('input[name="pajak[nominal][]"]').value = formatRupiah(nominal);
 
         const kodeCell = row.querySelector('.kode-pajak');
@@ -999,14 +840,14 @@
         n = Math.floor(n);
         const angka = ['', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima',
                         'Enam', 'Tujuh', 'Delapan', 'Sembilan', 'Sepuluh', 'Sebelas'];
-        if (n < 12)            return angka[n];
-        if (n < 20)            return terbilangInt(n - 10) + ' Belas';
-        if (n < 100)           return terbilangInt(Math.floor(n / 10))       + ' Puluh '  + terbilangInt(n % 10);
-        if (n < 200)           return 'Seratus ' + terbilangInt(n - 100);
-        if (n < 1000)          return terbilangInt(Math.floor(n / 100))      + ' Ratus '  + terbilangInt(n % 100);
-        if (n < 2000)          return 'Seribu '  + terbilangInt(n - 1000);
-        if (n < 1_000_000)     return terbilangInt(Math.floor(n / 1000))     + ' Ribu '   + terbilangInt(n % 1000);
-        if (n < 1_000_000_000) return terbilangInt(Math.floor(n / 1_000_000)) + ' Juta '  + terbilangInt(n % 1_000_000);
+        if (n < 12)         return angka[n];
+        if (n < 20)         return terbilangInt(n - 10) + ' Belas';
+        if (n < 100)        return terbilangInt(Math.floor(n / 10)) + ' Puluh '  + terbilangInt(n % 10);
+        if (n < 200)        return 'Seratus ' + terbilangInt(n - 100);
+        if (n < 1000)       return terbilangInt(Math.floor(n / 100))  + ' Ratus ' + terbilangInt(n % 100);
+        if (n < 2000)       return 'Seribu '  + terbilangInt(n - 1000);
+        if (n < 1_000_000)  return terbilangInt(Math.floor(n / 1000)) + ' Ribu '  + terbilangInt(n % 1000);
+        if (n < 1_000_000_000) return terbilangInt(Math.floor(n / 1_000_000)) + ' Juta ' + terbilangInt(n % 1_000_000);
         return '';
     }
 

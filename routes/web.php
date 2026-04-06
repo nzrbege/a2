@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\A2Controller;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReportingController;
 use App\Http\Controllers\PenerimaController;
 
 /*
@@ -12,7 +12,7 @@ use App\Http\Controllers\PenerimaController;
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
-    return redirect()->route('dashboard.ringkasan');
+    return redirect()->route('reporting.realisasi');
 });
 
 /*
@@ -21,15 +21,21 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'verified'])
-    ->prefix('dashboard')
-    ->name('dashboard.')
+    ->prefix('reporting')
+    ->name('reporting.')
     ->group(function () {
 
-        Route::get('/ringkasan', [DashboardController::class, 'ringkasan'])
-            ->name('ringkasan');
+        Route::match(['get','post'], '/realisasi', [ReportingController::class, 'realisasi'])
+            ->name('realisasi');
 
-        Route::get('/kendali-sub-kegiatan', [DashboardController::class, 'kendaliSubKegiatan'])
-            ->name('kendali-sub-kegiatan');
+        Route::get('/realisasi/reset', function () {
+            session()->forget('filter');
+            return redirect()->route('reporting.realisasi');
+        })->name('realisasi.reset');
+        
+        Route::post('/filter-rincian',
+            [ReportingController::class, 'filterRincian']);
+
     });
 
 /*

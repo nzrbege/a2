@@ -526,10 +526,10 @@
 
                                 {{-- Informasi Komponen --}}
                                 <td class="border border-indigo-100 px-2 py-1 text-center text-slate-600 bg-indigo-50">
-                                    {{ number_format($row['reg_vol'], 0, ',', '.') }}
+                                    {{ number_format($row['reg_sah_vol'], 0, ',', '.') }}
                                 </td>
                                 <td class="border border-indigo-100 px-2 py-1 text-right text-slate-600 bg-indigo-50">
-                                    {{ number_format($row['reg_nom'], 0, ',', '.') }}
+                                    {{ number_format($row['reg_sah_nom'], 0, ',', '.') }}
                                 </td>
                                 <td class="border border-indigo-100 px-2 py-1 text-center font-bold text-red-600 bg-indigo-50">
                                     {{ number_format($row['sisa_vol'], 0, ',', '.') }}
@@ -779,8 +779,8 @@
                                 <input type="text" readonly id="nominal_riil_${i}" name="riil[${i}][nominal]"
                                     class="w-24 text-right bg-green-100 border border-green-200 rounded px-1 py-0.5 text-xs font-semibold text-green-700 cursor-not-allowed">
                             </td>
-                            <td class="border border-indigo-100 px-2 py-1 text-center text-slate-600 bg-indigo-50">${row.reg_sah}</td>
-                            <td class="border border-indigo-100 px-2 py-1 text-right text-slate-600 bg-indigo-50">${Number(row.reg_sah).toLocaleString('id-ID')}</td>
+                            <td class="border border-indigo-100 px-2 py-1 text-center text-slate-600 bg-indigo-50">${row.reg_sah_vol}</td>
+                            <td class="border border-indigo-100 px-2 py-1 text-right text-slate-600 bg-indigo-50">${Number(row.reg_sah_nom).toLocaleString('id-ID')}</td>
                             <td class="border border-indigo-100 px-2 py-1 text-center font-bold text-red-600 bg-indigo-50">${row.sisa_vol}</td>
                             <td class="border border-indigo-100 px-2 py-1 text-right font-bold text-red-600 bg-indigo-50">${Number(row.sisa_nom).toLocaleString('id-ID')}</td>
                             <input type="hidden" name="riil[${i}][id_rinci_sub_bl]" value="${row.id_rinci_sub_bl}">

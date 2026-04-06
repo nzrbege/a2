@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Print Surat Bukti Pengeluaran</title>
+    <title>A2</title>
     <style>
         @page {
             size: A4;

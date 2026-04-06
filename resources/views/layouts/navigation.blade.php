@@ -5,7 +5,7 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard.ringkasan') }}" class="text-xl font-bold text-gray-800">
+                    <a href="{{ route('reporting.realisasi') }}" class="text-xl font-bold text-gray-800">
                         A<span class="text-gray-800">2</span>
                     </a>
                 </div>
@@ -18,7 +18,7 @@
                         <x-slot name="trigger">
                             <button
                                 class="inline-flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-100 transition duration-150">
-                                Dashboard
+                                Reporting
                                 <svg class="ml-1 h-4 w-4 fill-current" viewBox="0 0 20 20">
                                     <path d="M5.293 7.293L10 12l4.707-4.707" />
                                 </svg>
@@ -26,13 +26,13 @@
                         </x-slot>
 
                         <x-slot name="content">
-                            <x-dropdown-link :href="route('dashboard.ringkasan')">
-                                Ringkasan Belanja
+                            <x-dropdown-link :href="route('reporting.realisasi')">
+                                Realisasi Anggaran
                             </x-dropdown-link>
 
-                            <x-dropdown-link :href="route('dashboard.kendali-sub-kegiatan')">
+                            {{-- <x-dropdown-link :href="route('dashboard.kendali-sub-kegiatan')">
                                 Kendali Sub Kegiatan
-                            </x-dropdown-link>
+                            </x-dropdown-link> --}}
                         </x-slot>
                     </x-dropdown>
 
@@ -142,13 +142,13 @@
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
 
-            <div class="px-4 text-xs text-gray-400 uppercase">Dashboard</div>
-            <x-responsive-nav-link :href="route('dashboard.ringkasan')">
-                Ringkasan Belanja
+            <div class="px-4 text-xs text-gray-400 uppercase">Reporting</div>
+            <x-responsive-nav-link :href="route('reporting.realisasi')">
+                Realisasi Anggaran
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('dashboard.kendali-sub-kegiatan')">
+            {{-- <x-responsive-nav-link :href="route('dashboard.kendali-sub-kegiatan')">
                 Kendali Sub Kegiatan
-            </x-responsive-nav-link>
+            </x-responsive-nav-link> --}}
 
             <div class="mt-3 px-4 text-xs text-gray-400 uppercase">Register</div>
             <x-responsive-nav-link :href="route('a2.index')">
