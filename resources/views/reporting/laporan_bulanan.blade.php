@@ -23,9 +23,9 @@
         {{-- FILTER & EXPORT --}}
         <div class="bg-white rounded-xl border border-slate-200 p-5">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <form method="GET" class="flex flex-wrap items-center gap-3">
+                <form id="filterForm" method="GET" class="flex flex-wrap items-center gap-3">
                     <div class="relative">
-                        <select name="bulan" class="appearance-none bg-slate-50 border border-slate-200 text-slate-700 pl-4 pr-10 py-2.5 rounded-lg text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all cursor-pointer hover:bg-slate-100">
+                        <select name="bulan" onchange="document.getElementById('filterForm').submit()" class="appearance-none bg-slate-50 border border-slate-200 text-slate-700 pl-4 pr-10 py-2.5 rounded-lg text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all cursor-pointer hover:bg-slate-100">
                             @foreach(range(1,12) as $b)
                                 <option value="{{ $b }}" {{ $bulan == $b ? 'selected' : '' }}>
                                     {{ date('F', mktime(0,0,0,$b,1)) }}
@@ -38,7 +38,7 @@
                     </div>
 
                     <div class="relative">
-                        <select name="tahun" class="appearance-none bg-slate-50 border border-slate-200 text-slate-700 pl-4 pr-10 py-2.5 rounded-lg text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all cursor-pointer hover:bg-slate-100">
+                        <select name="tahun" onchange="document.getElementById('filterForm').submit()" class="appearance-none bg-slate-50 border border-slate-200 text-slate-700 pl-4 pr-10 py-2.5 rounded-lg text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all cursor-pointer hover:bg-slate-100">
                             @foreach(range(date('Y')-5, date('Y')) as $t)
                                 <option value="{{ $t }}" {{ $tahun == $t ? 'selected' : '' }}>
                                     {{ $t }}
@@ -49,11 +49,6 @@
                             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </div>
                     </div>
-
-                    <button type="submit" class="inline-flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors duration-200">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        Tampilkan
-                    </button>
                 </form>
 
                 <a href="{{ route('reporting.bulanan.pdf', ['bulan' => $bulan, 'tahun' => $tahun]) }}"
@@ -203,8 +198,26 @@
             </div>
         </div>
 
-        @endforeach
+@endforeach
 
     </div>
 </div>
+
+{{-- LOADING OVERLAY --}}
+<div id="loadingOverlay" class="fixed inset-0 bg-white/70 backdrop-blur-sm z-50 hidden items-center justify-center">
+    <div class="flex flex-col items-center gap-4">
+        <div class="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+        <p class="text-slate-600 font-medium text-sm">Memuat data...</p>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('#filterForm select').forEach(function(el) {
+        el.addEventListener('change', function() {
+            var overlay = document.getElementById('loadingOverlay');
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+        });
+    });
+</script>
 @endsection
