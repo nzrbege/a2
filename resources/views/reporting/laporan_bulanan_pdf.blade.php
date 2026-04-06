@@ -264,7 +264,7 @@
 
             @php
                 $namaSub = $subRows->first()->urai_subkeg ?? '-';
-                $rekGroup = $subRows->groupBy('kd_rek');
+                $rekGroup = $subRows->groupBy('kd_rekbel');
             @endphp
 
             <div class="subkegiatan-header">
