@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <style>
         @page {
-            margin: 15mm 15mm 15mm 15mm;
+            margin: 5mm 5mm 5mm 5mm;
         }
 
         * {
@@ -19,7 +19,7 @@
             color: #000;
             line-height: 1.6;
             background: #fff;
-            padding: 20mm 25mm 20mm 30mm;
+            padding: 15mm;
         }
 
         /* KOP */
