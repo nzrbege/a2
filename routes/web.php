@@ -57,6 +57,9 @@ Route::middleware('auth')->group(function () {
     */
     Route::resource('penerima', PenerimaController::class);
 
+    Route::get('/reporting/laporan-bulanan', [ReportingController::class, 'bulanan'])->name('reporting.bulanan');
+    Route::get('/reporting/laporan-bulanan/pdf', [ReportingController::class, 'bulananPdf'])->name('reporting.bulanan.pdf');
+
     /*
     |--------------------------------------------------------------------------
     | REGISTER / A2

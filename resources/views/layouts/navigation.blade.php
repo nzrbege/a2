@@ -29,6 +29,10 @@
                             <x-dropdown-link :href="route('reporting.realisasi')">
                                 Realisasi Anggaran
                             </x-dropdown-link>
+                            
+                            <x-dropdown-link :href="route('reporting.bulanan')">
+                                Laporan Bulanan
+                            </x-dropdown-link>
 
                             {{-- <x-dropdown-link :href="route('dashboard.kendali-sub-kegiatan')">
                                 Kendali Sub Kegiatan

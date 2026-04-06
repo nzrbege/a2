@@ -7,6 +7,8 @@ use App\Models\RincianRka;
 use App\Models\VersiAnggaran;
 use Illuminate\Support\Facades\DB;
 
+    use Barryvdh\DomPDF\Facade\Pdf;
+
 class ReportingController extends Controller
 {
     public function realisasi(Request $request)
@@ -247,5 +249,62 @@ class ReportingController extends Controller
                 ];
             });
         return response()->json($data);
+    }
+
+    public function bulanan(Request $request)
+    {
+        $bulan = $request->bulan ?? date('m');
+        $tahun = $request->tahun ?? date('Y');
+
+        $data = DB::table('register')
+            ->whereMonth('created_at', $bulan)
+            ->whereYear('created_at', $tahun)
+            ->orderBy('kd_prog')
+            ->orderBy('kd_keg')
+            ->orderBy('kd_subkeg')
+            ->orderBy('kd_rekbel')
+            ->orderBy('created_at')
+            ->get();
+
+        // total keseluruhan
+        $total = $data->sum('nom_bruto');
+
+        // grouping
+        $grouped = $data->groupBy('kd_prog');
+
+        return view('reporting.laporan_bulanan', compact(
+            'grouped',
+            'total',
+            'bulan',
+            'tahun'
+        ));
+    }
+
+    public function bulananPdf(Request $request)
+    {
+        $bulan = $request->bulan ?? date('m');
+        $tahun = $request->tahun ?? date('Y');
+
+        $data = DB::table('register')
+            ->whereMonth('created_at', $bulan)
+            ->whereYear('created_at', $tahun)
+            ->orderBy('kd_prog')
+            ->orderBy('kd_keg')
+            ->orderBy('kd_subkeg')
+            ->orderBy('kd_rekbel')
+            ->orderBy('created_at')
+            ->get();
+
+        $total = $data->sum('nom_bruto');
+        $grouped = $data->groupBy('kd_prog');
+
+        $pdf = Pdf::loadView('reporting.laporan_bulanan_pdf', compact(
+            'grouped',
+            'total',
+            'bulan',
+            'tahun'
+        ))->setPaper('A4', 'portrait');
+
+        return $pdf->download('laporan-bulanan.pdf');
     }
 }

@@ -153,7 +153,7 @@ class A2Controller extends Controller
 
             // ================= DETAIL RIIL =================
             $detilData = [];
-            
+
             foreach ($request->riil as $row) {
 
                 if (empty($row['vol']) || empty($row['harga'])) {
@@ -164,7 +164,7 @@ class A2Controller extends Controller
                 $harga = (int) str_replace('.', '', $row['harga']);
 
                 $ppn = ($row['ppn'] ?? false) ? $vol * $harga * $request->ppn / 100 : 0;
-                
+
                 $iwp = ($row['iwp'] ?? false) ? $vol * $harga *  1 / 100 : 0;
 
                 $total_dpp = ($vol * $harga) - $iwp;
@@ -221,7 +221,7 @@ class A2Controller extends Controller
 
         $nomorsurat = strstr($register->gen_no_reg, "/BP/");
         $nomorsurat = str_replace("/BP/", "", $nomorsurat);
-        
+
         $dpp1 = Dpp::where('kode_potongan', $register->kd_pot1)->value('jenis_potongan');
         $dpp2 = Dpp::where('kode_potongan', $register->kd_pot2)->value('jenis_potongan');
 
@@ -423,18 +423,19 @@ class A2Controller extends Controller
 
     public function index(Request $request)
     {
-        $query = Register::query(); // ganti sesuai model kamu
+        $query = Register::query();
 
+        // ── Filter global (q) ──────────────────────────────────────────────
         if ($request->filled('q')) {
             $q = strtolower($request->q);
-
             $query->where(function ($sub) use ($q) {
-                $sub->whereRaw('LOWER(gen_no_reg) LIKE ?', ["%{$q}%"])
+                $sub->whereRaw('LOWER(gen_no_reg) LIKE ?',  ["%{$q}%"])
                     ->orWhereRaw('LOWER(urai_rekbel) LIKE ?', ["%{$q}%"])
-                    ->orWhereRaw('LOWER(keperluan) LIKE ?', ["%{$q}%"]);
+                    ->orWhereRaw('LOWER(keperluan) LIKE ?',   ["%{$q}%"]);
             });
         }
 
+        // ── Filter tanggal ─────────────────────────────────────────────────
         if ($request->filled('tgl_dari')) {
             $query->whereDate('created_at', '>=', $request->tgl_dari);
         }
@@ -443,10 +444,38 @@ class A2Controller extends Controller
             $query->whereDate('created_at', '<=', $request->tgl_sampai);
         }
 
-        $registers = $query
-            ->orderBy('created_at', 'desc')
-            ->paginate(10)
-            ->withQueryString();
+        // ── Filter per kolom ───────────────────────────────────────────────
+        if ($request->filled('f_no_reg')) {
+            $query->whereRaw('LOWER(gen_no_reg) LIKE ?', ['%' . strtolower($request->f_no_reg) . '%']);
+        }
+
+        if ($request->filled('f_subkeg')) {
+            $query->whereRaw('LOWER(urai_subkeg) LIKE ?', ['%' . strtolower($request->f_subkeg) . '%']);
+        }
+
+        if ($request->filled('f_rekbel')) {
+            $query->whereRaw('LOWER(urai_rekbel) LIKE ?', ['%' . strtolower($request->f_rekbel) . '%']);
+        }
+
+        if ($request->filled('f_keperluan')) {
+            $query->whereRaw('LOWER(keperluan) LIKE ?', ['%' . strtolower($request->f_keperluan) . '%']);
+        }
+
+        if ($request->filled('f_nominal')) {
+            // Hapus titik pemisah ribuan sebelum dicari
+            $nominal = str_replace('.', '', $request->f_nominal);
+            $query->whereRaw('CAST(nom_bruto AS TEXT) LIKE ?', ["%{$nominal}%"]);
+        }
+
+        // ── Sort ───────────────────────────────────────────────────────────
+        $allowedSorts = ['gen_no_reg', 'urai_subkeg', 'urai_rekbel', 'keperluan', 'nom_bruto', 'created_at'];
+        $sort         = in_array($request->sort, $allowedSorts) ? $request->sort : 'created_at';
+        $order        = $request->order === 'asc' ? 'asc' : 'desc';
+
+        $query->orderBy($sort, $order);
+
+        // ── Paginate ───────────────────────────────────────────────────────
+        $registers = $query->paginate(10)->withQueryString();
 
         return view('a2.index', compact('registers'));
     }
@@ -731,10 +760,10 @@ class A2Controller extends Controller
                 }
 
                 $vol   = (int)$row['vol'];
-                $harga = (int)str_replace('.', '', $row['harga']);            
+                $harga = (int)str_replace('.', '', $row['harga']);
 
                 $ppn = ($row['ppn'] ?? false) ? $vol * $harga * $request->ppn / 100 : 0;
-                
+
                 $iwp = ($row['iwp'] ?? false) ? $vol * $harga *  1 / 100 : 0;
 
                 $total_dpp = ($vol * $harga) - $iwp;
