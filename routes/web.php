@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\A2Controller;
 use App\Http\Controllers\ReportingController;
-use App\Http\Controllers\PenerimaController;
+use App\Http\Controllers\PenerimaController;;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +60,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/reporting/laporan-bulanan', [ReportingController::class, 'bulanan'])->name('reporting.bulanan');
     Route::get('/reporting/laporan-bulanan/pdf', [ReportingController::class, 'bulananPdf'])->name('reporting.bulanan.pdf');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     /*
     |--------------------------------------------------------------------------

@@ -5,7 +5,7 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('reporting.realisasi') }}" class="text-xl font-bold text-gray-800">
+                    <a href="{{ route('dashboard') }}" class="text-xl font-bold text-gray-800">
                         A<span class="text-gray-800">2</span>
                     </a>
                 </div>
