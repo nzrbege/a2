@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8">
+    <div class="max-w-7xl mx-auto">
 
     {{-- HEADER --}}
     <div class="mb-6">
@@ -101,7 +102,7 @@
                 <h2 class="text-lg font-bold text-gray-900">Realisasi per Program</h2>
             </div>
 
-            <div class="space-y-5 max-h-[600px] overflow-y-auto pr-1">
+            <div class="space-y-5">
                 @foreach($hirarki as $progKode => $prog)
                 <div class="border-2 border-gray-100 rounded-lg p-4">
 
@@ -247,6 +248,6 @@
         </div>
 
     </div>
-
+</div>
 </div>
 @endsection
