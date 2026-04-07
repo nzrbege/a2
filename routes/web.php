@@ -13,7 +13,7 @@ use App\Http\Controllers\DashboardController;
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
-    return redirect()->route('reporting.realisasi');
+    return redirect()->route('dashboard');
 });
 
 /*
