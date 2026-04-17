@@ -5,15 +5,20 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Register;
 
 class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+        $user = auth()->user();
+        $query = Register::query()->where('opd_id', $user->opd_id)
+            ->where('unit_id', $user->unit_id);
+
         $tanggalMulai = $request->tanggal_mulai;
         $tanggalSelesai = $request->tanggal_selesai;
 
-        $query = DB::table('register');
+        // $query = DB::table('register');
 
         if ($tanggalMulai && $tanggalSelesai) {
             $query->whereBetween('created_at', [
@@ -44,6 +49,8 @@ class DashboardController extends Controller
             ->leftJoinSub(
                 DB::table('register')
                     ->select('kd_subkeg', DB::raw('SUM(nom_bruto) as realisasi'))
+                    ->where('opd_id',$user->opd_id)
+                    ->where('unit_id', $user->unit_id)
                     ->groupBy('kd_subkeg'),
                 'real',
                 'rka.kode_sub_giat',
@@ -61,6 +68,8 @@ class DashboardController extends Controller
                 DB::raw('COALESCE(real.realisasi,0) as realisasi')
             )
             ->where('rka.id_versi_anggaran', $idVersi)
+            ->where('rka.opd_id',$user->opd_id)
+            ->where('rka.unit_id', $user->unit_id)
             ->groupBy(
                 'rka.kode_program','rka.nama_program',
                 'rka.kode_giat','rka.nama_giat',
@@ -117,9 +126,6 @@ class DashboardController extends Controller
             ->orderByDesc('created_at')
             ->limit(5)
             ->get();
-
-        
-            // dd($transaksiTerakhir);
 
         // =========================
         // RETURN VIEW

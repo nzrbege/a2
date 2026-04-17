@@ -6,7 +6,7 @@
         {{-- HEADER --}}
         <div class="bg-green-900 text-white text-center rounded-lg px-6 py-4 mb-4">
             <h1 class="text-sm font-semibold tracking-wide uppercase">Dashboard Cek Kendali Rincian Belanja</h1>
-            <p class="text-xs mt-1 opacity-80">Berdasarkan Akun Rekening dan Sub Kegiatan &mdash; DISKOMINFO Kabupaten Klaten
+            <p class="text-xs mt-1 opacity-80">Berdasarkan Akun Rekening dan Sub Kegiatan &mdash; {{$kode_opd}} Kabupaten Klaten
                 Tahun Anggaran {{ date('Y') }}</p>
         </div>
 

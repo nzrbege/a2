@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-slate-100 p-3" x-data="{ open: false }">
+<div class="min-h-screen bg-slate-100 dark:bg-slate-900 p-3" x-data="{ open: false }">
 
     {{-- ERROR ALERT --}}
     @if ($errors->any())
-        <div class="mb-3 bg-red-50 border border-red-300 text-red-700 rounded-lg px-4 py-2 text-xs">
+        <div class="mb-3 rounded-lg px-4 py-2 text-xs bg-red-50 border border-red-300 text-red-700 dark:bg-red-500/10 dark:border-red-500/30 dark:text-red-400">
             <ul class="list-disc list-inside space-y-0.5">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -22,7 +22,7 @@
         <input type="hidden" name="ppn" value="{{ $ppn->tarif }}">
 
         {{-- ── HEADER BAR ── --}}
-        <div class="bg-blue-800 text-white px-4 py-2 rounded-lg shadow flex justify-between items-center">
+        <div class="bg-blue-800 dark:bg-slate-900 text-white px-4 py-2 rounded-lg shadow flex justify-between items-center border border-transparent dark:border-blue-500/30">
             <h1 class="text-xs font-bold uppercase tracking-wider">
                 Edit Register A2 — Bukti Pengeluaran Bidang Informatika {{ date('Y') }}
             </h1>
@@ -33,28 +33,28 @@
         </div>
 
         {{-- ── TATA USAHA / JENIS / TRANSAKSI ── --}}
-        <div class="bg-white border border-slate-200 rounded-lg p-3 shadow-sm">
+        <div class="bg-white border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700/60 p-3 shadow-sm">
             <div class="grid grid-cols-3 gap-3">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Tata Usaha</label>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Tata Usaha</label>
                     <select name="tata_usaha"
-                        class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
+                        class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
                         <option value="GU" {{ old('tata_usaha', $register->tata_usaha) == 'GU' ? 'selected' : '' }}>Ganti Uang (GU)</option>
                         <option value="LS" {{ old('tata_usaha', $register->tata_usaha) == 'LS' ? 'selected' : '' }}>Langsung (LS)</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Jenis A2</label>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Jenis A2</label>
                     <select name="jenis_a2"
-                        class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
+                        class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
                         <option value="Non"   {{ old('jenis_a2', $register->jenis_a2) == 'Non'   ? 'selected' : '' }}>Non</option>
                         <option value="Cetak" {{ old('jenis_a2', $register->jenis_a2) == 'Cetak' ? 'selected' : '' }}>Cetak</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Transaksi</label>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Transaksi</label>
                     <select name="transaksi"
-                        class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
+                        class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
                         <option value="BANK"  {{ old('transaksi', $register->transaksi) == 'BANK'  ? 'selected' : '' }}>BANK</option>
                         <option value="TUNAI" {{ old('transaksi', $register->transaksi) == 'TUNAI' ? 'selected' : '' }}>TUNAI</option>
                         <option value="KPPD"  {{ old('transaksi', $register->transaksi) == 'KPPD'  ? 'selected' : '' }}>KPPD</option>
@@ -68,14 +68,14 @@
 
             {{-- DPA --}}
             <div class="col-span-4 bg-white border border-slate-200 rounded-lg p-3 shadow-sm">
-                <p class="text-xs font-bold text-blue-700 uppercase border-b border-slate-100 pb-1 mb-2">
+                <p class="text-xs font-bold text-blue-700 uppercase border-b border-slate-100 dark:text-blue-400 dark:border-slate-700/60 pb-1 mb-2">
                     Pengaturan DPA
                 </p>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih DPA</label>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Pilih DPA</label>
                         <select id="versi" name="versi"
-                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400"
+                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200"
                             required>
                             <option value="">-- Pilih Versi --</option>
                             @foreach ($versi as $v)
@@ -87,24 +87,24 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Nomor DPA</label>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Nomor DPA</label>
                         <input type="text" readonly id="no_dpa" name="no_dpa"
                             value="{{ old('no_dpa', $register->no_dpa) }}"
-                            class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-100 text-slate-500 cursor-not-allowed">
+                            class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-100 text-slate-500 cursor-not-allowed dark:bg-slate-900 dark:border-slate-700 dark:text-slate-400">
                     </div>
                 </div>
             </div>
 
             {{-- Program / Kegiatan --}}
             <div class="col-span-8 bg-white border border-slate-200 rounded-lg p-3 shadow-sm">
-                <p class="text-xs font-bold text-blue-700 uppercase border-b border-slate-100 pb-1 mb-2">
+                <p class="text-xs font-bold text-blue-700 uppercase border-b border-slate-100 dark:text-blue-400 dark:border-slate-700/60 pb-1 mb-2">
                     Program, Kegiatan &amp; Akun
                 </p>
                 <div class="grid grid-cols-2 gap-2">
                     <div class="space-y-1">
                         <label class="block text-xs font-semibold text-slate-600">Program / Kegiatan</label>
                         <select name="program" id="program"
-                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
+                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
                             <option value="">-- Pilih Program --</option>
                             @foreach ($program as $v)
                                 <option value="{{ $v->kode_program }}"
@@ -116,7 +116,7 @@
                         <input type="hidden" name="nama_program" id="nama_program"
                             value="{{ old('nama_program', $register->urai_prog) }}">
                         <select name="kegiatan" id="kegiatan"
-                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
+                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
                             <option value="">-- Pilih Kegiatan --</option>
                             @foreach ($kegiatan as $v)
                                 <option value="{{ $v->kode_giat }}"
@@ -131,7 +131,7 @@
                     <div class="space-y-1">
                         <label class="block text-xs font-semibold text-slate-600">Sub Kegiatan — Akun Rekening</label>
                         <select name="sub_kegiatan" id="sub_kegiatan"
-                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
+                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
                             <option value="">-- Pilih Sub Kegiatan --</option>
                             @foreach ($subkegiatan as $v)
                                 <option value="{{ $v->kode_sub_giat }}"
@@ -141,7 +141,7 @@
                             @endforeach
                         </select>
                         <select name="kode_akun" id="akun_rekening"
-                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
+                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
                             <option value="">-- Pilih Akun --</option>
                             @foreach ($akun as $v)
                                 <option value="{{ $v->kode_akun }}"
@@ -167,33 +167,33 @@
 
                 {{-- Kegiatan --}}
                 <div>
-                    <p class="text-xs font-bold text-green-700 uppercase border-b border-slate-100 pb-1 mb-2">
+                    <p class="text-xs font-bold text-green-700 uppercase border-b border-slate-100 dark:text-emerald-400 dark:border-slate-700/60 pb-1 mb-2">
                         Informasi Kegiatan
                     </p>
                     <div class="space-y-1.5">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal</label>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Tanggal</label>
                             <input type="date" name="tanggal"
                                 value="{{ old('tanggal', $register->tanggal) }}"
-                                class="w-full border border-slate-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-green-400">
+                                class="w-full border border-slate-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-green-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Keperluan Pembayaran</label>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Keperluan Pembayaran</label>
                             <textarea id="keperluan" name="keperluan" rows="2"
                                 placeholder="Keperluan Pembayaran"
-                                class="w-full border border-slate-300 rounded px-2 py-1 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-green-400">{{ old('keperluan', $register->keperluan) }}</textarea>
+                                class="w-full border border-slate-300 rounded px-2 py-1 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-green-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">{{ old('keperluan', $register->keperluan) }}</textarea>
                         </div>
                     </div>
                 </div>
 
                 {{-- Penerima --}}
                 <div>
-                    <p class="text-xs font-bold text-green-700 uppercase border-b border-slate-100 pb-1 mb-2">
+                    <p class="text-xs font-bold text-green-700 uppercase border-b border-slate-100 dark:text-emerald-400 dark:border-slate-700/60 pb-1 mb-2">
                         Informasi Penerima
                     </p>
                     <div class="space-y-1.5">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Penerima</label>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Nama Penerima</label>
                             <select name="penerima" id="penerima"
                                 class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-green-400"
                                 onchange="isiDataPenerima()">
@@ -215,23 +215,23 @@
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Bank</label>
+                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Bank</label>
                                 <input type="text" id="bank_penerima" name="bank_penerima"
                                     value="{{ old('bank_penerima', $register->bank_penerima) }}"
-                                    class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-green-400">
+                                    class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-green-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">No. Rek / Kode Bayar</label>
+                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">No. Rek / Kode Bayar</label>
                                 <input type="text" id="norek_penerima" name="norek_penerima"
                                     value="{{ old('norek_penerima', $register->norek_penerima) }}"
-                                    class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-green-400">
+                                    class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-green-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">NPWP</label>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">NPWP</label>
                             <input type="text" id="npwp" name="npwp"
                                 value="{{ old('npwp', $register->npwp) }}"
-                                class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-green-400">
+                                class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-green-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
                         </div>
                         <input type="hidden" id="alamat_penerima" name="alamat_penerima"
                             value="{{ old('alamat_penerima', $register->alamat_penerima) }}">
@@ -241,7 +241,7 @@
 
             {{-- Hitung Potongan PPh --}}
             <div class="col-span-7 bg-white border border-slate-200 rounded-lg p-3 shadow-sm">
-                <p class="text-xs font-bold text-orange-700 uppercase border-b border-slate-100 pb-1 mb-2">
+                <p class="text-xs font-bold text-orange-700 uppercase border-b border-slate-100 dark:text-orange-400 dark:border-slate-700/60 pb-1 mb-2">
                     Hitung Potongan PPh
                 </p>
 
@@ -382,7 +382,7 @@
                 </table>
 
                 {{-- ── TOTAL DIBAYARKAN ── --}}
-                <div class="mt-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 space-y-1.5">
+                <div class="mt-2 rounded-lg px-3 py-2 space-y-1.5 bg-blue-50 border border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/20">
                     <div class="flex gap-2">
                         {{-- Bruto --}}
                         <div class="flex-1 bg-white border border-blue-200 rounded px-2 py-1">
@@ -435,10 +435,10 @@
         </div>
 
         {{-- ── TABEL RINCIAN KOMPONEN (full width, data dari server) ── --}}
-        <div class="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+        <div class="bg-white border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700/60 shadow-sm overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-xs leading-tight" style="min-width:800px">
-                    <thead class="bg-slate-800 text-white sticky top-0 text-center">
+                    <thead class="bg-slate-900 dark:bg-slate-950 text-white sticky top-0 text-center">
                         <tr>
                             <th rowspan="2" class="border border-slate-700 px-2 py-1 whitespace-nowrap">ID</th>
                             <th rowspan="2" class="border border-slate-700 px-2 py-1 whitespace-nowrap">Uraian Komponen</th>
@@ -462,7 +462,7 @@
                             <th class="border border-indigo-600 px-2 py-1 bg-indigo-700">Sisa Nom</th>
                         </tr>
                     </thead>
-                    <tbody id="tabelRincian" class="divide-y divide-slate-100">
+                    <tbody id="tabelRincian" class="divide-y divide-slate-100 dark:divide-slate-700/60">
                         @forelse ($komponen as $i => $row)
                             <tr class="{{ $i % 2 === 0 ? '' : 'bg-slate-50' }} hover:bg-blue-50 transition-colors">
                                 <td class="border border-slate-200 px-2 py-1 text-center text-slate-500 font-semibold text-blue-700">
@@ -567,12 +567,12 @@
     {{-- ── MODAL KONFIRMASI — harus di dalam x-data wrapper ── --}}
     <div x-show="open" x-transition @click.self="open = false" style="display:none"
         class="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-        <div class="bg-white rounded-xl shadow-2xl border border-gray-200 w-96 p-6">
-            <h2 class="text-base font-semibold text-slate-800 mb-2">Konfirmasi Simpan</h2>
-            <p class="text-sm text-slate-500">Yakin ingin menyimpan perubahan data A2 ini?</p>
+        <div class="rounded-xl shadow-2xl w-96 p-6 bg-white border border-gray-200 dark:bg-slate-800 dark:border-slate-700">
+            <h2 class="text-base font-semibold mb-2 text-slate-800 dark:text-slate-100">Konfirmasi Simpan</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Yakin ingin menyimpan perubahan data A2 ini?</p>
             <div class="flex justify-end gap-2 mt-6">
                 <button type="button" @click="open = false"
-                    class="px-4 py-2 text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors">
+                    class="px-4 py-2 text-sm rounded-lg transition-colors bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200">
                     Batal
                 </button>
                 <button type="button" @click="$refs.formA2.submit()"
@@ -896,6 +896,9 @@
         pajak_iv.innerText   = iv   ? formatRupiah(iv)   : 0;
         pajak_iii.innerText  = iii  ? formatRupiah(iii)  : 0;
         pajak_lain.innerText = lain ? formatRupiah(lain) : 0;
+        
+        hitungSemuaPajak();
+        hitungTotalPajak();
     }
 
     function hitungPajakBaris(select) {

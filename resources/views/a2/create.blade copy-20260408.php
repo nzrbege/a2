@@ -1,12 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-slate-100 dark:bg-slate-900 p-3"
-     x-data="a2Form()">
+<div class="min-h-screen bg-slate-100 p-3" x-data="{ open: false }">
 
-    {{-- ERROR ALERT (dari server / backend) --}}
+    {{-- ERROR ALERT --}}
     @if ($errors->any())
-        <div class="mb-3 rounded-lg px-4 py-2 text-xs bg-red-50 border border-red-300 text-red-700 dark:bg-red-500/10 dark:border-red-500/30 dark:text-red-400">
+        <div class="mb-3 bg-red-50 border border-red-300 text-red-700 rounded-lg px-4 py-2 text-xs">
             <ul class="list-disc list-inside space-y-0.5">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -15,18 +14,13 @@
         </div>
     @endif
 
-    {{-- ERROR ALERT SALDO (dari frontend / JS) --}}
-    <div id="saldo-error-alert" style="display:none"
-        class="mb-3 rounded-lg px-4 py-2 text-xs bg-red-50 border border-red-300 text-red-700 dark:bg-red-500/10 dark:border-red-500/30 dark:text-red-400">
-    </div>
-
     <form x-ref="formA2" id="form-a2" method="POST" action="{{ route('a2.store') }}"
-        class="space-y-3" @submit.prevent="handleBeforeConfirm()">
+        class="space-y-3" @submit.prevent="open = true">
         @csrf
         <input type="hidden" name="ppn" value="{{ $ppn->tarif }}">
 
         {{-- ── HEADER BAR ── --}}
-        <div class="bg-blue-800 dark:bg-slate-900 text-white px-4 py-2 rounded-lg shadow flex justify-between items-center border border-transparent dark:border-blue-500/30">
+        <div class="bg-blue-800 text-white px-4 py-2 rounded-lg shadow flex justify-between items-center">
             <h1 class="text-xs font-bold uppercase tracking-wider">
                 Register A2 — Bukti Pengeluaran Bidang Informatika {{ date('Y') }}
             </h1>
@@ -37,31 +31,31 @@
         </div>
 
         {{-- ── TATA USAHA / JENIS / TRANSAKSI ── --}}
-        <div class="bg-white border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700/60 p-3 shadow-sm">
+        <div class="bg-white border border-slate-200 rounded-lg p-3 shadow-sm">
             <div class="grid grid-cols-3 gap-3">
                 {{-- Tata Usaha --}}
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Tata Usaha</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Tata Usaha</label>
                     <select name="tata_usaha"
-                        class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
+                        class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
                         <option value="GU" {{ old('tata_usaha') == 'GU' ? 'selected' : '' }}>Ganti Uang (GU)</option>
                         <option value="LS" {{ old('tata_usaha') == 'LS' ? 'selected' : '' }}>Langsung (LS)</option>
                     </select>
                 </div>
                 {{-- Jenis A2 --}}
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Jenis A2</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Jenis A2</label>
                     <select name="jenis_a2"
-                        class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
+                        class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
                         <option value="Non"   {{ old('jenis_a2') == 'Non'   ? 'selected' : '' }}>Non</option>
                         <option value="Cetak" {{ old('jenis_a2') == 'Cetak' ? 'selected' : '' }}>Cetak</option>
                     </select>
                 </div>
                 {{-- Transaksi --}}
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Transaksi</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Transaksi</label>
                     <select name="transaksi"
-                        class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
+                        class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
                         <option value="BANK"  {{ old('transaksi') == 'BANK'  ? 'selected' : '' }}>BANK</option>
                         <option value="TUNAI" {{ old('transaksi') == 'TUNAI' ? 'selected' : '' }}>TUNAI</option>
                         <option value="KPPD"  {{ old('transaksi') == 'KPPD'  ? 'selected' : '' }}>KPPD</option>
@@ -75,19 +69,19 @@
 
             {{-- DPA --}}
             <div class="col-span-4 bg-white border border-slate-200 rounded-lg p-3 shadow-sm">
-                <p class="text-xs font-bold text-blue-700 uppercase border-b border-slate-100 dark:text-blue-400 dark:border-slate-700/60 pb-1 mb-2">
+                <p class="text-xs font-bold text-blue-700 uppercase border-b border-slate-100 pb-1 mb-2">
                     Pengaturan DPA
                 </p>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Pilih DPA</label>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih DPA</label>
                         <select name="versi" id="versi"
-                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200"
+                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400"
                             required>
                             <option value="">-- Pilih --</option>
                             @foreach ($versi as $v)
-                                <option value="{{ $v->id }}"
-                                    {{ old('versi') == $v->id ? 'selected' : '' }}
+                                <option value="{{ $v->id_versi_anggaran }}"
+                                    {{ old('versi') == $v->id_versi_anggaran ? 'selected' : '' }}
                                     data-nomor="{{ $v->nomor_anggaran }}">
                                     {{ $v->versi_anggaran }}
                                 </option>
@@ -95,29 +89,29 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Nomor DPA</label>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Nomor DPA</label>
                         <input type="text" readonly id="no_dpa" name="no_dpa" value="{{ old('no_dpa') }}"
-                            class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-100 text-slate-500 cursor-not-allowed dark:bg-slate-900 dark:border-slate-700 dark:text-slate-400">
+                            class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-100 text-slate-500 cursor-not-allowed">
                     </div>
                 </div>
             </div>
 
             {{-- Program / Kegiatan --}}
             <div class="col-span-8 bg-white border border-slate-200 rounded-lg p-3 shadow-sm">
-                <p class="text-xs font-bold text-blue-700 uppercase border-b border-slate-100 dark:text-blue-400 dark:border-slate-700/60 pb-1 mb-2">
+                <p class="text-xs font-bold text-blue-700 uppercase border-b border-slate-100 pb-1 mb-2">
                     Program, Kegiatan &amp; Akun
                 </p>
                 <div class="grid grid-cols-2 gap-2">
                     <div class="space-y-1">
                         <label class="block text-xs font-semibold text-slate-600">Program / Kegiatan</label>
                         <select name="program" id="program"
-                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200"
+                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400"
                             disabled>
                             <option value="">-- Pilih Program --</option>
                         </select>
                         <input type="hidden" name="nama_program" id="nama_program">
                         <select name="kegiatan" id="kegiatan"
-                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200"
+                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400"
                             disabled>
                             <option value="">-- Pilih Kegiatan --</option>
                         </select>
@@ -126,12 +120,12 @@
                     <div class="space-y-1">
                         <label class="block text-xs font-semibold text-slate-600">Sub Kegiatan — Akun Rekening</label>
                         <select name="sub_kegiatan" id="sub_kegiatan"
-                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200"
+                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400"
                             disabled>
                             <option value="">-- Pilih Sub Kegiatan --</option>
                         </select>
                         <select name="kode_akun" id="akun_rekening"
-                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200"
+                            class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400"
                             disabled>
                             <option value="">-- Pilih Akun --</option>
                         </select>
@@ -150,32 +144,32 @@
 
                 {{-- Kegiatan --}}
                 <div>
-                    <p class="text-xs font-bold text-green-700 uppercase border-b border-slate-100 dark:text-emerald-400 dark:border-slate-700/60 pb-1 mb-2">
+                    <p class="text-xs font-bold text-green-700 uppercase border-b border-slate-100 pb-1 mb-2">
                         Informasi Kegiatan
                     </p>
                     <div class="space-y-1.5">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Tanggal</label>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal</label>
                             <input type="date" name="tanggal"
-                                class="w-full border border-slate-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-green-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
+                                class="w-full border border-slate-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-green-400">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Keperluan Pembayaran</label>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Keperluan Pembayaran</label>
                             <textarea id="keperluan" name="keperluan" rows="2"
                                 placeholder="Keperluan Pembayaran"
-                                class="w-full border border-slate-300 rounded px-2 py-1 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-green-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200"></textarea>
+                                class="w-full border border-slate-300 rounded px-2 py-1 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-green-400"></textarea>
                         </div>
                     </div>
                 </div>
 
                 {{-- Penerima --}}
                 <div>
-                    <p class="text-xs font-bold text-green-700 uppercase border-b border-slate-100 dark:text-emerald-400 dark:border-slate-700/60 pb-1 mb-2">
+                    <p class="text-xs font-bold text-green-700 uppercase border-b border-slate-100 pb-1 mb-2">
                         Informasi Penerima
                     </p>
                     <div class="space-y-1.5">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Nama Penerima</label>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Penerima</label>
                             <select name="penerima" id="penerima"
                                 class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-green-400"
                                 onchange="isiDataPenerima()">
@@ -195,20 +189,20 @@
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Bank</label>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Bank</label>
                                 <input type="text" id="bank_penerima" name="bank_penerima"
-                                    class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-green-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
+                                    class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-green-400">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">No. Rek / Kode Bayar</label>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">No. Rek / Kode Bayar</label>
                                 <input type="text" id="norek_penerima" name="norek_penerima"
-                                    class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-green-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
+                                    class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-green-400">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">NPWP</label>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">NPWP</label>
                             <input type="text" id="npwp" name="npwp"
-                                class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-green-400 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200">
+                                class="w-full border border-slate-200 rounded px-2 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-green-400">
                         </div>
                         <input type="hidden" id="alamat_penerima" name="alamat_penerima">
                     </div>
@@ -217,7 +211,7 @@
 
             {{-- Hitung Potongan PPh --}}
             <div class="col-span-7 bg-white border border-slate-200 rounded-lg p-3 shadow-sm">
-                <p class="text-xs font-bold text-orange-700 uppercase border-b border-slate-100 dark:text-orange-400 dark:border-slate-700/60 pb-1 mb-2">
+                <p class="text-xs font-bold text-orange-700 uppercase border-b border-slate-100 pb-1 mb-2">
                     Hitung Potongan PPh
                 </p>
 
@@ -313,7 +307,7 @@
                 </table>
 
                 {{-- ── TOTAL DIBAYARKAN ── --}}
-                <div class="mt-2 rounded-lg px-3 py-2 space-y-1.5 bg-blue-50 border border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/20">
+                <div class="mt-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 space-y-1.5">
                     <div class="flex gap-2">
 
                         {{-- Bruto --}}
@@ -366,65 +360,64 @@
         </div>
 
         {{-- ── TABEL RINCIAN KOMPONEN (full width) ── --}}
-        <div class="bg-white border border-slate-200 rounded-lg dark:bg-slate-800 dark:border-slate-700/60 shadow-sm overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-xs leading-tight" style="min-width:800px">
-                    <thead class="bg-slate-900 dark:bg-slate-950 text-white sticky top-0 text-center">
-                        <tr>
-                            <th rowspan="2" class="border border-slate-700 px-2 py-1 whitespace-nowrap">ID</th>
-                            <th rowspan="2" class="border border-slate-700 px-2 py-1 whitespace-nowrap">Uraian Komponen</th>
-                            <th rowspan="2" class="border border-slate-700 px-2 py-1 whitespace-nowrap">Satuan</th>
-                            <th colspan="3" class="border border-blue-600 px-2 py-1 bg-blue-700">Rincian Anggaran</th>
-                            <th colspan="5" class="border border-green-600 px-2 py-1 bg-green-700">Pengeluaran Riil</th>
-                            <th colspan="4" class="border border-indigo-600 px-2 py-1 bg-indigo-700">Informasi Komponen</th>
-                        </tr>
-                        <tr>
-                            {{-- Rincian Anggaran --}}
-                            <th class="border border-blue-600 px-2 py-1 bg-blue-700">Vol</th>
-                            <th class="border border-blue-600 px-2 py-1 bg-blue-700">Harga</th>
-                            <th class="border border-blue-600 px-2 py-1 bg-blue-700">Total</th>
-                            {{-- Riil --}}
-                            <th class="border border-green-600 px-2 py-1 bg-green-700 min-w-[5rem]">Vol</th>
-                            <th class="border border-green-600 px-2 py-1 bg-green-700">Harga</th>
-                            <th class="border border-green-600 px-2 py-1 bg-green-700">PPN</th>
-                            <th class="border border-green-600 px-2 py-1 bg-green-700">IWP</th>
-                            <th class="border border-green-600 px-2 py-1 bg-green-700">Nominal</th>
-                            {{-- Info --}}
-                            <th class="border border-indigo-600 px-2 py-1 bg-indigo-700">Reg Vol</th>
-                            <th class="border border-indigo-600 px-2 py-1 bg-indigo-700">Reg Nom</th>
-                            <th class="border border-indigo-600 px-2 py-1 bg-indigo-700">Sisa Vol</th>
-                            <th class="border border-indigo-600 px-2 py-1 bg-indigo-700">Sisa Nom</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelRincian" class="divide-y divide-slate-100 dark:divide-slate-700/60">
-                        <tr>
-                            <td colspan="15" class="text-center py-6 text-slate-400 text-xs italic">
-                                Pilih Akun Rekening untuk memuat data rincian...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs leading-tight" style="min-width:800px">
+                        <thead class="bg-slate-800 text-white sticky top-0 text-center">
+                            <tr>
+                                <th rowspan="2" class="border border-slate-700 px-2 py-1 whitespace-nowrap">ID</th>
+                                <th rowspan="2" class="border border-slate-700 px-2 py-1 whitespace-nowrap">Uraian Komponen</th>
+                                <th rowspan="2" class="border border-slate-700 px-2 py-1 whitespace-nowrap">Satuan</th>
+                                <th colspan="3" class="border border-blue-600 px-2 py-1 bg-blue-700">Rincian Anggaran</th>
+                                <th colspan="5" class="border border-green-600 px-2 py-1 bg-green-700">Pengeluaran Riil</th>
+                                <th colspan="4" class="border border-indigo-600 px-2 py-1 bg-indigo-700">Informasi Komponen</th>
+                            </tr>
+                            <tr>
+                                {{-- Rincian Anggaran --}}
+                                <th class="border border-blue-600 px-2 py-1 bg-blue-700">Vol</th>
+                                <th class="border border-blue-600 px-2 py-1 bg-blue-700">Harga</th>
+                                <th class="border border-blue-600 px-2 py-1 bg-blue-700">Total</th>
+                                {{-- Riil --}}
+                                <th class="border border-green-600 px-2 py-1 bg-green-700 min-w-[5rem]">Vol</th>
+                                <th class="border border-green-600 px-2 py-1 bg-green-700">Harga</th>
+                                <th class="border border-green-600 px-2 py-1 bg-green-700">PPN</th>
+                                <th class="border border-green-600 px-2 py-1 bg-green-700">IWP</th>
+                                <th class="border border-green-600 px-2 py-1 bg-green-700">Nominal</th>
+                                {{-- Info --}}
+                                <th class="border border-indigo-600 px-2 py-1 bg-indigo-700">Reg Vol</th>
+                                <th class="border border-indigo-600 px-2 py-1 bg-indigo-700">Reg Nom</th>
+                                <th class="border border-indigo-600 px-2 py-1 bg-indigo-700">Sisa Vol</th>
+                                <th class="border border-indigo-600 px-2 py-1 bg-indigo-700">Sisa Nom</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelRincian" class="divide-y divide-slate-100">
+                            <tr>
+                                <td colspan="15" class="text-center py-6 text-slate-400 text-xs italic">
+                                    Pilih Akun Rekening untuk memuat data rincian...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
 
         <input type="hidden" id="hasilPph" name="hasilPph">
         <input type="hidden" name="iwp_total" id="iwp_total_hidden">
 
     </form>
 
-    {{-- ── MODAL KONFIRMASI ── --}}
+    {{-- ── MODAL KONFIRMASI — harus di dalam x-data wrapper ── --}}
     <div x-show="open" x-transition @click.self="open = false" style="display:none"
         class="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-        <div class="rounded-xl shadow-2xl w-96 p-6 bg-white border border-gray-200 dark:bg-slate-800 dark:border-slate-700">
-            <h2 class="text-base font-semibold mb-2 text-slate-800 dark:text-slate-100">Konfirmasi Simpan</h2>
-            <p class="text-sm text-slate-500 dark:text-slate-400">Yakin ingin menyimpan data A2 ini?</p>
+        <div class="bg-white rounded-xl shadow-2xl border border-gray-200 w-96 p-6">
+            <h2 class="text-base font-semibold text-slate-800 mb-2">Konfirmasi Simpan</h2>
+            <p class="text-sm text-slate-500">Yakin ingin menyimpan data A2 ini?</p>
             <div class="flex justify-end gap-2 mt-6">
                 <button type="button" @click="open = false"
-                    class="px-4 py-2 text-sm rounded-lg transition-colors bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200">
+                    class="px-4 py-2 text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors">
                     Batal
                 </button>
-                {{-- ✦ DIUBAH: panggil submitDenganCekSaldo() bukan $refs.formA2.submit() langsung --}}
-                <button type="button" @click="submitDenganCekSaldo() && (open = false)"
+                <button type="button" @click="$refs.formA2.submit()"
                     class="px-4 py-2 text-sm bg-blue-700 hover:bg-blue-800 text-white rounded-lg shadow transition-colors">
                     Ya, Simpan
                 </button>
@@ -602,10 +595,7 @@
                 .then(res => { if (!res.ok) throw new Error('Server error'); return res.json(); })
                 .then(data => {
                     const html = data.map((row, i) => `
-                        {{-- ✦ DIUBAH: tambah data-sisa-nom dan data-id-rinci di <tr> --}}
-                        <tr class="${i % 2 === 0 ? '' : 'bg-slate-50'}"
-                            data-sisa-nom="${row.sisa_nom}"
-                            data-id-rinci="${row.id_rinci_sub_bl}">
+                        <tr class="${i % 2 === 0 ? '' : 'bg-slate-50'}">
                             <td class="border border-slate-200 px-2 py-1 text-center text-slate-500">${row.id_rinci_sub_bl}</td>
                             <td class="border border-slate-200 px-2 py-1">${row.nama_komponen}</td>
                             <td class="border border-slate-200 px-2 py-1 text-center">${row.satuan}</td>
@@ -645,8 +635,6 @@
                             <input type="hidden" name="riil[${i}][nama_komponen]"   value="${row.nama_komponen}">
                             <input type="hidden" name="riil[${i}][kode_dana]"       value="${row.kode_dana}">
                             <input type="hidden" name="riil[${i}][nama_dana]"       value="${row.nama_dana}">
-                            <input type="hidden" name="riil[${i}][opd_id]"          value="${row.opd_id}">
-                            <input type="hidden" name="riil[${i}][unit_id]"         value="${row.unit_id}">
                             <input type="hidden" name="riil[${i}][kode_skpd]"       value="${row.kode_skpd}">
                             <input type="hidden" name="riil[${i}][nama_skpd]"       value="${row.nama_skpd}">
                             <input type="hidden" name="riil[${i}][pptk_id]"         value="${row.pptk_id}">
@@ -732,7 +720,6 @@
         document.getElementById(`nominal_riil_${i}`).value = total > 0 ? formatRupiah(total) : '';
         hitungBruto();
         hitungTotalPajak();
-        cekSaldoBaris(i); /* ✦ TAMBAHAN: validasi saldo real-time */
     }
 
     function cekStatus(i) {
@@ -744,89 +731,9 @@
         const total = vol * harga;
         document.getElementById(`nominal_riil_${i}`).value = total > 0 ? formatRupiah(total) : '';
         hitungBruto();
-        cekSaldoBaris(i); /* ✦ TAMBAHAN: validasi saldo saat centang PPN */
     }
 
-    function cekIWP(i) {
-        hitungTotalPajak();
-    }
-
-    /* ─────────────────────────────────────────
-     * ✦ CEK SALDO ANGGARAN — REAL TIME
-     * Warnai baris merah jika nominal riil
-     * melebihi sisa saldo komponen.
-     * ───────────────────────────────────────── */
-    function cekSaldoBaris(i) {
-        const tr = document.querySelector(`input[name="riil[${i}][vol]"]`)?.closest('tr');
-        if (!tr) return true;
-
-        const sisaNom  = parseFloat(tr.dataset.sisaNom) || 0;
-        const vol      = Number(document.querySelector(`input[name="riil[${i}][vol]"]`)?.value || 0);
-        const harga    = parseRupiah(document.querySelector(`input[name="riil[${i}][harga]"]`)?.value || 0);
-        const nominal  = vol * harga;
-        const nomEl    = document.getElementById(`nominal_riil_${i}`);
-
-        if (sisaNom > 0 && nominal > sisaNom) {
-            /* Tandai baris & kolom nominal merah */
-            tr.classList.add('bg-red-50');
-            tr.classList.remove('bg-slate-50');
-            if (nomEl) {
-                nomEl.classList.add('bg-red-200', 'text-red-700', 'border-red-400');
-                nomEl.classList.remove('bg-green-100', 'text-green-700', 'border-green-200');
-            }
-            return false;
-        } else {
-            /* Kembalikan ke normal */
-            tr.classList.remove('bg-red-50');
-            if (nomEl) {
-                nomEl.classList.remove('bg-red-200', 'text-red-700', 'border-red-400');
-                nomEl.classList.add('bg-green-100', 'text-green-700', 'border-green-200');
-            }
-            return true;
-        }
-    }
-
-    /* ─────────────────────────────────────────
-     * ✦ SUBMIT DENGAN CEK SALDO
-     * Dipanggil dari tombol "Ya, Simpan" di modal.
-     * Jika ada baris yang melebihi sisa saldo,
-     * batalkan submit dan tampilkan pesan error.
-     * ───────────────────────────────────────── */
-    function submitDenganCekSaldo() {
-        const rows = document.querySelectorAll('#tabelRincian tr[data-sisa-nom]');
-        let adaPelanggaran = false;
-        const pesanError = [];
-
-        rows.forEach((tr, i) => {
-            const sisaNom = parseFloat(tr.dataset.sisaNom) || 0;
-            const volInput = tr.querySelector(`input[name="riil[${i}][vol]"]`);
-            const hargaInput = tr.querySelector(`input[name="riil[${i}][harga]"]`);
-            if (!volInput || !hargaInput) return;
-
-            const vol = Number(volInput.value || 0);
-            const harga = parseRupiah(hargaInput.value || 0);
-            const nominal = vol * harga;
-
-            if (sisaNom > 0 && nominal > sisaNom) {
-                adaPelanggaran = true;
-                pesanError.push(nominal);
-            }
-        });
-
-        if (adaPelanggaran) {
-            const alertEl = document.getElementById('saldo-error-alert');
-            alertEl.innerHTML = `<b>⚠ Saldo tidak mencukupi</b>`;
-            alertEl.style.display = 'block';
-
-            alertEl.scrollIntoView({ behavior: 'smooth' });
-
-            return false; // ❌ penting: jangan submit
-        }
-
-        document.getElementById('saldo-error-alert').style.display = 'none';
-        document.getElementById('form-a2').submit();
-        return true;
-    }
+    function cekIWP(i) { hitungTotalPajak(); }
 
     /* ─────────────────────────────────────────
      * PAJAK
@@ -838,9 +745,6 @@
         pajak_iv.innerText   = iv   ? formatRupiah(iv)   : 0;
         pajak_iii.innerText  = iii  ? formatRupiah(iii)  : 0;
         pajak_lain.innerText = lain ? formatRupiah(lain) : 0;
-
-        hitungSemuaPajak();
-        hitungTotalPajak();
     }
 
     function hitungPajakBaris(select) {
@@ -965,110 +869,5 @@
         if (sen > 0) hasil += ' ' + terbilangInt(sen) + ' Sen';
         return hasil.trim();
     }
-
-    function handleBeforeConfirm() {
-        const rows = document.querySelectorAll('#tabelRincian tr[data-sisa-nom]');
-        let adaPelanggaran = false;
-
-        rows.forEach((tr, i) => {
-            const sisaNom = parseFloat(tr.dataset.sisaNom) || 0;
-
-            const volInput = tr.querySelector(`input[name="riil[${i}][vol]"]`);
-            const hargaInput = tr.querySelector(`input[name="riil[${i}][harga]"]`);
-
-            if (!volInput || !hargaInput) return;
-
-            const vol = Number(volInput.value || 0);
-            const harga = parseRupiah(hargaInput.value || 0);
-            const nominal = vol * harga;
-
-            if (sisaNom > 0 && nominal > sisaNom) {
-                adaPelanggaran = true;
-            }
-        });
-
-        if (adaPelanggaran) {
-            const alertEl = document.getElementById('saldo-error-alert');
-            alertEl.innerHTML = `<b>⚠ Saldo tidak mencukupi</b>`;
-            alertEl.style.display = 'block';
-            alertEl.scrollIntoView({ behavior: 'smooth' });
-
-            return; // ❌ STOP, jangan buka modal
-        }
-
-        // ✔️ baru buka modal kalau aman
-        open = true;
-    }
-
-    function a2Form() {
-    return {
-        open: false,
-
-        handleBeforeConfirm() {
-            const rows = document.querySelectorAll('#tabelRincian tr[data-sisa-nom]');
-            let adaPelanggaran = false;
-
-            rows.forEach((tr, i) => {
-                const sisaNom = parseFloat(tr.dataset.sisaNom) || 0;
-
-                const volInput = tr.querySelector(`input[name="riil[${i}][vol]"]`);
-                const hargaInput = tr.querySelector(`input[name="riil[${i}][harga]"]`);
-
-                if (!volInput || !hargaInput) return;
-
-                const vol = Number(volInput.value || 0);
-                const harga = parseRupiah(hargaInput.value || 0);
-                const nominal = vol * harga;
-
-                if (sisaNom > 0 && nominal > sisaNom) {
-                    adaPelanggaran = true;
-                }
-            });
-
-            if (adaPelanggaran) {
-                const alertEl = document.getElementById('saldo-error-alert');
-                alertEl.innerHTML = `<b>⚠ Saldo tidak mencukupi</b>`;
-                alertEl.style.display = 'block';
-                alertEl.scrollIntoView({ behavior: 'smooth' });
-                return;
-            }
-
-            this.open = true; // ✅ INI KUNCI FIX
-        },
-
-        submitDenganCekSaldo() {
-            const rows = document.querySelectorAll('#tabelRincian tr[data-sisa-nom]');
-            let adaPelanggaran = false;
-
-            rows.forEach((tr, i) => {
-                const sisaNom = parseFloat(tr.dataset.sisaNom) || 0;
-
-                const volInput = tr.querySelector(`input[name="riil[${i}][vol]"]`);
-                const hargaInput = tr.querySelector(`input[name="riil[${i}][harga]"]`);
-
-                if (!volInput || !hargaInput) return;
-
-                const vol = Number(volInput.value || 0);
-                const harga = parseRupiah(hargaInput.value || 0);
-                const nominal = vol * harga;
-
-                if (sisaNom > 0 && nominal > sisaNom) {
-                    adaPelanggaran = true;
-                }
-            });
-
-            if (adaPelanggaran) {
-                const alertEl = document.getElementById('saldo-error-alert');
-                alertEl.innerHTML = `<b>⚠ Saldo tidak mencukupi</b>`;
-                alertEl.style.display = 'block';
-                alertEl.scrollIntoView({ behavior: 'smooth' });
-                return false;
-            }
-
-            document.getElementById('form-a2').submit();
-            return true;
-        }
-    }
-}
 </script>
 @endpush

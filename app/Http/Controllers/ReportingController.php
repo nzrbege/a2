@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\RincianRka;
 use App\Models\VersiAnggaran;
+use App\Models\Opd;
 use Illuminate\Support\Facades\DB;
 
     use Barryvdh\DomPDF\Facade\Pdf;
@@ -13,6 +14,10 @@ class ReportingController extends Controller
 {
     public function realisasi(Request $request)
     {
+        $user = auth()->user();
+        
+        $kode_opd = Opd::where('id', $user->opd_id)->value('kode_singkat');
+
         // =========================
         // SIMPAN FILTER KE SESSION (POST)
         // =========================
@@ -121,20 +126,13 @@ class ReportingController extends Controller
                 break;
         }
 
-        // =========================
-        // DATA UNTUK DROPDOWN
-        // =========================
-        // $programs = ['Program Pendidikan', 'Program Kesehatan'];
-        $kegiatans = ['Pengelolaan Sekolah', 'Pelayanan Puskesmas'];
-        $sub_kegiatans = ['Operasional SD', 'Operasional SMP', 'Pengadaan Obat'];
+        $versiTerbaru = VersiAnggaran::max('id');
 
-        $program = RincianRka::where('id_versi_anggaran', 'P1')
+        $program = RincianRka::where('versi_anggaran_id', $versiTerbaru)
             ->select('kode_program', 'nama_program')
             ->groupBy('kode_program', 'nama_program')
             ->orderBy('kode_program')
             ->get();
-
-        $versiTerbaru = VersiAnggaran::orderByDesc('id')->value('id_versi_anggaran');
 
         // =========================
         // RETURN VIEW
@@ -143,16 +141,15 @@ class ReportingController extends Controller
             'versiTerbaru',
             'data',
             'program',
-            'kegiatans',
-            'sub_kegiatans'
+            'kode_opd',
+            // 'kegiatans',
+            // 'sub_kegiatans'
         ));
     }
 
 
     public function filterRincian(Request $request)
     {
-        // $versipilihan = VersiAnggaran::where('nomor_anggaran', $request->versi)->value('id_versi_anggaran');
-
         $data = DB::table('rincian_rka as r')
             ->leftJoinSub(
                 DB::table('register')
@@ -252,13 +249,17 @@ class ReportingController extends Controller
     }
 
     public function bulanan(Request $request)
-    {
+    {        
+        $user = auth()->user();
+
         $bulan = $request->bulan ?? date('m');
         $tahun = $request->tahun ?? date('Y');
 
         $data = DB::table('register')
             ->whereMonth('created_at', $bulan)
             ->whereYear('created_at', $tahun)
+            ->where('opd_id',$user->opd_id)
+            ->where('unit_id',$user->unit_id)
             ->orderBy('kd_prog')
             ->orderBy('kd_keg')
             ->orderBy('kd_subkeg')
@@ -288,6 +289,8 @@ class ReportingController extends Controller
         $data = DB::table('register')
             ->whereMonth('created_at', $bulan)
             ->whereYear('created_at', $tahun)
+            ->where('opd_id',$user->opd_id)
+            ->where('unit_id',$user->unit_id)            
             ->orderBy('kd_prog')
             ->orderBy('kd_keg')
             ->orderBy('kd_subkeg')

@@ -6,6 +6,8 @@ use App\Http\Controllers\A2Controller;
 use App\Http\Controllers\ReportingController;
 use App\Http\Controllers\PenerimaController;;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UserController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +47,10 @@ Route::middleware(['auth', 'verified'])
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
+
+    Route::resource('users', UserController::class);
+    Route::post('users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.resetPassword');
+
 
     /*
     | Profile

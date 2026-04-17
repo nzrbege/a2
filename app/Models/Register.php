@@ -20,6 +20,7 @@ class Register extends Model
     protected $fillable = [
         'id_reg',
         'gen_no_reg',
+        'versi_anggaran_id',
         'no_dpa',
         'tanggal',
         'kd_prog',
@@ -157,6 +158,8 @@ class Register extends Model
         'bruto_terbilang',
         'kode_skpd',
         'nama_skpd',
+        'opd_id',
+        'unit_id',
         'nama_pa',
         'nip_pa',
         'nama_pptk',
