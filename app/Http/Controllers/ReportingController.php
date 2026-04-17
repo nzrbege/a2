@@ -171,7 +171,7 @@ class ReportingController extends Controller
             ->where('r.kode_giat', $request->input('kegiatan'))
             ->where('r.kode_sub_giat', $request->input('sub_kegiatan'))
             ->where('r.kode_akun', $request->input('akun'))
-            ->where('r.id_versi_anggaran', $request->input('versi'))
+            ->where('r.versi_anggaran_id', $request->input('versi'))
             ->groupBy(
                 'r.id_rinci_sub_bl',
                 'r.nama_komponen',
