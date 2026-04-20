@@ -93,23 +93,22 @@
                 </div>
             </div>
 
-            <div class="space-y-3" id="hirarki-container">
-                @foreach($hirarki as $progKode => $prog)
+            {{-- accordion-group="prog" → hanya 1 program boleh terbuka --}}
+            <div class="space-y-3" id="hirarki-container" data-accordion-group="prog">
 
+                @foreach($hirarki as $progKode => $prog)
                 {{-- ══════════════════════════════════════════
                      LEVEL 1 : PROGRAM
                 ══════════════════════════════════════════ --}}
-                <div class="border-2 border-blue-200 rounded-xl overflow-hidden">
+                <div class="border-2 border-blue-200 rounded-xl overflow-hidden acc-item" data-level="prog">
 
-                    <button type="button" onclick="toggleSection(this)"
-                        class="w-full text-left px-4 py-3 bg-blue-50 hover:bg-blue-100 transition-colors">
+                    <button type="button" onclick="accordionToggle(this, 'prog')"
+                        class="acc-trigger w-full text-left px-4 py-3 bg-blue-50 hover:bg-blue-100 transition-colors">
                         <div class="flex items-start justify-between gap-3">
-                            {{-- Kiri: badge + nama --}}
                             <div class="flex items-start gap-2 min-w-0">
                                 <span class="inline-flex items-center justify-center w-6 h-6 bg-blue-500 rounded text-xs font-bold text-white shrink-0 mt-0.5">P</span>
                                 <p class="text-sm font-semibold text-blue-900">{{ $progKode }} — {{ $prog['nama_prog'] }}</p>
                             </div>
-                            {{-- Kanan: nominal + chevron --}}
                             <div class="flex items-center gap-3 shrink-0">
                                 <div class="text-right hidden sm:block">
                                     <p class="text-xs text-blue-400 font-medium">Realisasi</p>
@@ -120,8 +119,7 @@
                                     <p class="text-sm font-semibold text-gray-600">Rp {{ number_format($prog['pagu'],0,',','.') }}</p>
                                 </div>
                                 <div class="flex flex-col items-center gap-0.5 shrink-0">
-                                    <span class="text-xs font-bold
-                                        {{ $prog['persen'] >= 80 ? 'text-emerald-600' : ($prog['persen'] >= 50 ? 'text-blue-600' : ($prog['persen'] >= 25 ? 'text-amber-600' : 'text-red-500')) }}">
+                                    <span class="text-xs font-bold {{ $prog['persen'] >= 80 ? 'text-emerald-600' : ($prog['persen'] >= 50 ? 'text-blue-600' : ($prog['persen'] >= 25 ? 'text-amber-600' : 'text-red-500')) }}">
                                         {{ $prog['persen'] }}%
                                     </span>
                                     <svg class="chevron w-4 h-4 text-blue-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,30 +128,27 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- Progress bar program --}}
-                        <div class="mt-2 flex items-center gap-2">
+                        <div class="mt-2">
                             <div class="flex-1 h-1.5 bg-blue-100 rounded-full overflow-hidden">
-                                <div class="h-full rounded-full transition-all duration-500
-                                    {{ $prog['persen'] >= 80 ? 'bg-emerald-500' : ($prog['persen'] >= 50 ? 'bg-blue-500' : ($prog['persen'] >= 25 ? 'bg-amber-500' : 'bg-red-400')) }}"
-                                    style="width: {{ $prog['persen'] }}%">
-                                </div>
+                                <div class="h-full rounded-full transition-all duration-500 {{ $prog['persen'] >= 80 ? 'bg-emerald-500' : ($prog['persen'] >= 50 ? 'bg-blue-500' : ($prog['persen'] >= 25 ? 'bg-amber-500' : 'bg-red-400')) }}"
+                                    style="width: {{ $prog['persen'] }}%"></div>
                             </div>
                         </div>
                     </button>
 
                     {{-- Isi Program --}}
-                    <div class="collapsible-content">
-                        <div class="p-3 space-y-2">
+                    <div class="acc-content collapsible-content">
+                        {{-- accordion-group="keg-{progKode}" → hanya 1 kegiatan boleh terbuka per program --}}
+                        <div class="p-3 space-y-2" data-accordion-group="keg-{{ $progKode }}">
 
                             @foreach($prog['kegiatan'] as $kegKode => $keg)
-
                             {{-- ══════════════════════════════════════════
                                  LEVEL 2 : KEGIATAN
                             ══════════════════════════════════════════ --}}
-                            <div class="border-2 border-emerald-100 rounded-lg overflow-hidden">
+                            <div class="border-2 border-emerald-100 rounded-lg overflow-hidden acc-item" data-level="keg-{{ $progKode }}">
 
-                                <button type="button" onclick="toggleSection(this)"
-                                    class="w-full text-left px-3 py-2.5 bg-emerald-50 hover:bg-emerald-100 transition-colors">
+                                <button type="button" onclick="accordionToggle(this, 'keg-{{ $progKode }}')"
+                                    class="acc-trigger w-full text-left px-3 py-2.5 bg-emerald-50 hover:bg-emerald-100 transition-colors">
                                     <div class="flex items-start justify-between gap-3">
                                         <div class="flex items-start gap-2 min-w-0">
                                             <span class="inline-flex items-center justify-center w-6 h-6 bg-emerald-500 rounded text-xs font-bold text-white shrink-0 mt-0.5">K</span>
@@ -169,8 +164,7 @@
                                                 <p class="text-sm font-semibold text-gray-600">Rp {{ number_format($keg['pagu'],0,',','.') }}</p>
                                             </div>
                                             <div class="flex flex-col items-center gap-0.5 shrink-0">
-                                                <span class="text-xs font-bold
-                                                    {{ $keg['persen'] >= 80 ? 'text-emerald-600' : ($keg['persen'] >= 50 ? 'text-blue-600' : ($keg['persen'] >= 25 ? 'text-amber-600' : 'text-red-500')) }}">
+                                                <span class="text-xs font-bold {{ $keg['persen'] >= 80 ? 'text-emerald-600' : ($keg['persen'] >= 50 ? 'text-blue-600' : ($keg['persen'] >= 25 ? 'text-amber-600' : 'text-red-500')) }}">
                                                     {{ $keg['persen'] }}%
                                                 </span>
                                                 <svg class="chevron w-4 h-4 text-emerald-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -179,35 +173,33 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="mt-1.5 flex items-center gap-2">
+                                    <div class="mt-1.5">
                                         <div class="flex-1 h-1.5 bg-emerald-100 rounded-full overflow-hidden">
-                                            <div class="h-full rounded-full transition-all duration-500
-                                                {{ $keg['persen'] >= 80 ? 'bg-emerald-500' : ($keg['persen'] >= 50 ? 'bg-blue-500' : ($keg['persen'] >= 25 ? 'bg-amber-500' : 'bg-red-400')) }}"
-                                                style="width: {{ $keg['persen'] }}%">
-                                            </div>
+                                            <div class="h-full rounded-full transition-all duration-500 {{ $keg['persen'] >= 80 ? 'bg-emerald-500' : ($keg['persen'] >= 50 ? 'bg-blue-500' : ($keg['persen'] >= 25 ? 'bg-amber-500' : 'bg-red-400')) }}"
+                                                style="width: {{ $keg['persen'] }}%"></div>
                                         </div>
                                     </div>
                                 </button>
 
                                 {{-- Isi Kegiatan --}}
-                                <div class="collapsible-content">
-                                    <div class="p-2 space-y-2">
+                                <div class="acc-content collapsible-content">
+                                    {{-- accordion-group="sub-{kegKode}" → hanya 1 sub kegiatan boleh terbuka per kegiatan --}}
+                                    <div class="p-2 space-y-2" data-accordion-group="sub-{{ $kegKode }}">
 
                                         @foreach($keg['subkeg'] as $sub)
-
                                         {{-- ══════════════════════════════════════════
                                              LEVEL 3 : SUB KEGIATAN
                                         ══════════════════════════════════════════ --}}
-                                        <div class="bg-white border-2 border-gray-100 rounded-lg overflow-hidden">
+                                        <div class="bg-white border-2 border-gray-100 rounded-lg overflow-hidden acc-item" data-level="sub-{{ $kegKode }}">
 
-                                            <button type="button" onclick="toggleSection(this)"
-                                                class="w-full text-left px-3 py-2.5 hover:bg-gray-50 transition-colors">
+                                            <button type="button"
+                                                @if($sub['rekening']->count() > 0) onclick="accordionToggle(this, 'sub-{{ $kegKode }}')" @endif
+                                                class="acc-trigger w-full text-left px-3 py-2.5 {{ $sub['rekening']->count() > 0 ? 'hover:bg-gray-50' : 'cursor-default' }} transition-colors">
                                                 <div class="flex items-start justify-between gap-2">
                                                     <div class="flex items-start gap-2 min-w-0 flex-1">
                                                         <span class="inline-flex items-center justify-center w-5 h-5 bg-gray-200 rounded text-xs font-bold text-gray-600 shrink-0 mt-0.5">S</span>
                                                         <div class="min-w-0 flex-1">
                                                             <p class="text-xs font-semibold text-gray-800 mb-1.5">{{ $sub['kode'] }} — {{ $sub['nama'] }}</p>
-                                                            {{-- Info pagu / realisasi / sisa --}}
                                                             <div class="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-gray-500 mb-1.5">
                                                                 <span>Pagu: <strong class="text-gray-700">Rp {{ number_format($sub['pagu'],0,',','.') }}</strong></span>
                                                                 <span>Realisasi: <strong class="text-blue-600">Rp {{ number_format($sub['realisasi'],0,',','.') }}</strong></span>
@@ -215,16 +207,13 @@
                                                             </div>
                                                             <div class="flex items-center gap-2">
                                                                 <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                                                    <div class="h-full rounded-full transition-all duration-500
-                                                                        {{ $sub['persen'] >= 80 ? 'bg-emerald-500' : ($sub['persen'] >= 50 ? 'bg-blue-500' : ($sub['persen'] >= 25 ? 'bg-amber-500' : 'bg-red-400')) }}"
-                                                                        style="width: {{ $sub['persen'] }}%">
-                                                                    </div>
+                                                                    <div class="h-full rounded-full transition-all duration-500 {{ $sub['persen'] >= 80 ? 'bg-emerald-500' : ($sub['persen'] >= 50 ? 'bg-blue-500' : ($sub['persen'] >= 25 ? 'bg-amber-500' : 'bg-red-400')) }}"
+                                                                        style="width: {{ $sub['persen'] }}%"></div>
                                                                 </div>
                                                                 <span class="text-xs font-bold text-gray-600 w-10 text-right shrink-0">{{ $sub['persen'] }}%</span>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    {{-- Chevron sub kegiatan (hanya jika ada rekening) --}}
                                                     @if($sub['rekening']->count() > 0)
                                                     <div class="flex items-center gap-1 shrink-0 mt-0.5">
                                                         <span class="text-xs text-gray-400">{{ $sub['rekening']->count() }} rek.</span>
@@ -238,30 +227,50 @@
 
                                             {{-- ══════════════════════════════════════════
                                                  LEVEL 4 : REKENING
+                                                 indent: ml-7 (badge S width) + tambahan ml-2
                                             ══════════════════════════════════════════ --}}
                                             @if($sub['rekening']->count() > 0)
-                                            <div class="collapsible-content">
-                                                <div class="border-t-2 border-gray-100 bg-gray-50 px-3 py-2.5">
+                                            <div class="acc-content collapsible-content">
+                                                <div class="border-t-2 border-gray-100 bg-slate-50 px-3 pt-2.5 pb-3">
                                                     <div class="flex items-center justify-between mb-2">
                                                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Rincian Rekening</p>
-                                                        {{-- Total rekening untuk sub kegiatan ini --}}
                                                         <span class="text-xs font-bold text-gray-700 bg-white border border-gray-200 rounded px-2 py-0.5">
                                                             Total: Rp {{ number_format($sub['rekening']->sum('total'),0,',','.') }}
                                                         </span>
                                                     </div>
-                                                    <div class="space-y-1">
+
+                                                    {{-- indent: menjorok setara badge S (w-5 = 20px) + gap-2 = ml-7 --}}
+                                                    <div class="ml-7 space-y-1.5">
                                                         @foreach($sub['rekening'] as $rek)
-                                                        <div class="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-3 py-2 hover:border-indigo-200 transition-colors">
-                                                            <div class="flex items-center gap-2 min-w-0">
-                                                                <span class="inline-flex items-center justify-center w-4 h-4 bg-indigo-100 rounded text-xs font-bold text-indigo-600 shrink-0">R</span>
-                                                                <div class="min-w-0">
-                                                                    <span class="text-xs font-mono font-semibold text-gray-700">{{ $rek->kd_rekbel }}</span>
-                                                                    @if($rek->nama_rekbel)
-                                                                    <span class="text-xs text-gray-400 ml-1.5">— {{ $rek->nama_rekbel }}</span>
-                                                                    @endif
+                                                        @php
+                                                            $rekPersen = $sub['pagu'] > 0
+                                                                ? round(($rek->total / $sub['pagu']) * 100, 1)
+                                                                : 0;
+                                                        @endphp
+                                                        <div class="bg-white border border-gray-200 rounded-lg px-3 py-2 hover:border-indigo-200 transition-colors">
+                                                            {{-- Baris 1: kode + nama + nominal --}}
+                                                            <div class="flex items-start justify-between gap-2 mb-1.5">
+                                                                <div class="flex items-center gap-1.5 min-w-0">
+                                                                    <span class="inline-flex items-center justify-center w-4 h-4 bg-indigo-100 rounded text-xs font-bold text-indigo-600 shrink-0">R</span>
+                                                                    <div class="min-w-0">
+                                                                        <span class="text-xs font-mono font-semibold text-gray-700">{{ $rek->kd_rekbel }}</span>
+                                                                        @if($rek->nama_rekbel)
+                                                                        <span class="text-xs text-gray-500 ml-1">— {{ $rek->nama_rekbel }}</span>
+                                                                        @endif
+                                                                    </div>
+                                                                </div>
+                                                                <div class="text-right shrink-0">
+                                                                    <p class="text-xs font-bold text-indigo-700">Rp {{ number_format($rek->total,0,',','.') }}</p>
+                                                                    <p class="text-xs text-gray-400 font-medium">{{ $rekPersen }}% dari pagu</p>
                                                                 </div>
                                                             </div>
-                                                            <span class="text-xs font-bold text-gray-900 shrink-0 ml-2">Rp {{ number_format($rek->total,0,',','.') }}</span>
+                                                            {{-- Baris 2: progress bar rekening --}}
+                                                            <div class="flex items-center gap-2">
+                                                                <div class="flex-1 h-1.5 bg-indigo-50 rounded-full overflow-hidden">
+                                                                    <div class="h-full rounded-full transition-all duration-500 {{ $rekPersen >= 80 ? 'bg-emerald-400' : ($rekPersen >= 50 ? 'bg-indigo-400' : ($rekPersen >= 25 ? 'bg-amber-400' : 'bg-red-300')) }}"
+                                                                        style="width: {{ min($rekPersen, 100) }}%"></div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                         @endforeach
                                                     </div>
@@ -387,10 +396,10 @@
 <style>
     .collapsible-content {
         display: none;
-        animation: slideDown 0.2s ease-out;
     }
     .collapsible-content.open {
         display: block;
+        animation: slideDown 0.18s ease-out;
     }
     .chevron.rotated {
         transform: rotate(180deg);
@@ -402,12 +411,49 @@
 </style>
 
 <script>
-    function toggleSection(btn) {
-        const content = btn.nextElementSibling;
-        const chevron = btn.querySelector('.chevron');
-        if (!content || !content.classList.contains('collapsible-content')) return;
-        content.classList.toggle('open');
-        if (chevron) chevron.classList.toggle('rotated');
+    /**
+     * accordionToggle — klik satu item, item lain di grup yang sama ditutup.
+     * Setelah collapse, scroll layar ke tombol yang diklik agar tidak melompat.
+     * @param {HTMLElement} btn   - tombol yang diklik
+     * @param {string}      group - nama grup accordion (e.g. 'prog', 'keg-1.02', 'sub-1.02.01')
+     */
+    function accordionToggle(btn, group) {
+        const clickedContent = btn.nextElementSibling; // .acc-content
+        const clickedChevron = btn.querySelector('.chevron');
+
+        if (!clickedContent) return;
+
+        const isOpen = clickedContent.classList.contains('open');
+
+        // Catat posisi tombol sebelum perubahan DOM
+        const btnTop = btn.getBoundingClientRect().top;
+
+        // Tutup semua item dalam grup yang sama
+        const container = btn.closest('[data-accordion-group="' + group + '"]');
+        if (container) {
+            container.querySelectorAll(':scope > .acc-item').forEach(item => {
+                const content = item.querySelector(':scope > .acc-content');
+                const chevron = item.querySelector(':scope > .acc-trigger .chevron');
+                if (content)  content.classList.remove('open');
+                if (chevron)  chevron.classList.remove('rotated');
+                // Tutup juga semua level di bawahnya (child accordion)
+                item.querySelectorAll('.collapsible-content').forEach(c => c.classList.remove('open'));
+                item.querySelectorAll('.chevron').forEach(c => c.classList.remove('rotated'));
+            });
+        }
+
+        // Buka item yang diklik (kalau sebelumnya tertutup)
+        if (!isOpen) {
+            clickedContent.classList.add('open');
+            if (clickedChevron) clickedChevron.classList.add('rotated');
+        }
+
+        // Kompensasi pergeseran scroll: kembalikan posisi tombol ke posisi semula di viewport
+        const btnTopAfter = btn.getBoundingClientRect().top;
+        const shift = btnTopAfter - btnTop;
+        if (Math.abs(shift) > 1) {
+            window.scrollBy({ top: shift, behavior: 'instant' });
+        }
     }
 
     function expandAll() {
