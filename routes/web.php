@@ -6,6 +6,7 @@ use App\Http\Controllers\A2Controller;
 use App\Http\Controllers\ReportingController;
 use App\Http\Controllers\PenerimaController;;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\UserController;
 
 
@@ -119,6 +120,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/filter-rincian',
             [A2Controller::class, 'filterRincian']);
     });
+
+    Route::get('/password/change', [PasswordController::class, 'edit'])->name('password.change');
+    Route::put('/password/change', [PasswordController::class, 'update'])->name('password.update');
 });
 
 require __DIR__.'/auth.php';

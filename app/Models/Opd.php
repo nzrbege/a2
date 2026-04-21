@@ -7,20 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 class Opd extends Model
 {
     protected $table = 'opd';
-    protected $primaryKey = 'id_opd';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'kode_opd',
         'nama_opd'
     ];
 
-    public function bidang()
+    public function unit()
     {
-        return $this->hasMany(Bidang::class, 'id_opd', 'id_opd');
+        return $this->hasMany(Unit::class, 'opd_id', 'id');
     }
 
     public function users()
     {
-        return $this->hasMany(User::class, 'id_opd', 'id_opd');
+        return $this->hasMany(User::class, 'opd_id', 'id');
     }
 }

@@ -156,7 +156,7 @@ class DashboardController extends Controller
                 DB::raw("COALESCE(register.urai_rekbel, '') as nama_rekbel"),
                 DB::raw('SUM(register.nom_bruto) as total')
             )
-            // ->leftJoin('rekening as rek', 'register.kd_rekbel', '=', 'rek.kd_rekbel')
+            // ->leftJoin('rincian_rka as rek', 'register.kd_rekbel', '=', 'rek.kd_rekbel')
             ->groupBy('register.kd_rekbel', 'register.urai_rekbel')
             ->orderByDesc('total')
             ->limit(10)

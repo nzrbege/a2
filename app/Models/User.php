@@ -23,18 +23,18 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'id_opd',
-        'id_bidang'
+        'opd_id',
+        'unit_id'
     ];
 
     public function opd()
     {
-        return $this->belongsTo(Opd::class, 'id_opd', 'id_opd');
+        return $this->belongsTo(Opd::class, 'opd_id', 'id');
     }
 
-    public function bidang()
+    public function unit()
     {
-        return $this->belongsTo(Bidang::class, 'id_bidang', 'id_bidang');
+        return $this->belongsTo(Unit::class, 'unit_id', 'id');
     }
 
     public function isAdmin()
