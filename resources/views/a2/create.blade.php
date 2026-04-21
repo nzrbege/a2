@@ -24,6 +24,7 @@
         class="space-y-3" @submit.prevent="handleBeforeConfirm()">
         @csrf
         <input type="hidden" name="ppn" value="{{ $ppn->tarif }}">
+        <input type="hidden" name="umk" value="{{ $umk }}">
 
         {{-- ── HEADER BAR ── --}}
         <div class="bg-blue-800 dark:bg-slate-900 text-white px-4 py-2 rounded-lg shadow flex justify-between items-center border border-transparent dark:border-blue-500/30">
@@ -882,11 +883,12 @@
 
     function hitungTotalIWP() {
         let totalIWP = 0;
+        const umk  = {{ $umk }};
         document.querySelectorAll('[id^="iwp_riil_"]').forEach((cb, i) => {
             if (cb.checked) {
                 const vol   = Number(document.querySelector(`input[name="riil[${i}][vol]"]`)?.value || 0);
                 const harga = parseRupiah(document.querySelector(`input[name="riil[${i}][harga]"]`)?.value || 0);
-                totalIWP += vol * harga * 0.01;
+                totalIWP += Math.round(Math.max(vol * harga, umk) * 0.01);
             }
         });
         document.getElementById('iwpTotal').value         = formatRupiah(totalIWP);

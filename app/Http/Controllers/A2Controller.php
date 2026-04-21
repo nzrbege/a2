@@ -12,6 +12,7 @@ use App\Models\Dpp;
 use App\Models\MasterPejabat;
 use App\Models\PengeluaranA2;
 use App\Models\Register;
+use App\Models\Umk;
 use App\Models\Pptk;
 use App\Models\Pokja;
 use App\Models\TarifPpn;
@@ -30,12 +31,17 @@ class A2Controller extends Controller
 
         $dpp = Dpp::all();
         $ppn = TarifPpn::find(1);
+        
+        $tahun = now()->year;
+
+        $umk = Umk::where('tahun', $tahun)->value('nominal');
 
         return view('a2.create', compact(
             'versi',
             'penerima',
             'dpp',
-            'ppn'
+            'ppn',
+            'umk'
         ));
     }
 
@@ -96,6 +102,7 @@ class A2Controller extends Controller
                 // Total yang sudah terealisasi untuk komponen ini
                 $totalTerealisasi = DB::table('detail_belanja')
                     ->where('id_rinci_sub_bl', $row['id_rinci_sub_bl'])
+                    ->where('kd_subkeg', $request->sub_kegiatan)
                     ->sum('total_dibayar');
                 
 
@@ -207,6 +214,15 @@ class A2Controller extends Controller
 
             $detilData = [];
 
+            $tahun = now()->year;
+
+            $umk = Umk::where('tahun', $tahun)->value('nominal');
+
+            if (!$umk) {
+                throw new \Exception("UMK tahun {$tahun} belum disetting");
+            }
+
+
             foreach ($request->riil as $row) {
                 if (empty($row['vol']) || empty($row['harga'])) {
                     continue;
@@ -216,7 +232,7 @@ class A2Controller extends Controller
                 $harga = (int) str_replace('.', '', $row['harga']);
 
                 $ppn = ($row['ppn'] ?? false) ? $vol * $harga * $request->ppn / 100 : 0;
-                $iwp = ($row['iwp'] ?? false) ? $vol * $harga * 1 / 100 : 0;
+                $iwp = ($row['iwp'] ?? false) ? (int) ceil(max($vol * $harga,$umk) * 1 / 100) : 0;
 
                 $total_dpp     = ($vol * $harga) - $iwp;
                 $total_dibayar = $total_dpp + $ppn + $iwp;
