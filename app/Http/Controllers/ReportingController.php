@@ -283,6 +283,8 @@ class ReportingController extends Controller
 
     public function bulananPdf(Request $request)
     {
+        $user = auth()->user();
+        
         $bulan = $request->bulan ?? date('m');
         $tahun = $request->tahun ?? date('Y');
 
