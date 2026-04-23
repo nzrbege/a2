@@ -194,7 +194,7 @@
 
                                             <button type="button"
                                                 @if($sub['rekening']->count() > 0) onclick="accordionToggle(this, 'sub-{{ $kegKode }}')" @endif
-                                                class="acc-trigger w-full text-left px-3 py-2.5 {{ $sub['rekening']->count() > 0 ? 'hover:bg-gray-50 cursor-pointer' : 'cursor-default' }} transition-colors">
+                                                class="acc-trigger w-full text-left px-3 py-2.5 {{ $sub['rekening']->count() > 0 ? 'hover:bg-gray-50' : 'cursor-default' }} transition-colors">
                                                 <div class="flex items-start justify-between gap-2">
                                                     <div class="flex items-start gap-2 min-w-0 flex-1">
                                                         <span class="inline-flex items-center justify-center w-5 h-5 bg-gray-200 rounded text-xs font-bold text-gray-600 shrink-0 mt-0.5">S</span>
@@ -215,19 +215,11 @@
                                                         </div>
                                                     </div>
                                                     @if($sub['rekening']->count() > 0)
-                                                    @php $belumRealisasi = $sub['rekening']->where('total', 0)->count(); @endphp
-                                                    <div class="flex flex-col items-end gap-1 shrink-0 mt-0.5">
-                                                        <div class="flex items-center gap-1">
-                                                            <span class="text-xs text-gray-400">{{ $sub['rekening']->count() }} rek.</span>
-                                                            <svg class="chevron w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                                            </svg>
-                                                        </div>
-                                                        @if($belumRealisasi > 0)
-                                                        <span class="text-xs font-semibold text-orange-500 bg-orange-50 border border-orange-200 rounded px-1.5 py-0.5 leading-none">
-                                                            {{ $belumRealisasi }} belum jalan
-                                                        </span>
-                                                        @endif
+                                                    <div class="flex items-center gap-1 shrink-0 mt-0.5">
+                                                        <span class="text-xs text-gray-400">{{ $sub['rekening']->count() }} rek.</span>
+                                                        <svg class="chevron w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                                        </svg>
                                                     </div>
                                                     @endif
                                                 </div>
@@ -251,18 +243,15 @@
                                                     <div class="ml-7 space-y-1.5">
                                                         @foreach($sub['rekening'] as $rek)
                                                         @php
-                                                            $rekPersen  = $rek->total_pagu > 0 ? round(($rek->total / $rek->total_pagu) * 100, 1) : 0;
-                                                            $belumJalan = $rek->total == 0;
+                                                            $rekPersen = $sub['pagu'] > 0
+                                                                ? round(($rek->total / $sub['pagu']) * 100, 1)
+                                                                : 0;
                                                         @endphp
-                                                        <div class="border rounded-lg px-3 py-2 transition-colors
-                                                            {{ $belumJalan
-                                                                ? 'bg-orange-50 border-orange-200 hover:border-orange-300'
-                                                                : 'bg-white border-gray-200 hover:border-indigo-200' }}">
+                                                        <div class="bg-white border border-gray-200 rounded-lg px-3 py-2 hover:border-indigo-200 transition-colors">
                                                             {{-- Baris 1: kode + nama + nominal --}}
                                                             <div class="flex items-start justify-between gap-2 mb-1.5">
                                                                 <div class="flex items-center gap-1.5 min-w-0">
-                                                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded text-xs font-bold shrink-0
-                                                                        {{ $belumJalan ? 'bg-orange-100 text-orange-600' : 'bg-indigo-100 text-indigo-600' }}">R</span>
+                                                                    <span class="inline-flex items-center justify-center w-4 h-4 bg-indigo-100 rounded text-xs font-bold text-indigo-600 shrink-0">R</span>
                                                                     <div class="min-w-0">
                                                                         <span class="text-xs font-mono font-semibold text-gray-700">{{ $rek->kd_rekbel }}</span>
                                                                         @if($rek->nama_rekbel)
@@ -271,30 +260,16 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="text-right shrink-0">
-                                                                    @if($belumJalan)
-                                                                        <p class="text-xs font-semibold text-orange-500">Belum ada realisasi</p>
-                                                                        <p class="text-xs text-gray-400">Pagu: Rp {{ number_format($rek->total_pagu,0,',','.') }}</p>
-                                                                    @else
-                                                                        <p class="text-xs font-bold text-indigo-700">Rp {{ number_format($rek->total,0,',','.') }}</p>
-                                                                        <p class="text-xs text-gray-400">{{ $rekPersen }}% dari Rp {{ number_format($rek->total_pagu,0,',','.') }}</p>
-                                                                    @endif
+                                                                    <p class="text-xs font-bold text-indigo-700">Rp {{ number_format($rek->total,0,',','.') }}</p>
+                                                                    <p class="text-xs text-gray-400 font-medium">{{round($rek->total/$rek->total_pagu*100,1)}}% dari Rp {{ number_format($rek->total_pagu,0,',','.') }}</p>
                                                                 </div>
                                                             </div>
                                                             {{-- Baris 2: progress bar rekening --}}
                                                             <div class="flex items-center gap-2">
-                                                                <div class="flex-1 h-1.5 rounded-full overflow-hidden {{ $belumJalan ? 'bg-orange-100' : 'bg-indigo-50' }}">
-                                                                    @if(!$belumJalan)
-                                                                    <div class="h-full rounded-full transition-all duration-500
-                                                                        {{ $rekPersen >= 80 ? 'bg-emerald-400' : ($rekPersen >= 50 ? 'bg-indigo-400' : ($rekPersen >= 25 ? 'bg-amber-400' : 'bg-red-300')) }}"
-                                                                        style="width: {{ min($rekPersen, 100) }}%"></div>
-                                                                    @endif
+                                                                <div class="flex-1 h-1.5 bg-indigo-50 rounded-full overflow-hidden">
+                                                                    <div class="h-full rounded-full transition-all duration-500 {{ round($rek->total/$rek->total_pagu*100,1) >= 80 ? 'bg-emerald-400' : (round($rek->total/$rek->total_pagu*100,1) >= 50 ? 'bg-indigo-400' : (round($rek->total/$rek->total_pagu*100,1) >= 25 ? 'bg-amber-400' : 'bg-red-300')) }}"
+                                                                        style="width: {{ min(round($rek->total/$rek->total_pagu*100,1), 100) }}%"></div>
                                                                 </div>
-                                                                @if(!$belumJalan)
-                                                                <span class="text-xs font-semibold w-10 text-right shrink-0
-                                                                    {{ $rekPersen >= 80 ? 'text-emerald-500' : ($rekPersen >= 50 ? 'text-indigo-500' : ($rekPersen >= 25 ? 'text-amber-500' : 'text-red-400')) }}">
-                                                                    {{ $rekPersen }}%
-                                                                </span>
-                                                                @endif
                                                             </div>
                                                         </div>
                                                         @endforeach
@@ -323,48 +298,21 @@
 
         {{-- REKAP REKENING (sidebar) --}}
         <div class="bg-white border-2 border-gray-200 rounded-xl p-5">
-            <div class="flex items-center justify-between mb-5">
-                <div class="flex items-center gap-2">
-                    <div class="w-1.5 h-6 bg-emerald-500 rounded-full"></div>
-                    <h2 class="text-lg font-bold text-gray-900">Pengeluaran per Rekening</h2>
-                </div>
-                @php $totalBelum = $rekapRekening->where('total', 0)->count(); @endphp
-                @if($totalBelum > 0)
-                <span class="text-xs font-semibold text-orange-500 bg-orange-50 border border-orange-200 rounded-full px-2 py-0.5">
-                    {{ $totalBelum }} belum jalan
-                </span>
-                @endif
+            <div class="flex items-center gap-2 mb-5">
+                <div class="w-1.5 h-6 bg-emerald-500 rounded-full"></div>
+                <h2 class="text-lg font-bold text-gray-900">Pengeluaran per Rekening</h2>
             </div>
             <div class="space-y-2">
                 @forelse($rekapRekening as $r)
-                @php $rBelum = $r->total == 0; @endphp
-                <div class="border-2 rounded-lg px-4 py-3 transition-colors
-                    {{ $rBelum
-                        ? 'bg-orange-50 border-orange-100 hover:border-orange-200'
-                        : 'bg-gray-50 border-gray-100 hover:border-emerald-200' }}">
-                    <div class="flex items-start justify-between gap-2 mb-1">
+                <div class="bg-gray-50 border-2 border-gray-100 rounded-lg px-4 py-3 hover:border-emerald-200 transition-colors">
+                    <div class="flex items-start justify-between gap-2">
                         <div class="min-w-0">
                             <p class="text-xs font-mono font-semibold text-gray-700">{{ $r->kd_rekbel }}</p>
                             @if($r->nama_rekbel)
                             <p class="text-xs text-gray-500 mt-0.5 leading-tight">{{ $r->nama_rekbel }}</p>
                             @endif
                         </div>
-                        <div class="text-right shrink-0">
-                            @if($rBelum)
-                                <span class="text-xs font-semibold text-orange-500">Belum ada realisasi</span>
-                            @else
-                                <span class="text-xs font-bold text-gray-900">Rp {{ number_format($r->total,0,',','.') }}</span>
-                            @endif
-                            <p class="text-xs text-gray-400 mt-0.5">Pagu: Rp {{ number_format($r->total_pagu,0,',','.') }}</p>
-                        </div>
-                    </div>
-                    {{-- mini progress bar --}}
-                    @php $rPersen = $r->total_pagu > 0 ? min(round($r->total/$r->total_pagu*100,1), 100) : 0; @endphp
-                    <div class="h-1 rounded-full overflow-hidden {{ $rBelum ? 'bg-orange-100' : 'bg-gray-200' }}">
-                        @if(!$rBelum)
-                        <div class="h-full rounded-full {{ $rPersen >= 80 ? 'bg-emerald-400' : ($rPersen >= 50 ? 'bg-blue-400' : ($rPersen >= 25 ? 'bg-amber-400' : 'bg-red-300')) }}"
-                            style="width: {{ $rPersen }}%"></div>
-                        @endif
+                        <span class="text-sm font-bold text-gray-900 shrink-0">Rp {{ number_format($r->total,0,',','.') }}</span>
                     </div>
                 </div>
                 @empty

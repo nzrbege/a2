@@ -79,50 +79,34 @@ class DashboardController extends Controller
         // =========================
     
 
-        // =========================
-        // REKENING PER SUB KEGIATAN
-        // Sumber utama: rincian_rka (semua rekening yang dianggarkan)
-        // LEFT JOIN ke register agar rekening belum terealisasi tetap muncul
-        // =========================
-
-        // Sub-query: total realisasi per sub kegiatan + rekening (dengan filter tanggal)
-        $realisasiSub = DB::table('register')
+        $subBudget = DB::table('rincian_rka')
             ->select(
-                'kd_subkeg',
-                'kd_rekbel',
-                DB::raw('SUM(nom_bruto) as total_realisasi')
+                'kode_sub_giat',
+                'kode_akun',
+                DB::raw('SUM(total_harga) as total_pagu')
             )
-            ->where('opd_id', $user->opd_id)
-            ->where('unit_id', $user->unit_id)
-            ->when($tanggalMulai && $tanggalSelesai, function ($q) use ($tanggalMulai, $tanggalSelesai) {
-                $q->whereBetween('created_at', [
-                    $tanggalMulai  . ' 00:00:00',
-                    $tanggalSelesai . ' 23:59:59',
-                ]);
-            })
-            ->groupBy('kd_subkeg', 'kd_rekbel');
+            ->where('versi_anggaran_id', 2)
+            ->groupBy('kode_sub_giat', 'kode_akun');
 
-        $rekeningPerSubkeg = DB::table('rincian_rka as rka')
-            ->leftJoinSub($realisasiSub, 'real', function ($join) {
-                $join->on('rka.kode_sub_giat', '=', 'real.kd_subkeg')
-                     ->on('rka.kode_akun',     '=', 'real.kd_rekbel');
+        $rekeningPerSubkeg = (clone $base)
+            ->joinSub($subBudget, 'budget', function ($join) {
+                $join->on('register.kd_subkeg', '=', 'budget.kode_sub_giat')
+                    ->on('register.kd_rekbel', '=', 'budget.kode_akun');
             })
             ->select(
-                'rka.kode_sub_giat as kd_subkeg',
-                'rka.kode_akun     as kd_rekbel',
-                'rka.nama_akun   as nama_rekbel',   // sesuaikan nama kolom jika berbeda
-                DB::raw('SUM(rka.total_harga) as total_pagu'),
-                DB::raw('COALESCE(SUM(real.total_realisasi), 0) as total')
+                'register.kd_subkeg',
+                'register.kd_rekbel',
+                DB::raw("COALESCE(register.urai_rekbel, '') as nama_rekbel"),
+                'budget.total_pagu',
+                DB::raw('SUM(register.nom_bruto) as total')
             )
-            ->where('rka.id_versi_anggaran', $idVersi)
-            ->where('rka.opd_id',  $user->opd_id)
-            ->where('rka.unit_id', $user->unit_id)
             ->groupBy(
-                'rka.kode_sub_giat',
-                'rka.kode_akun',
-                'rka.nama_akun'
+                'register.kd_subkeg',
+                'register.kd_rekbel',
+                'register.urai_rekbel',
+                'budget.total_pagu'
             )
-            ->orderBy('rka.kode_sub_giat')
+            ->orderBy('register.kd_subkeg')
             ->orderByDesc('total')
             ->get()
             ->groupBy('kd_subkeg');
@@ -181,23 +165,37 @@ class DashboardController extends Controller
         });
 
         // =========================
-        // REKAP REKENING global (sidebar) — semua rekening termasuk belum terealisasi
+        // REKAP REKENING global (sidebar) — dengan nama rekening
         // =========================
-        $rekapRekening = DB::table('rincian_rka as rka')
-            ->leftJoinSub($realisasiSub, 'real', function ($join) {
-                $join->on('rka.kode_sub_giat', '=', 'real.kd_subkeg')
-                     ->on('rka.kode_akun',     '=', 'real.kd_rekbel');
+        $subBudget = DB::table('rincian_rka')
+            ->select(
+                'kode_sub_giat',
+                'kode_akun',
+                DB::raw('SUM(total_harga) as total_pagu')
+            )
+            ->where('versi_anggaran_id', 2)
+            ->groupBy('kode_sub_giat', 'kode_akun');
+
+        $rekapRekening = (clone $base)
+            ->joinSub($subBudget, 'budget', function ($join) {
+                $join->on('register.kd_subkeg', '=', 'budget.kode_sub_giat')
+                    ->on('register.kd_rekbel', '=', 'budget.kode_akun');
             })
             ->select(
-                'rka.kode_akun     as kd_rekbel',
-                'rka.nama_akun   as nama_rekbel',
-                DB::raw('SUM(rka.total_harga) as total_pagu'),
-                DB::raw('COALESCE(SUM(real.total_realisasi), 0) as total')
+                'register.kd_subkeg',
+                'register.urai_subkeg',
+                'register.kd_rekbel',
+                DB::raw("COALESCE(register.urai_rekbel, '') as nama_rekbel"),
+                'budget.total_pagu',
+                DB::raw('SUM(register.nom_bruto) as total')
             )
-            ->where('rka.id_versi_anggaran', $idVersi)
-            ->where('rka.opd_id',  $user->opd_id)
-            ->where('rka.unit_id', $user->unit_id)
-            ->groupBy('rka.kode_akun', 'rka.nama_akun')
+            ->groupBy(
+                'register.kd_subkeg',
+                'register.urai_subkeg',
+                'register.kd_rekbel',
+                'register.urai_rekbel',
+                'budget.total_pagu'
+            )
             ->orderByDesc('total')
             ->get();
 
