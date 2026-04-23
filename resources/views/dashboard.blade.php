@@ -267,8 +267,8 @@
                                                             {{-- Baris 2: progress bar rekening --}}
                                                             <div class="flex items-center gap-2">
                                                                 <div class="flex-1 h-1.5 bg-indigo-50 rounded-full overflow-hidden">
-                                                                    <div class="h-full rounded-full transition-all duration-500 {{ $rekPersen >= 80 ? 'bg-emerald-400' : ($rekPersen >= 50 ? 'bg-indigo-400' : ($rekPersen >= 25 ? 'bg-amber-400' : 'bg-red-300')) }}"
-                                                                        style="width: {{ min($rekPersen, 100) }}%"></div>
+                                                                    <div class="h-full rounded-full transition-all duration-500 {{ round($rek->total/$rek->total_pagu*100,1) >= 80 ? 'bg-emerald-400' : (round($rek->total/$rek->total_pagu*100,1) >= 50 ? 'bg-indigo-400' : (round($rek->total/$rek->total_pagu*100,1) >= 25 ? 'bg-amber-400' : 'bg-red-300')) }}"
+                                                                        style="width: {{ min(round($rek->total/$rek->total_pagu*100,1), 100) }}%"></div>
                                                                 </div>
                                                             </div>
                                                         </div>
