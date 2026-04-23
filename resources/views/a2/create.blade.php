@@ -635,7 +635,7 @@
                                     id="iwp_riil_${i}" class="w-3 h-3 accent-green-600">
                             </td>
                             <td class="border border-green-100 px-1 py-1 bg-green-50">
-                                <input type="text" readonly id="nominal_riil_${i}"
+                                <input type="text" readonly name="riil[${i}][total_dibayar]" id="nominal_riil_${i}"
                                     class="w-24 text-right bg-green-100 border border-green-200 rounded px-1 py-0.5 text-xs font-semibold text-green-700 cursor-not-allowed">
                             </td>
                             <td class="border border-indigo-100 px-2 py-1 text-center text-slate-600 bg-indigo-50">${row.reg_vol}</td>

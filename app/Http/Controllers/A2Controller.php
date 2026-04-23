@@ -228,7 +228,7 @@ class A2Controller extends Controller
                     continue;
                 }
 
-                $vol   = (int) $row['vol'];
+                $vol   = $row['vol'];
                 $harga = (int) str_replace('.', '', $row['harga']);
 
                 $ppn = ($row['ppn'] ?? false) ? $vol * $harga * $request->ppn / 100 : 0;
@@ -788,8 +788,9 @@ class A2Controller extends Controller
                     continue;
                 }
 
-                $vol   = (int)$row['vol'];
+                $vol   = $row['vol'];
                 $harga = (int)str_replace('.', '', $row['harga']);
+                $total_dibayar = $row['total_dibayar'];
 
                 $ppn = ($row['ppn'] ?? false) ? $vol * $harga * $request->ppn / 100 : 0;
 
@@ -797,7 +798,7 @@ class A2Controller extends Controller
 
                 $total_dpp = ($vol * $harga) - $iwp;
 
-                $total_dibayar = $total_dpp + $ppn + $iwp;
+                // $total_dibayar = $total_dpp + $ppn + $iwp;
 
                 $detilData[] = [
                     'id_reg'          => $register->id_reg,
