@@ -261,7 +261,7 @@
                                                                 </div>
                                                                 <div class="text-right shrink-0">
                                                                     <p class="text-xs font-bold text-indigo-700">Rp {{ number_format($rek->total,0,',','.') }}</p>
-                                                                    <p class="text-xs text-gray-400 font-medium">{{ $rekPersen }}% dari pagu</p>
+                                                                    <p class="text-xs text-gray-400 font-medium">{{round($rek->total/$rek->total_pagu*100,1)}}% dari Rp {{ number_format($rek->total_pagu,0,',','.') }}</p>
                                                                 </div>
                                                             </div>
                                                             {{-- Baris 2: progress bar rekening --}}

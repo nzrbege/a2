@@ -77,35 +77,18 @@ class DashboardController extends Controller
         //   FK    : kd_rekbel       (kolom kode di tabel rekening)
         //   nama  : nama_rekbel     (kolom nama di tabel rekening)
         // =========================
-    
-
-        $subBudget = DB::table('rincian_rka')
-            ->select(
-                'kode_sub_giat',
-                'kode_akun',
-                DB::raw('SUM(total_harga) as total_pagu')
-            )
-            ->where('versi_anggaran_id', 2)
-            ->groupBy('kode_sub_giat', 'kode_akun');
-
         $rekeningPerSubkeg = (clone $base)
-            ->joinSub($subBudget, 'budget', function ($join) {
-                $join->on('register.kd_subkeg', '=', 'budget.kode_sub_giat')
-                    ->on('register.kd_rekbel', '=', 'budget.kode_akun');
-            })
             ->select(
                 'register.kd_subkeg',
                 'register.kd_rekbel',
                 DB::raw("COALESCE(register.urai_rekbel, '') as nama_rekbel"),
-                'budget.total_pagu',
                 DB::raw('SUM(register.nom_bruto) as total')
             )
-            ->groupBy(
-                'register.kd_subkeg',
-                'register.kd_rekbel',
-                'register.urai_rekbel',
-                'budget.total_pagu'
-            )
+            // ->leftJoin(
+            //     'rekening as rek',
+            //     'register.kd_rekbel', '=', 'rek.kd_rekbel'
+            // )
+            ->groupBy('register.kd_subkeg', 'register.kd_rekbel', 'register.urai_rekbel')
             ->orderBy('register.kd_subkeg')
             ->orderByDesc('total')
             ->get()
