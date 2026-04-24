@@ -417,7 +417,7 @@
                         <div class="flex-1 bg-green-50 border border-green-300 rounded px-2 py-1">
                             <p class="text-[10px] font-semibold text-green-600 uppercase leading-none mb-0.5">Netto</p>
                             <input type="text" id="netto" name="nom_netto" readonly
-                                value="{{ number_format(old('nom_netto', $register->nom_netto), 0, ',', '.') }}"
+                                value="{{ number_format((float) str_replace(['.', ','], ['', '.'], old('nom_netto', $register->nom_netto)), 0, ',', '.') }}"
                                 class="w-full text-right bg-transparent border-none text-xs font-black text-green-700 focus:outline-none">
                         </div>
                     </div>

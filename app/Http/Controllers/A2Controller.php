@@ -782,6 +782,14 @@ class A2Controller extends Controller
             // ================= INSERT DETAIL BARU =================
             $detilData = [];
 
+            $tahun = now()->year;
+
+            $umk = Umk::where('tahun', $tahun)->value('nominal');
+
+            if (!$umk) {
+                throw new \Exception("UMK tahun {$tahun} belum disetting");
+            }
+
             foreach ($request->riil as $row) {
 
                 if (empty($row['vol']) || empty($row['harga'])) {
