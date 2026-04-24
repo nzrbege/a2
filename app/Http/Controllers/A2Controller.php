@@ -790,15 +790,12 @@ class A2Controller extends Controller
 
                 $vol   = $row['vol'];
                 $harga = (int)str_replace('.', '', $row['harga']);
-                $total_dibayar = $row['total_dibayar'];
 
                 $ppn = ($row['ppn'] ?? false) ? $vol * $harga * $request->ppn / 100 : 0;
+                $iwp = ($row['iwp'] ?? false) ? (int) ceil(max($vol * $harga,$umk) * 1 / 100) : 0;
 
-                $iwp = ($row['iwp'] ?? false) ? $vol * $harga *  1 / 100 : 0;
-
-                $total_dpp = ($vol * $harga) - $iwp;
-
-                // $total_dibayar = $total_dpp + $ppn + $iwp;
+                $total_dpp     = ($vol * $harga) - $iwp;
+                $total_dibayar = $total_dpp + $ppn + $iwp;
 
                 $detilData[] = [
                     'id_reg'          => $register->id_reg,

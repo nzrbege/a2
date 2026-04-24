@@ -485,6 +485,7 @@
                                 {{-- Pengeluaran Riil --}}
                                 <td class="border border-green-100 px-1 py-1 bg-green-50">
                                     <input type="number"
+                                        step="any"
                                         name="riil[{{ $i }}][vol]"
                                         id="vol_{{ $i }}"
                                         value="{{ old('volume_input', $row['volume_input'] + 0 ?? '') }}"
@@ -517,7 +518,7 @@
                                 </td>
                                 <td class="border border-green-100 px-1 py-1 bg-green-50">
                                     <input type="text"
-                                        name="riil[{{ $i }}][nominal]"
+                                        name="riil[{{ $i }}][total_dibayar]"
                                         id="nominal_riil_{{ $i }}"
                                         value="{{ old('total_input', $row['total_input'] ?? '') }}"
                                         readonly
